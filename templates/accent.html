@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<!-- bootstrap links -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+<link rel="icon" href="https://www.pinclipart.com/picdir/big/1-13391_the-history-of-my-globe-with-flags-icon.png">
+<body style="background-color: #F4D03F;">
+<title> Vitamova </title>
+
+<div class="jumbotron jumbotron-fluid bg-primary">
+  <div class="container">
+    <h1 class="display-4">Vitamova</h1>
+  </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Input</h1>
+            <textarea id="input" rows="10" cols="60"></textarea>
+        </div>
+        <div class="col">
+            <h1>Output</h1>
+            <textarea id="output" rows="10" cols="60" readonly></textarea>
+        </div>
+    </div>
+</div>
+
+<script>
+    var input_t = document.getElementById("input");
+    var output_t = document.getElementById("output");
+    input_t.addEventListener("input", function () {
+        var x = input_t.value;
+        var x_l = x.split("");
+        var x_l_r = x_l.reverse();
+        x = x_l_r.join("");
+        output_t.value = x;
+    });
+</script>
+  </body>
+</html>

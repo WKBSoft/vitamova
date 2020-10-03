@@ -1,0 +1,13 @@
+[Unit]
+Description=Django Application for My Ukrainian Website
+After=multi-user.target
+Conflicts=getty@tty1.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /home/ubuntu/vitamova/manage.py runserver 127.0.0.1:1337
+StandardInput=tty-force
+User=ubuntu
+
+[Install]
+WantedBy=multi-user.target

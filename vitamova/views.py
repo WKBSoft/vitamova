@@ -1,0 +1,141 @@
+# coding=utf-8
+import os
+from django.shortcuts import render
+from django.http import HttpResponse
+from django.http import HttpResponseRedirect
+import sys
+import urllib
+import boto3
+import json
+import hashlib
+import secrets
+sys.path.insert(0, '/home/ubuntu/vitamova/vitamova/localviews/')
+import ukrainian
+import content_gen
+#translate_key = urllib.parse.unquote(request.GET.get('translate',""))
+
+def home(request):
+    return HttpResponseRedirect("/dashboard")
+
+def login(request):
+    secret_token = secrets.token_urlsafe(64)
+    if request.method == "POST":
+        email = request.POST["email"]
+        password = request.POST["password"]
+        login_token = request.POST["login_token"]
+        with open("/home/ubuntu/users/userpass.json","r") as f:
+            userpass = json.load(f)
+        pass_b = bytes(password,encoding="utf-8")
+        pash_hash = hashlib.sha256(pass_b).hexdigest()
+        if userpass[email]["password"] == pash_hash:
+            userpass[email]["token"] = login_token
+            with open("/home/ubuntu/users/userpass.json","w+") as f:
+                json.dump(userpass,f)
+            return HttpResponseRedirect('/dashboard')
+        else:
+            return(render(request,'login.html',{"randomvalue":secret_token}))
+    else:
+        return(render(request,'login.html',{"randomvalue":secret_token}))
+
+def signup(request):
+    if request.method == "GET":
+        return render(request,'signup.html',{})
+    else:
+        login_email = request.POST["email"]
+        password = request.POST["password"]
+        pass_b = bytes(password,encoding="utf-8")
+        pash_hash = hashlib.sha256(pass_b).hexdigest()
+        with open("/home/ubuntu/users/userpass.json","r") as f:
+            userpass = json.load(f)
+        if login_email not in userpass:
+            userpass.update({login_email:{"password":pass_hash,"token":""}})
+            with open("/home/ubuntu/users/userpass.json","w+") as f:
+                json.dump(userpass,f)
+            return HttpResponseRedirect('/login')
+        else:
+            return render(request,'signup.html',{})
+        
+
+def dashboard(request):
+    if request.method == "GET":
+        return render(request,'authenticator.html',{"url":"/dashboard/"})
+    else:
+        login_email = request.POST["email"]
+        login_token = request.POST["login_token"]
+        if login_email != "" and login_token != "":
+            with open("/home/ubuntu/users/userpass.json","r") as f:
+                userpass = json.load(f)
+            user_info = userpass[login_email]
+            if user_info["token"] == login_token:
+                return(render(request,'dashboard.html',{}))
+            else:
+                return HttpResponseRedirect('/login')
+        else:
+            return HttpResponseRedirect('/login')
+
+def read(request):
+    return render(request,'coming_soon.html',{})
+
+def flashcards(request):
+    return render(request,'coming_soon.html',{})
+
+def reader(request):
+    book_title = request.GET['title']
+    if not os.path.isfile('/home/ubuntu/books/'+book_title):
+        s3 = boto3.resource('s3')
+        s3.Object('wkbvitamova', 'books/'+book_title).download_file('/home/ubuntu/books/'+book_title)
+    default_page = "0"
+    return(render(request,'reader.html',{'book_title':book_title,'default_page':default_page}))
+
+def get_book(request):
+    book_title = urllib.parse.unquote(request.GET['title'])
+    book_page = request.GET['page']
+    with open('/home/ubuntu/books/'+book_title,'r') as f:
+        file_data = f.read()
+    book_pages = urllib.parse.quote(ukrainian.return_pages(file_data,200,book_page))
+    return HttpResponse(book_pages, content_type="text/plain")
+
+def translate(request):
+    translate_key = request.GET.get('word_key',"")
+    translation = ukrainian.translate(urllib.parse.quote(translate_key))
+    #translation = urllib.parse.quote(translation)
+    return HttpResponse(translation, content_type="text/plain")
+
+def transcribe(request):
+    if request.method == "GET":
+        return render(request,'authenticator.html',{"url":"/transcribe/"})
+    else:
+        login_email = request.POST["email"]
+        login_token = request.POST["login_token"]
+        with open("/home/ubuntu/users/userpass.json","r") as f:
+            userpass = json.load(f)
+        user_info = userpass[login_email]
+        if user_info["token"] == login_token:
+            with open("/home/ubuntu/users/userdata/"+login_email+".json","r") as f:
+                user_data = json.load(f)
+            if "transcribe" not in user_data:
+                user_data.update({"transcribe":{"level":"0"}})
+                with open("/home/ubuntu/users/userdata/"+login_email+".json","w+") as f:
+                    json.dump(user_data,f)
+            transcribe_level = int(user_data["transcribe"]["level"])
+            with open("/home/ubuntu/vitamova/content/transcribe_embed.txt","r") as f:
+                transcribe_srcs = f.readlines()
+            transcribe_src = transcribe_srcs[transcribe_level]
+            with open("/home/ubuntu/vitamova/content/transcribe_text_"+str(transcribe_level)+".txt","r") as f:
+                transcription_content = f.read()
+            transcription_content_l = transcription_content.split(" ")
+            for i in range(len(transcription_content_l)):
+                word_bytes = bytes(transcription_content_l[i],encoding="utf-8")
+                transcription_content_l[i] = hashlib.sha256(word_bytes).hexdigest()
+            transcription_content = " ".join(transcription_content_l)
+            return(render(request,"transcribe.html",{"transcribe_src":transcribe_src, "video_content":transcription_content}))
+        else:
+            return HttpResponseRedirect('/login')
+def transcription_submit(request):
+    return HttpResponseRedirect('/transcribe')
+    
+def accent(request):
+    return render(request,"accent.html",{})
+    
+def write(request):
+    return render(request,'coming_soon.html',{})

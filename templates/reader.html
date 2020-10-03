@@ -1,0 +1,122 @@
+<html>
+<title>Vitamova E-Reader</title>
+
+<head>
+<link rel="icon" href="https://i.pinimg.com/originals/2c/fc/93/2cfc93d7665f5d7728782700e50596e3.png">
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  
+</head>
+
+<body onload="load_book(display_page,'{% if default_page %}{{default_page}}{% endif %}')">
+<div class="container-fluid">
+  <br><br>
+  <div class="row">
+	<div class="col">
+    
+    </div>
+	<div class="col-8">
+		<div class="progress" style="height: 20px;">
+		  <div id="book_progress" class="progress-bar" role="progressbar" style="width: 0%;"></div>
+		</div>	
+	</div>
+	<div class="col"></div>
+  </div>
+  <br><br>
+  <div class="row">
+    <div class="col">
+    </div>
+    <div class="col-6">
+      <div id="book_wait" class="spinner-grow" role="status">
+  		<span class="sr-only">Loading...</span>
+	  </div>
+      <p id="reader_content"></p>
+  	<div class="row justify-content-between">
+    		<div class="col-1">
+			<button type="button" class="btn btn-primary btn-lg" onclick="paginate('previous')">Previous</button>
+    		</div>
+    		<div class="col-1">
+			<button id="next_page_button" type="button" class="btn btn-primary btn-lg" onclick="paginate('next')" hidden>Next</button>
+            <div id="next_page_load" class="spinner-border text-primary" role="status" >
+              <span class="sr-only">Loading...</span>
+            </div>
+    		</div>
+	</div>
+    <br><br>
+    </div>
+    <div class="col">
+      <p id="translation"></p>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Vitamova JavaScript -->
+<script>
+  var book_title = "{% if book_title %}{{book_title}}{% endif %}";
+  function load_book(cFunction,current_page) {
+  	var xhttp;
+  	xhttp=new XMLHttpRequest();
+  	xhttp.onreadystatechange = function() {
+    	if (this.readyState == 4 && this.status == 200) {
+      		cFunction(this.responseText,current_page);
+    	}
+  	}
+  	xhttp.open("GET", "/get_book?title=".concat(book_title).concat("&page=").concat(current_page), true);
+  	xhttp.send();
+  }
+  function display_page(book,page) {
+    var book_list = book.split("~~");
+    sessionStorage.clear();
+    sessionStorage.setItem("vitamova_reader_current_book",book);
+    var display_page_str = book_list[parseInt(page)];
+    sessionStorage.setItem("vitamova_reader_current_page",page);
+    document.getElementById("book_wait").hidden = true;
+    var display_page_html = decodeURIComponent(display_page_str);
+    document.getElementById("reader_content").innerHTML = display_page_html;
+    sessionStorage.setItem("vitamova_reader_current_book_title",book_title);
+    document.getElementById("next_page_button").hidden = false;
+    document.getElementById("next_page_load").hidden= true;
+  }
+  
+  function paginate(action) {
+    var current_page = sessionStorage.getItem("vitamova_reader_current_page");
+    var current_book = sessionStorage.getItem("vitamova_reader_current_book");
+    var book_list = current_book.split("~~");
+    if (action==="next" && parseInt(current_page)!=book_list.length){
+      var page = parseInt(current_page)+1;
+    } else if (action==="previous" && parseInt(current_page)!=0){
+	  var page = parseInt(current_page)-1;       
+    } else {
+      var page = parseInt(current_page);
+    }
+    var display_page_html = decodeURIComponent(book_list[page]);
+    var percent_complete = Math.floor(page/book_list.length*100).toString();
+    document.getElementById("book_progress").style = "width: "+percent_complete+"%"
+    document.getElementById("reader_content").innerHTML = display_page_html;
+    document.getElementById("next_page_button").hidden = true;
+    document.getElementById("next_page_load").hidden= false;
+    load_book(display_page,page);
+  }
+
+   function tran_uk(word){
+  		var xhttp;
+  		xhttp=new XMLHttpRequest();
+  		xhttp.onreadystatechange = function() {
+    		if (this.readyState == 4 && this.status == 200) {
+      			translation = this.responseText;
+              	document.getElementById("translation").innerHTML = translation;
+    		}
+  		}
+  		xhttp.open("GET", "/translate?word_key=".concat(word), true);
+  		xhttp.send();
+    }
+</script>
+  
+</body>
+</html>

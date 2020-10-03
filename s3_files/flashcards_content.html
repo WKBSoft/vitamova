@@ -1,0 +1,16 @@
+<br>
+<br>
+<div class="d-flex justify-content-center">
+  <canvas id="myCanvas" width="800" height="400"></canvas>
+</div>
+
+<script>
+var canvas = document.getElementById("myCanvas");
+var ctx = canvas.getContext("2d");
+ctx.fillStyle = "#007bff";
+ctx.fillRect(0,0,800,400);
+ctx.font = "100px Comic Sans MS";
+ctx.fillStyle = "black";
+ctx.textAlign = "center";
+ctx.fillText("Get Started", canvas.width/2, canvas.height/2);
+</script>
