@@ -46,28 +46,19 @@
 
 <div class="container">
     <div class="row">
-        <div class="col">
-            <h1>Input</h1>
-            <textarea id="input" rows="10" cols="60"></textarea>
+        <div class="col-2"></div>
+        <div class="col-7" style="background: #FCF3CF;">
+            {{read_text|safe}}
+            <button class="btn btn-block btn-primary btn-lg" onclick="generate_report()">Complete</button>
+            <br><br>
         </div>
-        <div class="col">
-            <h1>Output</h1>
-            <textarea id="output" rows="10" cols="60" readonly></textarea>
-        </div>
+        <div class="col-3"></div>
     </div>
 </div>
 
 <script>
-    var input_t = document.getElementById("input");
-    var output_t = document.getElementById("output");
-    input_t.addEventListener("input", function () {
-        /*var x = input_t.value;
-        var x_l = x.split("");
-        var x_l_r = x_l.reverse();
-        x = x_l_r.join("");
-        output_t.value = x; */
-        output_t.value = "We are currently upgrading this tool. Sorry for the inconvenience.";
-    });
+    var word_count = {{word_count}};
 </script>
+
   </body>
 </html>

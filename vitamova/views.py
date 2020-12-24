@@ -1,9 +1,11 @@
 # coding=utf-8
 import os
+import datetime
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 import sys
+import re
 import urllib
 import boto3
 import json
@@ -44,13 +46,16 @@ def signup(request):
         login_email = request.POST["email"]
         password = request.POST["password"]
         pass_b = bytes(password,encoding="utf-8")
-        pash_hash = hashlib.sha256(pass_b).hexdigest()
+        pass_hash = hashlib.sha256(pass_b).hexdigest()
         with open("/home/ubuntu/users/userpass.json","r") as f:
             userpass = json.load(f)
         if login_email not in userpass:
             userpass.update({login_email:{"password":pass_hash,"token":""}})
             with open("/home/ubuntu/users/userpass.json","w+") as f:
                 json.dump(userpass,f)
+            user_data = {"transcribe": {"level": "0"}, "read": {"level": "0"}, "start_date":str(datetime.date.today()),"history":[0]}
+            with open("/home/ubuntu/users/userdata/"+login_email+".json","w+") as f:
+                json.dump(user_data,f)
             return HttpResponseRedirect('/login')
         else:
             return render(request,'signup.html',{})
@@ -67,14 +72,65 @@ def dashboard(request):
                 userpass = json.load(f)
             user_info = userpass[login_email]
             if user_info["token"] == login_token:
-                return(render(request,'dashboard.html',{}))
+                with open("/home/ubuntu/users/userdata/"+login_email+".json","r") as f:
+                    user_data = json.load(f)
+                history = user_data["history"]
+                start_date = user_data["start_date"].split("-")
+                date_delta = (datetime.date.today() - datetime.date(int(start_date[0]),int(start_date[1]),int(start_date[2]))).days
+                if len(history) < date_delta+1:
+                    history += [0] * (date_delta+1-len(history))
+                    with open("/home/ubuntu/users/userdata/"+login_email+".json","w+") as f:
+                        json.dump(user_data,f)
+                if len(history) < 7:
+                    week_score = "0"
+                else:
+                    week_points = sum(history[len(history)-7:len(history)])/7
+                    better_than = len(list(filter(lambda x: x<week_points,history)))
+                    week_score = str((100.0*better_than)//len(history))
+                if len(history) < 30:
+                    month_score = "0"
+                else:
+                    month_points = sum(history[len(history)-30:len(history)])/30
+                    better_than = len(list(filter(lambda x: x<month_points,history)))
+                    month_score = str((100.0*better_than)//len(history))
+                day_points = history[len(history)-1]
+                better_than = len(list(filter(lambda x: x<day_points,history)))
+                day_score = str((100.0*better_than)//len(history))
+                data = {"day_score":day_score,"week_score":week_score,"month_score":month_score}
+                return(render(request,'dashboard.html',data))
             else:
                 return HttpResponseRedirect('/login')
         else:
             return HttpResponseRedirect('/login')
 
 def read(request):
-    return render(request,'coming_soon.html',{})
+    if request.method == "GET":
+        return render(request,'authenticator.html',{"url":"/read/"})
+    else:
+        login_email = request.POST["email"]
+        login_token = request.POST["login_token"]
+        with open("/home/ubuntu/users/userpass.json","r") as f:
+            userpass = json.load(f)
+        user_info = userpass[login_email]
+        if user_info["token"] == login_token:
+            with open("/home/ubuntu/users/userdata/"+login_email+".json","r") as f:
+                user_data = json.load(f)
+            if "read" not in user_data:
+                user_data.update({"read":{"level":"0"}})
+                with open("/home/ubuntu/users/userdata/"+login_email+".json","w+") as f:
+                    json.dump(user_data,f)
+            read_level = int(user_data["read"]["level"])
+            with open("/home/ubuntu/vitamova/content/read_text_"+str(read_level)+".txt","r") as f:
+                read_content = f.read()
+            read_content_l = str(len(re.split(r'[\s-]',read_content)))
+            read_content = "<p>" + read_content + "</p>"
+            read_content = read_content.replace("\n","</p><p>")
+            return(render(request,"read.html",{ "read_text":read_content, "word_count":read_content_l}))
+        else:
+            return HttpResponseRedirect('/login')
+    
+def transcription_submit(request):
+    return HttpResponseRedirect('/transcribe')
 
 def flashcards(request):
     return render(request,'coming_soon.html',{})
@@ -131,11 +187,12 @@ def transcribe(request):
             return(render(request,"transcribe.html",{"transcribe_src":transcribe_src, "video_content":transcription_content}))
         else:
             return HttpResponseRedirect('/login')
-def transcription_submit(request):
-    return HttpResponseRedirect('/transcribe')
-    
+
 def accent(request):
     return render(request,"accent.html",{})
     
 def write(request):
     return render(request,'coming_soon.html',{})
+    
+def typing(request):
+    return render(request,'typing.html',{})

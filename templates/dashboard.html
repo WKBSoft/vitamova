@@ -16,9 +16,9 @@
 
         var data = google.visualization.arrayToDataTable([
           ['Label', 'Value'],
-          ['Day', 80],
-          ['Week', 55],
-          ['Month', 68]
+          ['Day', {{day_score}}],
+          ['Week', {{week_score}}],
+          ['Month', {{month_score}}]
         ]);
 
         var options = {
@@ -42,7 +42,7 @@
   <div class="container">
     <div class="row">
     <div class="col col-lg-9">
-      <h1 class="display-4">Vitamova</h1>
+      <a href="/" class="text-body"><h1 class="display-4">Vitamova</h1></a>
     </div>
     <div class="col">
       <div class="dropdown">
@@ -69,7 +69,6 @@
       </div>
     </div>
   </div>
-</div>
 </div>
 
 <div class="container">
