@@ -63,6 +63,7 @@
     var login_email = document.getElementById("InputEmail");
     var form = document.getElementById("login_form");
     var check = document.getElementById("Check");
+    login_email.value = window.localStorage.getItem("login_email");
     form.addEventListener("input", function () {
         window.localStorage.setItem("login_email",login_email.value);
         if(check.checked==true) {

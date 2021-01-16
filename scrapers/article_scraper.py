@@ -45,17 +45,29 @@ for x in links:
             link = main_content[exact_start:link_end]
             if link not in article_links:
                 article_links.append(link)
+
+#Clear Articles
+client = boto3.client('s3')
+articles_list = client.list_objects_v2(Bucket='wkbvitamova',Prefix='articles/')
+for x in articles_list['Contents']:
+    key = x['Key']
+    if key != 'articles/':
+        s3 = boto3.resource('s3')
+        object = s3.Object('wkbvitamova',key)
+        object.delete()
+
+    
+
 for i in range(len(article_links)):
     article_content = requests.get(article_links[i]).text
     start_i = article_content.find("<div class=\"post-item__text\">")
-    stop_i = article_content.find("<em>Новини від",start_i)
+    stop_i = article_content.find("Новини від",start_i)
     article_content = article_content[start_i:stop_i]
     article_content = remove_scripts(article_content)
     article_content = remove_html_tags(article_content)
-    article_content_bin = article_content.encode("utf-8")
     s3 = boto3.resource('s3')
-    object = s3.Object('wkbvitamova', 'articles/'+str(i)+".txt")
-    object.put(ACL='public-read',Body=article_content_bin)
+    object = s3.Object('wkbvitamova', 'articles/'+str(i)+".html")
+    object.put(ACL='public-read',Body=article_content)
     print(i,"/",len(article_links))
         
 print("Done")

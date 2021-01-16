@@ -31,4 +31,5 @@ urlpatterns = [
     path("write/",views.write,name="write"),
     path("signup/",views.signup,name="signup"),
     path("typing/",views.typing,name="typing"),
+    path("logout/",views.logout,name="logout")
 ]

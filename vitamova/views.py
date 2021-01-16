@@ -1,4 +1,7 @@
 # coding=utf-8
+from random import shuffle
+from random import randint
+import boto3
 import os
 import datetime
 from django.shortcuts import render
@@ -11,11 +14,34 @@ import boto3
 import json
 import hashlib
 import secrets
-sys.path.insert(0, '/home/ubuntu/vitamova/vitamova/localviews/')
+sys.path.insert(0, '/home/ubuntu/vitamova/vitamova/scripts/')
 import ukrainian
 import content_gen
+import ua_alphabet
 #translate_key = urllib.parse.unquote(request.GET.get('translate',""))
 
+def logged_in_header():
+    with open("/home/ubuntu/vitamova/templates/sub_templates/logged_in_header.html","r") as f:
+        return f.read()
+
+def check_login(request):
+    #Returns 3 results 0=correct login, 1=incorrect login, 2=no account
+    login_email = request.POST["email"]
+    login_token = request.POST["login_token"]
+    if login_email != "" and login_token != "":
+        with open("/home/ubuntu/users/userpass.json","r") as f:
+            userpass = json.load(f)
+    else:
+        return 1
+    if login_email in userpass:
+        user_info = userpass[login_email]
+    else:
+        return 2
+    if user_info["token"] == login_token:
+        return 0
+    else:
+        return 1
+        
 def home(request):
     return HttpResponseRedirect("/dashboard")
 
@@ -38,6 +64,9 @@ def login(request):
             return(render(request,'login.html',{"randomvalue":secret_token}))
     else:
         return(render(request,'login.html',{"randomvalue":secret_token}))
+
+def logout(request):
+    return render(request,'logout.html',{}) 
 
 def signup(request):
     if request.method == "GET":
@@ -96,7 +125,7 @@ def dashboard(request):
                 day_points = history[len(history)-1]
                 better_than = len(list(filter(lambda x: x<day_points,history)))
                 day_score = str((100.0*better_than)//len(history))
-                data = {"day_score":day_score,"week_score":week_score,"month_score":month_score}
+                data = {"day_score":day_score,"week_score":week_score,"month_score":month_score,"header":logged_in_header()}
                 return(render(request,'dashboard.html',data))
             else:
                 return HttpResponseRedirect('/login')
@@ -195,4 +224,30 @@ def write(request):
     return render(request,'coming_soon.html',{})
     
 def typing(request):
-    return render(request,'typing.html',{})
+    if request.method == "GET":
+        return render(request,'authenticator.html',{"url":"/typing/"})
+    elif request.method == "POST":
+        if 'request' not in request.POST:
+            logged_in = check_login(request)
+            print(logged_in)
+            if logged_in == 2:
+                return HttpResponseRedirect("/signup")
+            if logged_in == 1:
+                return HttpResponseRedirect("/login")
+            if logged_in == 0:
+                return render(request,'typing.html',{"header":logged_in_header()})
+        else:
+            if request.POST['request'] == 'wlu':
+                client = boto3.client('s3')
+                articles_list_r = client.list_objects_v2(Bucket='wkbvitamova',Prefix='articles/')
+                articles_list = articles_list_r['Contents']
+                selector = randint(0,len(articles_list)-1)
+                key = articles_list[selector]['Key']
+                s3 = boto3.resource('s3')
+                object = s3.Object('wkbvitamova',key)
+                article_content = object.get()['Body'].read().decode("utf-8")
+                response_l = ua_alphabet.split_word_list(article_content)
+                shuffle(response_l)
+                response = "|".join(response_l[0:20])
+                return HttpResponse(response, content_type="text/plain")
+        
