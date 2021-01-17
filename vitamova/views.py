@@ -14,14 +14,17 @@ import boto3
 import json
 import hashlib
 import secrets
-sys.path.insert(0, '/home/ubuntu/vitamova/vitamova/scripts/')
+
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(BASE_DIR,'scripts/'))
 import ukrainian
 import content_gen
 import ua_alphabet
 #translate_key = urllib.parse.unquote(request.GET.get('translate',""))
 
 def logged_in_header():
-    with open("/home/ubuntu/vitamova/templates/sub_templates/logged_in_header.html","r") as f:
+    with open(os.path.join(BASE_DIR,"templates/sub_templates/logged_in_header.html"),"r") as f:
         return f.read()
 
 def check_login(request):
