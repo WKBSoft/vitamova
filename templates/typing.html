@@ -39,7 +39,7 @@
     var ctx = canvas.getContext("2d");
     set_canvas();
     var game_active = 0;
-    var level = 1;
+    var level = {{ level }} +1;
     game_setup();
     
     function game_setup() {
@@ -71,14 +71,15 @@
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-           // Typical action to be performed when the document is ready:
-           var word_list_str = this.responseText;
-           word_list = word_list_str.split("|");
+           var status = this.responseText;
+           if (status != "success") {
+             level_up()
+           }
         }
       };
       xhttp.open("POST", "/typing/", false);
       xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      xhttp.send("request=wlu&csrfmiddlewaretoken="+csrftoken);
+      xhttp.send("request=levelup&csrfmiddlewaretoken="+csrftoken+"&email="+stored_email+"&login_token="+stored_token);
     }
     
     function doKeyDown(e) {
@@ -141,6 +142,7 @@
     }
     
     function game_won() {
+      level_up();
       set_canvas();
       ctx.fillStyle = "black";
       ctx.font = (h*0.08).toString() + "px Arial";

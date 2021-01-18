@@ -1,7 +1,16 @@
-class testclass():
-    def printit(self):
-        print(self)
-    def add_par(self):
-        print("("+self+")")
+import boto3
+import json
 
-testclass.add_par("hello")
+class user_data_c:
+    def __init__(self,email):
+        s3 = boto3.resource('s3')
+        self.s3_object = s3.Object('wkbvitamova','users/userdata/'+email+'.json')
+    def get(self):
+        return json.load(self.s3_object.get()['Body'])
+    def put(self,data):
+        return self.s3_object.put(Body=json.dumps(data).encode("utf-8"))
+
+x = user_data_c("bellemanwesley@gmail.com").get()
+x["typing"]["level"] = "0"
+x["points"] = 0
+user_data_c("bellemanwesley@gmail.com").put(x)

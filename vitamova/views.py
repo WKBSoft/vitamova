@@ -8,12 +8,10 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 import sys
-import re
 import urllib
 import boto3
 import json
 import hashlib
-import secrets
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -23,14 +21,31 @@ import content_gen
 import ua_alphabet
 #translate_key = urllib.parse.unquote(request.GET.get('translate',""))
 
-class user_data_c():
-    def get(self):
+class user_data_c:
+    def __init__(self,email):
         s3 = boto3.resource('s3')
-        object = s3.Object('wkbvitamova','users/userdata/'+self+'.json')
-        return json.load(object.get()['Body'])
+        self.s3_object = s3.Object('wkbvitamova','users/userdata/'+email+'.json')
+    def get(self):
+        return json.load(self.s3_object.get()['Body'])
+    def put(self,data):
+        return self.s3_object.put(Body=json.dumps(data).encode("utf-8"))
+
+def userpass_get():
+    s3 = boto3.resource('s3')
+    object = s3.Object('wkbvitamova','users/userpass.json')
+    return json.load(object.get()['Body'])
+    
+def userpass_put(data):
+    s3 = boto3.resource('s3')
+    object = s3.Object('wkbvitamova','users/userpass.json')
+    return object.put(Body=json.dumps(data).encode("utf-8"))
 
 def logged_in_header():
     with open(os.path.join(BASE_DIR,"templates/sub_templates/logged_in_header.html"),"r") as f:
+        return f.read()
+
+def not_logged_in_header():
+    with open(os.path.join(BASE_DIR,"templates/sub_templates/not_logged_in_header.html"),"r") as f:
         return f.read()
 
 def check_login(request):
@@ -56,24 +71,26 @@ def home(request):
     return HttpResponseRedirect("/dashboard")
 
 def login(request):
-    secret_token = secrets.token_urlsafe(64)
-    if request.method == "POST":
-        email = request.POST["email"]
-        password = request.POST["password"]
-        login_token = request.POST["login_token"]
-        with open(os.path.join(BASE_DIR,"users/userpass.json"),"r") as f:
-            userpass = json.load(f)
-        pass_b = bytes(password,encoding="utf-8")
-        pash_hash = hashlib.sha256(pass_b).hexdigest()
-        if userpass[email]["password"] == pash_hash:
-            userpass[email]["token"] = login_token
-            with open(os.path.join(BASE_DIR,"users/userpass.json"),"w+") as f:
-                json.dump(userpass,f)
+    if request.method == "GET":
+        return render(request,'authenticator.html',{"url":"/login/"})
+    else:
+        logged_in = check_login(request)
+        if logged_in == 0:
             return HttpResponseRedirect('/dashboard')
         else:
-            return(render(request,'login.html',{"randomvalue":secret_token}))
-    else:
-        return(render(request,'login.html',{"randomvalue":secret_token}))
+            if "logging_in" not in request.POST:
+                return(render(request,'login.html',{"header":not_logged_in_header()}))
+            else:
+                email = request.POST["email"]
+                password = request.POST["password"]
+                login_token = request.POST["login_token"]
+                userpass = userpass_get()
+                pass_b = bytes(password,encoding="utf-8")
+                pash_hash = hashlib.sha256(pass_b).hexdigest()
+                if userpass[email]["password"] == pash_hash:
+                    userpass[email]["token"] = login_token
+                    userpass_put(userpass)
+                return HttpResponseRedirect('/dashboard')
 
 def logout(request):
     return render(request,'logout.html',{}) 
@@ -93,11 +110,10 @@ def signup(request):
             with open(os.path.join(BASE_DIR,"users/userpass.json"),"w+") as f:
                 json.dump(userpass,f)
             user_data = {"transcribe": {"level": "0"}, "read": {"level": "0"}, "start_date":str(datetime.date.today()),"history":[0]}
-            with open(os.path.join(BASE_DIR,"users/userdata/"+login_email+".json"),"w+") as f:
-                json.dump(user_data,f)
+            user_data_c(login_email).put(user_data)
             return HttpResponseRedirect('/login')
         else:
-            return render(request,'signup.html',{})
+            return render(request,'signup.html',{"header":not_logged_in_header()})
         
 
 def dashboard(request):
@@ -111,14 +127,13 @@ def dashboard(request):
             return HttpResponseRedirect("/login")
         if logged_in == 0:
             login_email = request.POST['email']
-            user_data = user_data_c.get(login_email)
+            user_data = user_data_c(login_email).get()
             history = user_data["history"]
             start_date = user_data["start_date"].split("-")
             date_delta = (datetime.date.today() - datetime.date(int(start_date[0]),int(start_date[1]),int(start_date[2]))).days
             if len(history) < date_delta+1:
                 history += [0] * (date_delta+1-len(history))
-                with open(os.path.join(BASE_DIR, "users/userdata/"+login_email+".json"),"w+") as f:
-                    json.dump(user_data,f)
+                user_data_c(login_email).put(user_data)
             if len(history) < 7:
                 week_score = "0"
             else:
@@ -134,41 +149,44 @@ def dashboard(request):
             day_points = history[len(history)-1]
             better_than = len(list(filter(lambda x: x<day_points,history)))
             day_score = str((100.0*better_than)//len(history))
-            data = {"day_score":day_score,"week_score":week_score,"month_score":month_score,"header":logged_in_header()}
+            data = {
+                "day_score":day_score,
+                "week_score":week_score,
+                "month_score":month_score,
+                "header":logged_in_header(),
+                "points":user_data["points"]
+            }
             return(render(request,'dashboard.html',data))
 
 def read(request):
     if request.method == "GET":
         return render(request,'authenticator.html',{"url":"/read/"})
-    else:
-        login_email = request.POST["email"]
-        login_token = request.POST["login_token"]
-        with open(os.path.join(BASE_DIR,"users/userpass.json"),"r") as f:
-            userpass = json.load(f)
-        user_info = userpass[login_email]
-        if user_info["token"] == login_token:
-            with open(os.path.join(BASE_DIR,"users/userdata/"+login_email+".json"),"r") as f:
-                user_data = json.load(f)
-            if "read" not in user_data:
-                user_data.update({"read":{"level":"0"}})
-                with open("/home/ubuntu/users/userdata/"+login_email+".json","w+") as f:
-                    json.dump(user_data,f)
-            read_level = int(user_data["read"]["level"])
-            #This is broken, need to pull content from S3 where I moved the articles
-            client = boto3.client('s3')
-            articles_list_r = client.list_objects_v2(Bucket='wkbvitamova',Prefix='articles/')
-            articles_list = articles_list_r['Contents']
-            selector = 1
-            key = articles_list[selector]['Key']
-            s3 = boto3.resource('s3')
-            object = s3.Object('wkbvitamova',key)
-            read_content = object.get()['Body'].read().decode("utf-8")
-            read_content_l = str(len(re.split(r'[\s-]',read_content)))
-            read_content = "<p>" + read_content + "</p>"
-            read_content = read_content.replace("\n","</p><p>")
-            return(render(request,"read.html",{ "read_text":read_content, "word_count":read_content_l}))
-        else:
-            return HttpResponseRedirect('/login')
+    elif request.method == "POST":
+        if 'request' not in request.POST:
+            logged_in = check_login(request)
+            if logged_in == 2:
+                return HttpResponseRedirect("/signup")
+            if logged_in == 1:
+                return HttpResponseRedirect("/login")
+            if logged_in == 0:
+                login_email = request.POST["email"]
+                user_data = user_data_c(login_email).get()
+                if "read" not in user_data:
+                    user_data.update({"read":{"level":"0"}})
+                    user_data_c(login_email).put(user_data)
+                read_level = int(user_data["read"]["level"])
+                client = boto3.client('s3')
+                articles_list_r = client.list_objects_v2(Bucket='wkbvitamova',Prefix='articles/')
+                articles_list = articles_list_r['Contents']
+                selector = 1
+                key = articles_list[selector]['Key']
+                s3 = boto3.resource('s3')
+                object = s3.Object('wkbvitamova',key)
+                read_content = object.get()['Body'].read().decode("utf-8")
+                read_content_l = str(len(ua_alphabet.split_word_list(read_content)))
+                read_content = "<p>" + read_content + "</p>"
+                read_content = read_content.replace("\n","</p><p>")
+                return(render(request,"read.html",{ "read_text":read_content, "word_count":read_content_l,"header":logged_in_header()}))
 
 def flashcards(request):
     return render(request,'coming_soon.html',{})
@@ -196,19 +214,16 @@ def transcribe(request):
     elif request.method == "POST":
         if 'request' not in request.POST:
             logged_in = check_login(request)
-            print(logged_in)
             if logged_in == 2:
                 return HttpResponseRedirect("/signup")
             if logged_in == 1:
                 return HttpResponseRedirect("/login")
             if logged_in == 0:
                 login_email = request.POST["email"]
-                with open(os.path.join(BASE_DIR,"users/userdata/"+login_email+".json"),"r") as f:
-                    user_data = json.load(f)
+                user_data = user_data_c(login_email).get()
                 if "transcribe" not in user_data:
                     user_data.update({"transcribe":{"level":"0"}})
-                    with open("/home/ubuntu/users/userdata/"+login_email+".json","w+") as f:
-                        json.dump(user_data,f)
+                    user_data_c(login_email).put(user_data)
                 transcribe_level = int(user_data["transcribe"]["level"])
                 with open("/home/ubuntu/vitamova/content/transcribe_embed.txt","r") as f:
                     transcribe_srcs = f.readlines()
@@ -222,10 +237,17 @@ def transcribe(request):
                 transcription_content = " ".join(transcription_content_l)
                 return(render(request,"transcribe.html",{"transcribe_src":transcribe_src, "video_content":transcription_content}))
 
-
 def accent(request):
-    return render(request,"accent.html",{})
-    
+    if request.method == "GET":
+        return render(request,'authenticator.html',{"url":"/accent/"})
+    elif request.method == "POST":
+        logged_in = check_login(request)
+        if logged_in != 0:
+            return render(request,'accent.html',{"header":not_logged_in_header()})
+        if logged_in == 0:
+            login_email = request.POST["email"]
+            return render(request,'accent.html',{"header":logged_in_header()})
+
 def write(request):
     return render(request,'coming_soon.html',{})
     
@@ -234,14 +256,16 @@ def typing(request):
         return render(request,'authenticator.html',{"url":"/typing/"})
     elif request.method == "POST":
         logged_in = check_login(request)
-        print(logged_in)
         if logged_in == 2:
             return HttpResponseRedirect("/signup")
         if logged_in == 1:
             return HttpResponseRedirect("/login")
         if logged_in == 0:
+            login_email = request.POST["email"]
             if 'request' not in request.POST:
-                return render(request,'typing.html',{"header":logged_in_header()})
+                user_data = user_data_c(login_email).get()
+                level = user_data['typing']['level']
+                return render(request,'typing.html',{"header":logged_in_header(),"level":level})
             else:
                 if request.POST['request'] == 'wlu':
                     client = boto3.client('s3')
@@ -256,4 +280,11 @@ def typing(request):
                     shuffle(response_l)
                     response = "|".join(response_l[0:20])
                     return HttpResponse(response, content_type="text/plain")
+                elif request.POST["request"] == "levelup":
+                    user_data = user_data_c(login_email).get()
+                    user_data['typing']['level'] = str(int(user_data['typing']['level'])+1)
+                    user_data['points'] += 50
+                    user_data['history'][len(user_data['history'])-1] += 50
+                    user_data_c(login_email).put(user_data)
+                    return HttpResponse("success", content_type="text/plain")
         

@@ -1,48 +1,7 @@
 <!DOCTYPE html>
 <html>
 
-<!-- bootstrap links -->
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
-
-<link rel="icon" href="https://www.pinclipart.com/picdir/big/1-13391_the-history-of-my-globe-with-flags-icon.png">
-<body style="background-color: #F4D03F;">
-<title> Vitamova </title>
-
-<div class="jumbotron jumbotron-fluid bg-primary">
-  <div class="container">
-    <div class="row">
-    <div class="col col-lg-9">
-      <a href="/" class="text-body"><h1 class="display-4">Vitamova</h1></a>
-    </div>
-    <div class="col">
-      <div class="dropdown">
-        <button class="btn btn-warning dropdown-toggle btn-block" type="button" id="learn_dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Learn
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-          <a class="dropdown-item" href="/read">Read</a>
-          <a class="dropdown-item" href="/write">Write</a>
-          <a class="dropdown-item" href="/transcribe">Transcribe</a>
-          <a class="dropdown-item" href="/flashcards">Flashcards</a>
-        </div>
-      </div>
-    </div>
-    <div class="col align-bottom">
-      <div class="dropdown">
-        <button class="btn btn-warning dropdown-toggle btn-block" type="button" id="tools_dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Tools
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-          <a class="dropdown-item" href="/accent">Accent Tool</a>
-        </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+{{ header|safe }}
 
 <div class="container">
     <div class="row">
