@@ -23,6 +23,12 @@ import content_gen
 import ua_alphabet
 #translate_key = urllib.parse.unquote(request.GET.get('translate',""))
 
+class user_data_c():
+    def get(self):
+        s3 = boto3.resource('s3')
+        object = s3.Object('wkbvitamova','users/userdata/'+self+'.json')
+        return json.load(object.get()['Body'])
+
 def logged_in_header():
     with open(os.path.join(BASE_DIR,"templates/sub_templates/logged_in_header.html"),"r") as f:
         return f.read()
@@ -32,8 +38,9 @@ def check_login(request):
     login_email = request.POST["email"]
     login_token = request.POST["login_token"]
     if login_email != "" and login_token != "":
-        with open(os.path.join(BASE_DIR,"users/userpass.json"),"r") as f:
-            userpass = json.load(f)
+        s3 = boto3.resource('s3')
+        object = s3.Object('wkbvitamova','users/userpass.json')
+        userpass = json.load(object.get()['Body'])
     else:
         return 1
     if login_email in userpass:
@@ -96,44 +103,39 @@ def signup(request):
 def dashboard(request):
     if request.method == "GET":
         return render(request,'authenticator.html',{"url":"/dashboard/"})
-    else:
-        login_email = request.POST["email"]
-        login_token = request.POST["login_token"]
-        if login_email != "" and login_token != "":
-            with open(os.path.join(BASE_DIR,"users/userpass.json"),"r") as f:
-                userpass = json.load(f)
-            user_info = userpass[login_email]
-            if user_info["token"] == login_token:
-                with open(os.path.join(BASE_DIR,"users/userdata/"+login_email+".json"),"r") as f:
-                    user_data = json.load(f)
-                history = user_data["history"]
-                start_date = user_data["start_date"].split("-")
-                date_delta = (datetime.date.today() - datetime.date(int(start_date[0]),int(start_date[1]),int(start_date[2]))).days
-                if len(history) < date_delta+1:
-                    history += [0] * (date_delta+1-len(history))
-                    with open(os.path.join(BASE_DIR, "users/userdata/"+login_email+".json"),"w+") as f:
-                        json.dump(user_data,f)
-                if len(history) < 7:
-                    week_score = "0"
-                else:
-                    week_points = sum(history[len(history)-7:len(history)])/7
-                    better_than = len(list(filter(lambda x: x<week_points,history)))
-                    week_score = str((100.0*better_than)//len(history))
-                if len(history) < 30:
-                    month_score = "0"
-                else:
-                    month_points = sum(history[len(history)-30:len(history)])/30
-                    better_than = len(list(filter(lambda x: x<month_points,history)))
-                    month_score = str((100.0*better_than)//len(history))
-                day_points = history[len(history)-1]
-                better_than = len(list(filter(lambda x: x<day_points,history)))
-                day_score = str((100.0*better_than)//len(history))
-                data = {"day_score":day_score,"week_score":week_score,"month_score":month_score,"header":logged_in_header()}
-                return(render(request,'dashboard.html',data))
+    elif request.method == "POST":
+        logged_in = check_login(request)
+        if logged_in == 2:
+            return HttpResponseRedirect("/signup")
+        if logged_in == 1:
+            return HttpResponseRedirect("/login")
+        if logged_in == 0:
+            login_email = request.POST['email']
+            user_data = user_data_c.get(login_email)
+            history = user_data["history"]
+            start_date = user_data["start_date"].split("-")
+            date_delta = (datetime.date.today() - datetime.date(int(start_date[0]),int(start_date[1]),int(start_date[2]))).days
+            if len(history) < date_delta+1:
+                history += [0] * (date_delta+1-len(history))
+                with open(os.path.join(BASE_DIR, "users/userdata/"+login_email+".json"),"w+") as f:
+                    json.dump(user_data,f)
+            if len(history) < 7:
+                week_score = "0"
             else:
-                return HttpResponseRedirect('/login')
-        else:
-            return HttpResponseRedirect('/login')
+                week_points = sum(history[len(history)-7:len(history)])/7
+                better_than = len(list(filter(lambda x: x<week_points,history)))
+                week_score = str((100.0*better_than)//len(history))
+            if len(history) < 30:
+                month_score = "0"
+            else:
+                month_points = sum(history[len(history)-30:len(history)])/30
+                better_than = len(list(filter(lambda x: x<month_points,history)))
+                month_score = str((100.0*better_than)//len(history))
+            day_points = history[len(history)-1]
+            better_than = len(list(filter(lambda x: x<day_points,history)))
+            day_score = str((100.0*better_than)//len(history))
+            data = {"day_score":day_score,"week_score":week_score,"month_score":month_score,"header":logged_in_header()}
+            return(render(request,'dashboard.html',data))
 
 def read(request):
     if request.method == "GET":
@@ -153,6 +155,14 @@ def read(request):
                     json.dump(user_data,f)
             read_level = int(user_data["read"]["level"])
             #This is broken, need to pull content from S3 where I moved the articles
+            client = boto3.client('s3')
+            articles_list_r = client.list_objects_v2(Bucket='wkbvitamova',Prefix='articles/')
+            articles_list = articles_list_r['Contents']
+            selector = 1
+            key = articles_list[selector]['Key']
+            s3 = boto3.resource('s3')
+            object = s3.Object('wkbvitamova',key)
+            read_content = object.get()['Body'].read().decode("utf-8")
             read_content_l = str(len(re.split(r'[\s-]',read_content)))
             read_content = "<p>" + read_content + "</p>"
             read_content = read_content.replace("\n","</p><p>")
@@ -223,27 +233,27 @@ def typing(request):
     if request.method == "GET":
         return render(request,'authenticator.html',{"url":"/typing/"})
     elif request.method == "POST":
-        if 'request' not in request.POST:
-            logged_in = check_login(request)
-            print(logged_in)
-            if logged_in == 2:
-                return HttpResponseRedirect("/signup")
-            if logged_in == 1:
-                return HttpResponseRedirect("/login")
-            if logged_in == 0:
+        logged_in = check_login(request)
+        print(logged_in)
+        if logged_in == 2:
+            return HttpResponseRedirect("/signup")
+        if logged_in == 1:
+            return HttpResponseRedirect("/login")
+        if logged_in == 0:
+            if 'request' not in request.POST:
                 return render(request,'typing.html',{"header":logged_in_header()})
-        else:
-            if request.POST['request'] == 'wlu':
-                client = boto3.client('s3')
-                articles_list_r = client.list_objects_v2(Bucket='wkbvitamova',Prefix='articles/')
-                articles_list = articles_list_r['Contents']
-                selector = randint(0,len(articles_list)-1)
-                key = articles_list[selector]['Key']
-                s3 = boto3.resource('s3')
-                object = s3.Object('wkbvitamova',key)
-                article_content = object.get()['Body'].read().decode("utf-8")
-                response_l = ua_alphabet.split_word_list(article_content)
-                shuffle(response_l)
-                response = "|".join(response_l[0:20])
-                return HttpResponse(response, content_type="text/plain")
+            else:
+                if request.POST['request'] == 'wlu':
+                    client = boto3.client('s3')
+                    articles_list_r = client.list_objects_v2(Bucket='wkbvitamova',Prefix='articles/')
+                    articles_list = articles_list_r['Contents']
+                    selector = randint(0,len(articles_list)-1)
+                    key = articles_list[selector]['Key']
+                    s3 = boto3.resource('s3')
+                    object = s3.Object('wkbvitamova',key)
+                    article_content = object.get()['Body'].read().decode("utf-8")
+                    response_l = ua_alphabet.split_word_list(article_content)
+                    shuffle(response_l)
+                    response = "|".join(response_l[0:20])
+                    return HttpResponse(response, content_type="text/plain")
         

@@ -29,6 +29,12 @@
     typing_space.style.bottom = (h*0.02).toString() + "px";
     typing_space.style.fontSize = (h*0.08).toString() + "px";
     
+    var stored_token = window.localStorage.getItem("login_token");
+    if (stored_token==null) {
+        stored_token = window.sessionStorage.getItem("login_token");
+    }
+    var stored_email = window.localStorage.getItem("login_email");    
+    
     var word_list;
     var ctx = canvas.getContext("2d");
     set_canvas();
@@ -58,7 +64,7 @@
       };
       xhttp.open("POST", "/typing/", false);
       xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      xhttp.send("request=wlu&csrfmiddlewaretoken="+csrftoken);
+      xhttp.send("request=wlu&csrfmiddlewaretoken="+csrftoken+"&email="+stored_email+"&login_token="+stored_token);
     }
     
     function level_up() {
