@@ -22,7 +22,6 @@ urlpatterns = [
     path("login/",views.login,name='login'),
     path("dashboard/", views.dashboard, name='dashboard'),
     path("read/", views.read, name='read'),
-    path("translate/",views.translate,name="translate"),
     path("flashcards/",views.flashcards,name="flashcards"),
     path("transcribe/",views.transcribe,name="transcribe"),
     path("accent/",views.accent,name="accent"),

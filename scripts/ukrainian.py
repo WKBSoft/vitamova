@@ -1,9 +1,17 @@
 # coding=utf-8
 import ssl
-import urllib
+import urllib.request
+import urllib.parse
 import re
+import os
+import sys
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(BASE_DIR,'scripts/'))
+import database as db
 
 def translate(word):
+    word = urllib.parse.quote(word)
     ctx = ssl.create_default_context()
     ctx.check_hostname = False
     ctx.verify_mode = ssl.CERT_NONE
@@ -97,6 +105,105 @@ def return_pages(content,wordcount,page):
     page_str = "~~".join(page_list)
     return page_str
 
+def is_ua_letter(letter):
+    all_letters = "АаБбВвГгҐґДдЕеЄєЖжЗзИиІіЇїЙйКкЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщЬьЮюЯя'"
+    if letter in all_letters:
+        return True
+    else:
+        return False
+        
+def lowercase(text):
+    all_letters = "АаБбВвГгҐґДдЕеЄєЖжЗзИиІіЇїЙйКкЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщЬьЮюЯя"
+    result_text = ""
+    for x in text:
+        if upper_lower(x) == "upper":
+            result_text += all_letters[all_letters.find(x)+1]
+        else:
+            result_text += x
+    return result_text
+        
+def upper_lower(letter):
+    all_letters = "АаБбВвГгҐґДдЕеЄєЖжЗзИиІіЇїЙйКкЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщЬьЮюЯя"
+    if letter not in all_letters:
+        return "none"
+    elif all_letters.find(letter) %2 == 0:
+        return "upper"
+    else:
+        return "lower"
 
+#This function splits up a text of ukrainian words into a list of those words without any white space or punctuation.
+def split_word_list(text):
+    result_list = []
+    word = ""
+    for char in text:
+        is_ua = is_ua_letter(char)
+        if is_ua:
+            word += char
+        else:
+            if word != "":
+                result_list.append(word)
+                word = ""
+    if word != "":
+        result_list.append(word)
+    return result_list
 
+def word_non_list(text):
+    result_list = []
+    word = ""
+    non_word = ""
+    for char in text:
+        is_ua = is_ua_letter(char)
+        if is_ua:
+            word += char
+            if non_word != "":
+                result_list.append(non_word)
+                non_word = ""
+        else:
+            non_word += char
+            if word != "":
+                result_list.append(word)
+                word = ""
+    if word != "":
+        result_list.append(word)
+    if non_word != "":
+        result_list.append(non_word)
+    return result_list
 
+def add_translate_tags(text):
+    word_list = word_non_list(text)
+    if is_ua_letter(word_list[0][0]):
+        i = 0
+    else:
+        i = 1
+    while i < len(word_list):
+        word_list[i] = "<a onclick=\"translate_ua('"+word_list[i]+"')\">"+word_list[i]+"</a>"
+        i += 2
+    text = "".join(word_list)
+    return text
+    
+def replace_with_emphases(text):
+    word_list = word_non_list(text)
+    if is_ua_letter(word_list[0][0]):
+        i = 0
+    else:
+        i = 1
+    while i < len(word_list):
+        emphasis_request = db.retrieve("ukrainian_dict",lowercase(word_list[i]))
+        if "accent" in emphasis_request and type(emphasis_request) is dict:
+            emphasis_raw = lowercase(emphasis_request["accent"])
+            emphasis = ""
+            j = 0
+            k = 0
+            while j < len(emphasis_raw):
+                while k < len(word_list[i]):
+                    if emphasis_raw[j] == lowercase(word_list[i][k]):
+                        emphasis += word_list[i][k]
+                        j += 1
+                        k += 1
+                    else:
+                        emphasis += emphasis_raw[j]
+                        j += 1
+            word_list[i] = emphasis
+        i += 2    
+    text = "".join(word_list)
+    return text

@@ -12,14 +12,13 @@ import urllib
 import boto3
 import json
 import hashlib
+import re
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(BASE_DIR,'scripts/'))
 import ukrainian
-import content_gen
-import ua_alphabet
-#translate_key = urllib.parse.unquote(request.GET.get('translate',""))
+import database as db
 
 class user_data_c:
     def __init__(self,email):
@@ -162,13 +161,13 @@ def read(request):
     if request.method == "GET":
         return render(request,'authenticator.html',{"url":"/read/"})
     elif request.method == "POST":
-        if 'request' not in request.POST:
-            logged_in = check_login(request)
-            if logged_in == 2:
-                return HttpResponseRedirect("/signup")
-            if logged_in == 1:
-                return HttpResponseRedirect("/login")
-            if logged_in == 0:
+        logged_in = check_login(request)
+        if logged_in == 2:
+            return HttpResponseRedirect("/signup")
+        if logged_in == 1:
+            return HttpResponseRedirect("/login")
+        if logged_in == 0:
+            if "request" not in request.POST:
                 login_email = request.POST["email"]
                 user_data = user_data_c(login_email).get()
                 if "read" not in user_data:
@@ -178,18 +177,33 @@ def read(request):
                 client = boto3.client('s3')
                 articles_list_r = client.list_objects_v2(Bucket='wkbvitamova',Prefix='articles/')
                 articles_list = articles_list_r['Contents']
-                selector = 1
+                selector = randint(0,len(articles_list)-1)
                 key = articles_list[selector]['Key']
                 s3 = boto3.resource('s3')
                 object = s3.Object('wkbvitamova',key)
                 read_content = object.get()['Body'].read().decode("utf-8")
-                read_content_l = str(len(ua_alphabet.split_word_list(read_content)))
+                read_content = ukrainian.add_translate_tags(read_content)
+                read_content_l = str(len(ukrainian.split_word_list(read_content)))
                 read_content = "<p>" + read_content + "</p>"
+                #re.sub(r'\s{2}','пута',read_content)
                 read_content = read_content.replace("\n","</p><p>")
-                return(render(request,"read.html",{ "read_text":read_content, "word_count":read_content_l,"header":logged_in_header()}))
+                return render(request,"read.html",{ "read_text":read_content, "word_count":read_content_l,"header":logged_in_header()})
+            elif request.POST["request"] == "translate":
+                word = request.POST["word"]
+                translation = ukrainian.translate(word)
+                return HttpResponse(translation, content_type="text/plain")
 
 def flashcards(request):
-    return render(request,'coming_soon.html',{})
+    if request.method == "GET":
+        return render(request,'authenticator.html',{"url":"/flashcards/"})
+    elif request.method == "POST":
+        logged_in = check_login(request)
+        if logged_in == 2:
+            return HttpResponseRedirect("/signup")
+        if logged_in == 1:
+            return HttpResponseRedirect("/login")
+        if logged_in == 0:
+            return render(request,'flashcards.html',{"header":logged_in_header()})
 
 def reader(request):
     return render(request,'coming_soon.html',{})
@@ -201,12 +215,6 @@ def get_book(request):
         file_data = f.read()
     book_pages = urllib.parse.quote(ukrainian.return_pages(file_data,200,book_page))
     return HttpResponse(book_pages, content_type="text/plain")
-
-def translate(request):
-    translate_key = request.GET.get('word_key',"")
-    translation = ukrainian.translate(urllib.parse.quote(translate_key))
-    #translation = urllib.parse.quote(translation)
-    return HttpResponse(translation, content_type="text/plain")
 
 def transcribe(request):
     if request.method == "GET":
@@ -241,12 +249,17 @@ def accent(request):
     if request.method == "GET":
         return render(request,'authenticator.html',{"url":"/accent/"})
     elif request.method == "POST":
-        logged_in = check_login(request)
-        if logged_in != 0:
-            return render(request,'accent.html',{"header":not_logged_in_header()})
-        if logged_in == 0:
-            login_email = request.POST["email"]
-            return render(request,'accent.html',{"header":logged_in_header()})
+        if "request" not in request.POST:
+            logged_in = check_login(request)
+            if logged_in != 0:
+                return render(request,'accent.html',{"header":not_logged_in_header()})
+            if logged_in == 0:
+                return render(request,'accent.html',{"header":logged_in_header()})
+        else:
+            if request.POST["request"] == "emphasis":
+                text = request.POST["text"]
+                response = ukrainian.replace_with_emphases(text)
+                return HttpResponse(response, content_type="text/plain")
 
 def write(request):
     return render(request,'coming_soon.html',{})
@@ -276,7 +289,7 @@ def typing(request):
                     s3 = boto3.resource('s3')
                     object = s3.Object('wkbvitamova',key)
                     article_content = object.get()['Body'].read().decode("utf-8")
-                    response_l = ua_alphabet.split_word_list(article_content)
+                    response_l = ukrainian.split_word_list(article_content)
                     shuffle(response_l)
                     response = "|".join(response_l[0:20])
                     return HttpResponse(response, content_type="text/plain")

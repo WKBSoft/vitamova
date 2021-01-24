@@ -1,16 +1,18 @@
-import boto3
-import json
+import os
+import sys
 
-class user_data_c:
-    def __init__(self,email):
-        s3 = boto3.resource('s3')
-        self.s3_object = s3.Object('wkbvitamova','users/userdata/'+email+'.json')
-    def get(self):
-        return json.load(self.s3_object.get()['Body'])
-    def put(self,data):
-        return self.s3_object.put(Body=json.dumps(data).encode("utf-8"))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(BASE_DIR,'vitamova/scripts/'))
+import ukrainian
+import database as db
 
-x = user_data_c("bellemanwesley@gmail.com").get()
-x["typing"]["level"] = "0"
-x["points"] = 0
-user_data_c("bellemanwesley@gmail.com").put(x)
+ua_text = '''
+На цьому тижні президент США Джо Байден підписав 10 указів, спрямованих на розширення виробництва вакцин, прискорення тестування і повторне відкриття шкіл. "Будуть потрібні місяці, щоб все виправити", - сказав політик.
+'''
+
+response = ukrainian.replace_with_emphases(ua_text)
+print(response)
+
+#emphasis_request = db.retrieve("ukrainian_dict",)
+
+#print(ukrainian.translate("привіт"))
