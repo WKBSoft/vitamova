@@ -208,14 +208,6 @@ def flashcards(request):
 def reader(request):
     return render(request,'coming_soon.html',{})
 
-def get_book(request):
-    book_title = urllib.parse.unquote(request.GET['title'])
-    book_page = request.GET['page']
-    with open('/home/ubuntu/books/'+book_title,'r') as f:
-        file_data = f.read()
-    book_pages = urllib.parse.quote(ukrainian.return_pages(file_data,200,book_page))
-    return HttpResponse(book_pages, content_type="text/plain")
-
 def transcribe(request):
     if request.method == "GET":
         return render(request,'authenticator.html',{"url":"/transcribe/"})
@@ -233,17 +225,18 @@ def transcribe(request):
                     user_data.update({"transcribe":{"level":"0"}})
                     user_data_c(login_email).put(user_data)
                 transcribe_level = int(user_data["transcribe"]["level"])
-                with open("/home/ubuntu/vitamova/content/transcribe_embed.txt","r") as f:
-                    transcribe_srcs = f.readlines()
+                s3 = boto3.resource('s3')
+                object = s3.Object('wkbvitamova','transcribe/transcribe_embed.txt')
+                transcribe_srcs = object.get()['Body'].read().decode("utf-8").split("\n")
                 transcribe_src = transcribe_srcs[transcribe_level]
-                with open("/home/ubuntu/vitamova/content/transcribe_text_"+str(transcribe_level)+".txt","r") as f:
-                    transcription_content = f.read()
+                object = s3.Object('wkbvitamova',"transcribe/transcribe_text_"+str(transcribe_level)+".txt")
+                transcription_content = object.get()['Body'].read().decode("utf-8")
                 transcription_content_l = transcription_content.split(" ")
                 for i in range(len(transcription_content_l)):
                     word_bytes = bytes(transcription_content_l[i],encoding="utf-8")
                     transcription_content_l[i] = hashlib.sha256(word_bytes).hexdigest()
                 transcription_content = " ".join(transcription_content_l)
-                return(render(request,"transcribe.html",{"transcribe_src":transcribe_src, "video_content":transcription_content}))
+                return(render(request,"transcribe.html",{"transcribe_src":transcribe_src, "video_content":transcription_content,"header":logged_in_header()}))
 
 def accent(request):
     if request.method == "GET":
