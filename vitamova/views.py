@@ -253,9 +253,6 @@ def accent(request):
                 text = request.POST["text"]
                 response = ukrainian.replace_with_emphases(text)
                 return HttpResponse(response, content_type="text/plain")
-
-def write(request):
-    return render(request,'coming_soon.html',{})
     
 def typing(request):
     if request.method == "GET":
