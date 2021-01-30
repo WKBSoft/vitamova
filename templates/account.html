@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  
+{{ header|safe }}
+
+{% csrf_token %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-4"></div>
+    <div class="col-4">
+      <button class="btn btn-lg btn-block btn-dark">Change Email</button>
+      <button class="btn btn-lg btn-block btn-dark">Change Password</button>
+      <button class="btn btn-lg btn-block btn-danger" data-toggle="modal" data-target="#deleteModal">Delete Account</button>
+    </div>
+    <div class="col-4"></div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteLabel">Are you sure?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        If you delete your account, you will lose all data and progress associated with your account. 
+        You will be able to create a new account, but your progress will start from zero.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Nevermind</button>
+        <button type="button" class="btn btn-danger" onclick="delete_account()">Delete Account</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+  function delete_account() {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+           // Typical action to be performed when the document is ready:
+           if (this.responseText != "success") {
+             delete_account();
+           } else {
+             window.localStorage.removeItem("login_email");
+             window.location.href = "/logout";
+           }
+        }
+      };
+      xhttp.open("POST", "/account/", false);
+      xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xhttp.send("request=delete&csrfmiddlewaretoken="+csrftoken+"&email="+stored_email+"&login_token="+stored_token);
+  }
+
+</script>
+
+  </body>
+</html>
+

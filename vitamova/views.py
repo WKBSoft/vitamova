@@ -20,6 +20,10 @@ sys.path.insert(0, os.path.join(BASE_DIR,'scripts/'))
 import ukrainian
 import database as db
 
+def debug_log(string):
+    with open(os.path.join(BASE_DIR,"debug.log"),"a+") as f:
+        f.write(string)
+
 class user_data_c:
     def __init__(self,email):
         s3 = boto3.resource('s3')
@@ -28,6 +32,8 @@ class user_data_c:
         return json.load(self.s3_object.get()['Body'])
     def put(self,data):
         return self.s3_object.put(Body=json.dumps(data).encode("utf-8"))
+    def delete(self):
+        return self.s3_object.delete()
 
 def userpass_get():
     s3 = boto3.resource('s3')
@@ -81,34 +87,64 @@ def login(request):
                 return(render(request,'login.html',{"header":not_logged_in_header()}))
             else:
                 email = request.POST["email"]
-                password = request.POST["password"]
-                login_token = request.POST["login_token"]
                 userpass = userpass_get()
-                pass_b = bytes(password,encoding="utf-8")
-                pash_hash = hashlib.sha256(pass_b).hexdigest()
-                if userpass[email]["password"] == pash_hash:
-                    userpass[email]["token"] = login_token
-                    userpass_put(userpass)
-                return HttpResponseRedirect('/dashboard')
+                if email not in userpass:
+                    return render(request,'login.html',{"header":not_logged_in_header()})
+                else:
+                    password = request.POST["password"]
+                    login_token = request.POST["login_token"]
+                    pass_b = bytes(password,encoding="utf-8")
+                    pash_hash = hashlib.sha256(pass_b).hexdigest()
+                    if userpass[email]["password"] == pash_hash:
+                        userpass[email]["token"] = login_token
+                        userpass_put(userpass)
+                        return HttpResponseRedirect('/dashboard')
+                    else:
+                        return render(request,'login.html',{"header":not_logged_in_header()})
 
+def account(request):
+    if request.method == "GET":
+        return render(request,'authenticator.html',{"url":"/account/"})
+    elif request.method == "POST":
+        logged_in = check_login(request)
+        if logged_in == 2:
+            return HttpResponseRedirect("/signup")
+        if logged_in == 1:
+            return HttpResponseRedirect("/login")
+        if logged_in == 0:
+            if "request" not in request.POST:
+                return render(request, 'account.html',{"header":logged_in_header()})
+            else:
+                email = request.POST["email"]
+                if request.POST["request"] == "delete":
+                    userpass = userpass_get()
+                    del userpass[email]
+                    userpass_put(userpass)
+                    debug_log(str(user_data_c(email).delete()))
+                    return HttpResponse("success", content_type="text/plain")
+            
 def logout(request):
     return render(request,'logout.html',{}) 
 
 def signup(request):
     if request.method == "GET":
-        return render(request,'signup.html',{})
+        return render(request,'signup.html',{"header":not_logged_in_header()})
     else:
         login_email = request.POST["email"]
         password = request.POST["password"]
         pass_b = bytes(password,encoding="utf-8")
         pass_hash = hashlib.sha256(pass_b).hexdigest()
-        with open(os.path.join(BASE_DIR,"users/userpass.json"),"r") as f:
-            userpass = json.load(f)
+        userpass = userpass_get()
         if login_email not in userpass:
             userpass.update({login_email:{"password":pass_hash,"token":""}})
-            with open(os.path.join(BASE_DIR,"users/userpass.json"),"w+") as f:
-                json.dump(userpass,f)
-            user_data = {"transcribe": {"level": "0"}, "read": {"level": "0"}, "start_date":str(datetime.date.today()),"history":[0]}
+            userpass_put(userpass);
+            user_data = {
+                "transcribe": {"level": "0"},
+                "read": {"level": "0"},
+                "typing": {"level": "0"},
+                "start_date":str(datetime.date.today()),
+                "history":[0],"points":0
+            }
             user_data_c(login_email).put(user_data)
             return HttpResponseRedirect('/login')
         else:
@@ -205,8 +241,6 @@ def flashcards(request):
         if logged_in == 0:
             return render(request,'flashcards.html',{"header":logged_in_header()})
 
-def reader(request):
-    return render(request,'coming_soon.html',{})
 
 def transcribe(request):
     if request.method == "GET":

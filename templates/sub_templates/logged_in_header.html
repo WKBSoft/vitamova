@@ -19,7 +19,7 @@
 <title> Vitamova </title>
 
 <div class="jumbotron container-fluid bg-primary">
-    <p id="username" class="text-right"></p>
+    <p class="text-right"><a href="/account" class="text-body" id="username"></a></p>
     <div class="row">
     <div class="col col-lg-9">
       <a href="/" class="text-body"><h1 class="display-4">Vitamova</h1></a>
@@ -53,4 +53,10 @@
 <script>
   var username = window.localStorage.getItem("login_email");
   document.getElementById("username").innerHTML=username+"&nbsp<a class='btn btn-warning' href='/logout'>Log Out</a>";
+  var stored_token = window.localStorage.getItem("login_token");
+  if (stored_token==null) {
+      stored_token = window.sessionStorage.getItem("login_token");
+  }
+  
+  var stored_email = window.localStorage.getItem("login_email");  
 </script>
