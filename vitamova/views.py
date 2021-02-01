@@ -140,7 +140,7 @@ def signup(request):
             userpass_put(userpass);
             user_data = {
                 "transcribe": {"level": "0"},
-                "read": {"level": "0"},
+                "read": {"articles": 0},
                 "typing": {"level": "0"},
                 "start_date":str(datetime.date.today()),
                 "history":[0],"points":0
@@ -209,7 +209,6 @@ def read(request):
                 if "read" not in user_data:
                     user_data.update({"read":{"level":"0"}})
                     user_data_c(login_email).put(user_data)
-                read_level = int(user_data["read"]["level"])
                 client = boto3.client('s3')
                 articles_list_r = client.list_objects_v2(Bucket='wkbvitamova',Prefix='articles/')
                 articles_list = articles_list_r['Contents']
@@ -228,6 +227,16 @@ def read(request):
                 word = request.POST["word"]
                 translation = ukrainian.translate(word)
                 return HttpResponse(translation, content_type="text/plain")
+            elif request.POST["request"] == "complete":
+                login_email = request.POST["email"]
+                wordcount = int(request.POST["wordcount"])
+                user_data = user_data_c(login_email).get()
+                user_data['read']['articles'] += 1
+                user_data['points'] += wordcount
+                user_data['history'][len(user_data['history'])-1] += wordcount
+                user_data_c(login_email).put(user_data)
+                return HttpResponse("success", content_type="text/plain")
+                
 
 def flashcards(request):
     if request.method == "GET":

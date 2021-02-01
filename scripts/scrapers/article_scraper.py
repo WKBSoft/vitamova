@@ -61,7 +61,9 @@ for x in articles_list['Contents']:
 for i in range(len(article_links)):
     article_content = requests.get(article_links[i]).text
     start_i = article_content.find("<div class=\"post-item__text\">")
-    stop_i = article_content.find("Новини від",start_i)
+    stop_i_one = article_content.find("Новини від",start_i)
+    stop_i_two = article_content.find("<span",start_i)
+    stop_i = min(stop_i_one,stop_i_two)
     article_content = article_content[start_i:stop_i]
     article_content = remove_scripts(article_content)
     article_content = remove_html_tags(article_content)
