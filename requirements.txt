@@ -2,7 +2,6 @@ asn1crypto==0.24.0
 astroid==2.3.0
 attrs==17.4.0
 Automat==0.6.0
-awscli==1.18.217
 backcall==0.2.0
 beautifulsoup4==4.9.3
 blinker==1.4
