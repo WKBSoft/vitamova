@@ -7,7 +7,7 @@ backcall==0.2.0
 beautifulsoup4==4.9.3
 blinker==1.4
 boto3==1.16.59
-botocore==1.19.57
+botocore==1.19.59
 cachetools==4.2.1
 certifi==2020.12.5
 chardet==4.0.0
@@ -78,7 +78,7 @@ python-dateutil==2.8.1
 python-debian==0.1.32
 pytz==2020.5
 pyxdg==0.25
-PyYAML==5.3.1
+PyYAML==5.4.1
 requests==2.25.1
 requests-unixsocket==0.1.5
 rsa==4.7
