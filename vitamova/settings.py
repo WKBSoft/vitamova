@@ -23,7 +23,7 @@ with open(os.path.join(BASE_DIR, "../keys/django_key.txt"),"r") as f:
     SECRET_KEY = f.readlines()[0]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1']
 
