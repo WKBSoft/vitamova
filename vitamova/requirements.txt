@@ -14,10 +14,9 @@ click==6.7
 colorama==0.4.3
 configobj==5.0.6
 constantly==15.1.0
-cryptography==2.1.4
 dataclasses==0.8
 decorator==4.4.2
-Django==2.0.2
+Django
 docutils==0.15.2
 git-remote-codecommit==1.15.1
 google==3.0.0
@@ -30,7 +29,6 @@ google-cloud-core==1.5.0
 google-cloud-translate==3.0.2
 googleapis-common-protos==1.52.0
 grpcio==1.29.0
-httplib2==0.18.1
 hyperlink==17.3.1
 idna==2.10
 ikp3db==1.4.1
@@ -40,7 +38,6 @@ ipython==7.16.1
 ipython-genutils==0.2.0
 isort==4.3.21
 jedi==0.11.1
-Jinja2==2.10
 jmespath==0.10.0
 jsonpatch==1.16
 jsonpointer==1.10
@@ -64,7 +61,6 @@ protobuf==3.14.0
 ptyprocess==0.7.0
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
-pycrypto==2.6.1
 Pygments==2.7.4
 PyJWT==1.5.3
 pylint==2.4.4
@@ -76,7 +72,6 @@ pyserial==3.4
 python-dateutil==2.8.1
 python-debian==0.1.32
 pytz==2020.5
-pyxdg==0.25
 PyYAML==5.4.1
 requests==2.25.1
 requests-unixsocket==0.1.5
@@ -89,7 +84,6 @@ soupsieve==2.1
 ssh-import-id==5.7
 stevedore==3.3.0
 traitlets==4.3.3
-Twisted==17.9.0
 typed-ast==1.2.0
 typing-extensions==3.7.4.3
 typing-inspect==0.6.0
