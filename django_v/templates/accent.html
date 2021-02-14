@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+{{ header | safe}}
+
+{% csrf_token %}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Input</h1>
+            <textarea id="input" rows="10" cols="60"></textarea>
+        </div>
+        <div class="col">
+            <h1>Output</h1>
+            <textarea id="output" rows="10" cols="60" readonly></textarea>
+        </div>
+    </div>
+</div>
+
+<script>
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    var my_output;
+    
+    var stored_token = window.localStorage.getItem("login_token");
+    if (stored_token==null) {
+        stored_token = window.sessionStorage.getItem("login_token");
+    }
+    var stored_email = window.localStorage.getItem("login_email"); 
+    
+    var input_t = document.getElementById("input");
+    var output_t = document.getElementById("output");
+    input_t.addEventListener("input", function () {
+        var x = input_t.value;
+        get_accents(x);
+        output_t.value = my_output; 
+        //output_t.value = "We are currently upgrading this tool. Sorry for the inconvenience.";
+    });
+    
+    function get_accents(text) {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            my_output = this.responseText;
+        }
+      };
+      xhttp.open("POST", "/accent/", false);
+      xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xhttp.send("request=emphasis&csrfmiddlewaretoken="+csrftoken+"&text="+text);
+    }
+</script>
+  </body>
+</html>
