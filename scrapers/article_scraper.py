@@ -46,16 +46,33 @@ for x in links:
             if link not in article_links:
                 article_links.append(link)
 
+
+#Create S3 Session
+with open("aws_key.txt","r") as f:
+    keys_str = f.read()
+
+keys = keys_str.split("\n")
+
+aws_access_key_id = keys[0]
+aws_secret_access_key = keys[1]
+my_session = boto3.Session(
+    aws_access_key_id=aws_access_key_id,
+    aws_secret_access_key=aws_secret_access_key,
+    region_name="us-east-2"
+    )
+
 #Clear Articles
-client = boto3.client('s3')
+
+'''
+client = my_session.client('s3')
 articles_list = client.list_objects_v2(Bucket='wkbvitamova',Prefix='articles/')
 for x in articles_list['Contents']:
     key = x['Key']
     if key != 'articles/':
-        s3 = boto3.resource('s3')
+        s3 = my_session.resource('s3')
         object = s3.Object('wkbvitamova',key)
         object.delete()
-
+'''
     
 
 for i in range(len(article_links)):
@@ -67,7 +84,7 @@ for i in range(len(article_links)):
     article_content = article_content[start_i:stop_i]
     article_content = remove_scripts(article_content)
     article_content = remove_html_tags(article_content)
-    s3 = boto3.resource('s3')
+    s3 = my_session.resource('s3')
     object = s3.Object('wkbvitamova', 'articles/'+str(i)+".html")
     object.put(ACL='public-read',Body=article_content)
     print(i,"/",len(article_links))
