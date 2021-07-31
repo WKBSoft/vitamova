@@ -3,6 +3,7 @@ DB_URL = "http://10.89.0.4:9200/"
 import requests
 import json
 from time import sleep
+from os import environ
 
 print("start")
 
@@ -10,7 +11,7 @@ def register():
     doc = {
         "type": "s3",
         "settings": {
-            "bucket": "wkbvitamova"
+            "bucket": environ(s3_bucket)
         }
     }
     data = json.dumps(doc)
