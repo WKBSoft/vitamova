@@ -7,7 +7,7 @@ sudo podman commit $es_id vitamova/elastic;
 sudo podman stop $es_id;
 sudo podman network create vitamova --subnet 10.89.0.0/24;
 echo "Give the name of the S3 bucket you will use for this project";
-export s3_bucket;
+read s3_bucket;
 echo "Provide your AWS credentials. First write your access key ID";
 read aws_access_id;
 echo "Provide your AWS secret access key";
