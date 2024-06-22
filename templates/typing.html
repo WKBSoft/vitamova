@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+
+{{ header|safe }}
+
+<br>
+
+{% csrf_token %}
+
+<canvas id="myCanvas"></canvas>
+<p id="typing_space"></p>
+
+<script>
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    var typed_word = "";
+    var typing_space = document.getElementById("typing_space");
+    var canvas = document.getElementById("myCanvas");
+    window.addEventListener( "keypress", doKeyDown, false );
+    var w = window.innerWidth;
+    var h = window.innerHeight;
+    canvas.width = w * 0.66;
+    canvas.height = h* 0.45;
+    canvas.style.backgroundColor = "#AEB6BF";
+    canvas.style.position = "fixed";
+    canvas.style.right = (w*0.17).toString() + "px";
+    canvas.style.bottom = (h*0.15).toString() + "px";
+    
+    typing_space.style.position = "fixed";
+    typing_space.style.bottom = (h*0.02).toString() + "px";
+    typing_space.style.fontSize = (h*0.08).toString() + "px";
+    
+    var stored_token = window.localStorage.getItem("login_token");
+    if (stored_token==null) {
+        stored_token = window.sessionStorage.getItem("login_token");
+    }
+    var stored_email = window.localStorage.getItem("login_email");    
+    
+    var word_list;
+    var ctx = canvas.getContext("2d");
+    set_canvas();
+    var game_active = 0;
+    var level = {{ level }} +1;
+    game_setup();
+    
+    function game_setup() {
+      ctx.fillStyle = "black";
+      ctx.font = (h*0.08).toString() + "px Arial";
+      ctx.fillText("Press Enter to Start - Level "+level.toString(), w*0.1, h*0.2);
+    }
+
+    function play_game() {
+      word_list_update()
+      word_slide(word_list[0],level,0);
+    }
+    
+    function word_list_update() {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+           // Typical action to be performed when the document is ready:
+           var word_list_str = this.responseText;
+           word_list = word_list_str.split("|");
+        }
+      };
+      xhttp.open("POST", "/typing/", false);
+      xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xhttp.send("request=wlu&csrfmiddlewaretoken="+csrftoken+"&email="+stored_email+"&login_token="+stored_token);
+    }
+    
+    function level_up() {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+           var status = this.responseText;
+           if (status != "success") {
+             level_up()
+           }
+        }
+      };
+      xhttp.open("POST", "/typing/", false);
+      xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xhttp.send("request=levelup&csrfmiddlewaretoken="+csrftoken+"&email="+stored_email+"&login_token="+stored_token);
+    }
+    
+    function doKeyDown(e) {
+      if (game_active===0 && e.keyCode === 13) {
+        game_active = 1;
+        play_game();
+      } else {
+        var letter = String.fromCharCode(e.keyCode);
+        var word = typed_word + letter;
+        if (word === word_list[0].slice(0,word.length)) {
+          typed_word = word;
+          type_word(typed_word);
+        }
+      }
+    }
+    
+    function set_canvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#EBEDEF";
+    }
+    
+    function type_word(word) {
+      typing_space.style.left = "50%";
+      typing_space.style.transform = "translateX(-50%)";
+      typing_space.innerHTML = word;
+      if (word === word_list[0] ) {
+        word_list.shift();
+        if (word_list.length === 0) {
+          game_won();
+        }
+      }
+    }
+    
+    async function word_slide(word,speed,x) {
+      if (word.valueOf() === word_list[0].valueOf()) {
+        set_canvas();
+        ctx.fillStyle = "black";
+        ctx.font = (h*0.08).toString() + "px Arial";
+        ctx.fillText(word, x, h*0.1);
+        if (x<w*0.66) {
+          setTimeout(() => {  word_slide(word, speed, x+speed); }, 20);
+        } else {
+          game_loss();
+        }
+      } else {
+        typed_word = "";
+        type_word(typed_word);
+        word_slide(word_list[0], speed, 0);
+      }
+    }
+    
+    function game_loss() {
+      set_canvas();
+      ctx.fillStyle = "black";
+      ctx.font = (h*0.08).toString() + "px Arial";
+      ctx.fillText("You Lose! - Level "+level.toString(), w*0.1, h*0.2); 
+      typed_word = "";
+      type_word(typed_word);
+      game_active = 0;
+    }
+    
+    function game_won() {
+      level_up();
+      set_canvas();
+      ctx.fillStyle = "black";
+      ctx.font = (h*0.08).toString() + "px Arial";
+      ctx.fillText("You Win! - Level "+level.toString(), w*0.1, h*0.2); 
+      level = level + 1;
+      typed_word = "";
+      type_word(typed_word);
+      game_active = 0;      
+    }
+    
+</script>
+
+  </body>
+</html>

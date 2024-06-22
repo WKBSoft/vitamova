@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+{{ header | safe }}
+
+<div class="row">
+    <div class="col"></div>
+    <div class="col">
+        <form action="/login/" method="POST" id="login_form">
+            {% csrf_token %}
+            <input type="text" name="logging_in" value="True" hidden>
+            <input type="text" id="login_token" name="login_token" hidden>
+            <div class="form-group">
+                <label for="InputEmail">Email address</label>
+                <input type="email" class="form-control" id="InputEmail" aria-describedby="emailHelp" name="email">
+                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+            </div>
+            <div class="form-group">
+                <label for="InputPassword">Password</label>
+                <input type="password" class="form-control" id="InputPassword" name="password">
+            </div>
+            <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="Check" name="persist">
+                <label class="form-check-label" for="Check">Stay logged in</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Sign In</button>
+            &nbsp
+            <a href="/signup">Sign Up</a>
+        </form>
+    </div>
+    <div class="col"></div>
+</div>
+
+<script>
+
+    var array = new Uint32Array(10);
+    window.crypto.getRandomValues(array);
+    
+    var token_value = generateId();
+    
+    for (var i = 0; i < array.length; i++) {
+      token_value = token_value + array[i].toString();
+    }
+    
+    var token = document.getElementById("login_token");
+    token.value = token_value;
+    var login_email = document.getElementById("InputEmail");
+    var form = document.getElementById("login_form");
+    var check = document.getElementById("Check");
+    login_email.value = window.localStorage.getItem("login_email");
+    form.addEventListener("input", function () {
+        window.localStorage.setItem("login_email",login_email.value);
+        if(check.checked==true) {
+           window.localStorage.setItem("login_token",token.value);
+        } else {
+            window.localStorage.removeItem("login_token")
+            window.sessionStorage.setItem("login_token",token.value)
+        }
+    });
+
+    // dec2hex :: Integer -> String
+    // i.e. 0-255 -> '00'-'ff'
+    function dec2hex (dec) {
+        return dec.toString(16).padStart(2, "0")
+    }
+
+    // generateId :: Integer -> String
+    function generateId (len) {
+        var arr = new Uint8Array((len || 40) / 2);
+        window.crypto.getRandomValues(arr);
+        return Array.from(arr, dec2hex).join('');
+        }
+</script>
+  
+  </body>
+</html>
+

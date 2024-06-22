@@ -2,7 +2,7 @@
 
 ### About
 
-This website is for learning Ukrainian. You can feel free to copy the code or run it on your own environment. For now, the application is available for free at https://vitamova.com 
+This website is for learning Spanish and Ukrainian. You can feel free to copy the code or run it on your own environment. For now, the application is available for free at https://www.vitamova.com 
 
 ## Compatability
 

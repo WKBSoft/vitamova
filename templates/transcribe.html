@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+{{ header|safe }}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+           {{transcribe_src|safe}}
+        </div>
+        <div class="col">
+                <textarea id="transcription_i" rows="10" cols="40"></textarea>
+        </div>
+        <div class="col" style="background-color: white;">
+            <div id="transcription_o"></div>
+        </div>
+    </div>
+</div>
+<script>
+    const text = 'An obscure body in the S-K System, your majesty. The inhabitants refer to it as the planet Earth.';
+    async function digestMessage(message) {
+        const msgUint8 = new TextEncoder().encode(message);                           // encode as (utf-8) Uint8Array
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);           // hash the message
+        const hashArray = Array.from(new Uint8Array(hashBuffer));                     // convert buffer to byte array
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
+        return hashHex;
+    }
+    const digestHex = digestMessage(text);
+    console.log(digestHex);
+
+    var video_content = "{{video_content}}";
+    var video_content_list = video_content.split(" ");
+
+    var input_t = document.getElementById("transcription_i");
+    var output_t = document.getElementById("transcription_o");
+    
+    var output_value = ""
+    for (var i =0; i<video_content_list.length; i++) {
+        output_value = output_value+"_____ "
+        output_t.innerHTML = output_value
+    }
+    
+    input_t.addEventListener("input", async function () {
+        var x = input_t.value;
+        var x_list = x.split(" ");
+        output_value = "";
+        for (var i=0; i < Math.min(video_content_list.length,x_list.length); i++) {
+            var x_value = await digestMessage(x_list[i]);
+            if (x_value === video_content_list[i]) {
+                output_value = output_value + "<a style='color:green;'>"+x_list[i]+"</a> ";
+            } else {
+                output_value = output_value + "<a style='color:red;'>"+x_list[i]+"</a> ";
+            }
+        }
+        
+        if (video_content_list.length > x_list.length) {
+            for (i=0; i<(video_content_list.length - x_list.length); i++) {
+                output_value = output_value + "_____ ";
+            }
+        }
+        
+        output_t.innerHTML = output_value;
+    });
+    
+</script>
+  </body>
+</html>
