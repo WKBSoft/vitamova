@@ -57,31 +57,7 @@ def check_login(request):
         return 1
 
 def login(request):
-    if request.method == "GET":
-        return render(request,'authenticator.html',{"url":"/login/"})
-    else:
-        if "logging_in" not in request.POST:
-            logged_in = check_login(request)
-            if logged_in == 0:
-                return HttpResponseRedirect('/dashboard')
-            else:
-                return(render(request,'login.html',{"header":not_logged_in_header()}))
-        else:
-               email = request.POST["email"]
-               userpass = userpass_get()
-               if email not in userpass:
-                   return render(request,'login.html',{"header":not_logged_in_header()})
-               else:
-                   password = request.POST["password"]
-                   login_token = request.POST["login_token"]
-                   pass_b = bytes(password,encoding="utf-8")
-                   pash_hash = hashlib.sha256(pass_b).hexdigest()
-                   if userpass[email]["password"] == pash_hash:
-                       userpass[email]["token"] = login_token
-                       userpass_put(userpass)
-                       return HttpResponseRedirect('/dashboard')
-                   else:
-                       return render(request,'login.html',{"header":not_logged_in_header()})
+    return render(request,'login.html',{"header":not_logged_in_header()})
 
 def signup(request):
     if request.method == "GET":
