@@ -10,8 +10,8 @@ import copy
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-sys.path.insert(0, os.path.join(BASE_DIR,'scripts/'))
-import database as db
+#sys.path.insert(0, os.path.join(BASE_DIR,'scripts/'))
+#import database as db
 
 def logged_in_header():
     with open(os.path.join(BASE_DIR,"templates/sub_templates/logged_in_header.html"),"r") as f:
@@ -25,17 +25,17 @@ class user_data_c:
     def __init__(self,email):
         self.email = email
     def get(self):
-        return db.retrieve("userdata",self.email)
+        return 0 #db.retrieve("userdata",self.email)
     def put(self,data):
-        return db.send("userdata",self.email,data)
+        return 0 #db.send("userdata",self.email,data)
     def delete(self):
-        return db.delete("userdata")
+        return 0 #db.delete("userdata")
 
 def userpass_get():
-    return db.retrieve("userpass","1")
+    return 0 #db.retrieve("userpass","1")
     
 def userpass_put(data):
-    return db.send("userpass","1",data)
+    return 0 #db.send("userpass","1",data)
 
 def check_login(request):
     #Returns 3 results 0=logged in, 1=not logged in, 2=no account
