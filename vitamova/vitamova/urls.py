@@ -16,7 +16,9 @@ Including another URLconf
 """
 from django.urls import path
 from . import views
+from . import authentication
 
 urlpatterns = [
+    path("login/",authentication.login,name='login'),
     path("",views.home,name='home'),
 ]

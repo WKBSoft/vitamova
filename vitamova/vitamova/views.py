@@ -10,4 +10,4 @@ import hashlib
 from random import shuffle
 
 def home(request):
-    return render(request, 'login.html')
+    return HttpResponseRedirect("/login/")
