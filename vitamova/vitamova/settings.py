@@ -30,6 +30,8 @@ ALLOWED_HOSTS = ['localhost']
 
 CSRF_TRUSTED_ORIGINS = ['https://www.vitamova.com/']
 
+LOGIN_URL = '/login/'
+
 
 # Application definition
 
