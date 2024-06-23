@@ -77,9 +77,13 @@ WSGI_APPLICATION = 'vitamova.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "vitamova",
+        "USER": "vitamova",
+        "PASSWORD": os.environ.get('db_password'),
+        "HOST": "db.evenstarsec.local",
+        "PORT": "5432",
     }
 }
 
