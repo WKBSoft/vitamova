@@ -38,7 +38,7 @@ def userpass_get():
 def userpass_put(data):
     return 0 #db.send("userpass","1",data)
 
-def login(request):
+def login(request, user):
     if request.method == "GET":
         return render(request,'login.html',{"header":not_logged_in_header()})
     elif request.method == "POST":
