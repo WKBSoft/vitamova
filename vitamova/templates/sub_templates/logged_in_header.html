@@ -51,14 +51,3 @@
     </div>
   </div>
 </div>
-
-<script>
-  var username = window.localStorage.getItem("login_email");
-  document.getElementById("username").innerHTML=username+"&nbsp<a class='btn btn-warning' href='/logout'>Log Out</a>";
-  var stored_token = window.localStorage.getItem("login_token");
-  if (stored_token==null) {
-      stored_token = window.sessionStorage.getItem("login_token");
-  }
-  
-  var stored_email = window.localStorage.getItem("login_email");  
-</script>
