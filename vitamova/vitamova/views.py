@@ -8,6 +8,10 @@ import requests
 from random import randint
 import hashlib
 from random import shuffle
+from pathlib import Path
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 def logged_in_header():
     with open(os.path.join(BASE_DIR,"templates/sub_templates/logged_in_header.html"),"r") as f:
