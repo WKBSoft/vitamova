@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
+from django.contrib import auth
 import os
 import sys
 import hashlib
@@ -38,26 +39,20 @@ def userpass_put(data):
     return 0 #db.send("userpass","1",data)
 
 def check_login(request):
-    #Returns 3 results 0=logged in, 1=not logged in, 2=no account
-    login_email = request.POST["email"]
-    login_token = request.POST["login_token"]
-    if login_email != "" and login_token != "":
-        userpass = userpass_get()
+    username = request.POST["username"]
+    password = request.POST["password"]
+    user = auth.authenticate(request, username=username, password=password)
+    if user is not None:
+        login(request, user)
+        return render(request,'dashboard.html',{"header":logged_in_header()})
     else:
-        return 1
-    if login_email in userpass:
-        user_info = userpass[login_email]
-    else:
-        return 2
-    if "token" not in user_info:
-        return 1
-    if user_info["token"] == login_token:
-        return 0
-    else:
-        return 1
+        return render(request,'login.html',{"header":not_logged_in_header()})
 
 def login(request):
-    return render(request,'login.html',{"header":not_logged_in_header()})
+    if request.method == "GET":
+        return render(request,'login.html',{"header":not_logged_in_header()})
+    elif request.method == "POST":
+        return check_login(request)
 
 def signup(request):
     if request.method == "GET":
