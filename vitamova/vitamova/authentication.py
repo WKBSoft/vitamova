@@ -38,21 +38,18 @@ def userpass_get():
 def userpass_put(data):
     return 0 #db.send("userpass","1",data)
 
-def check_login(request):
-    username = request.POST["username"]
-    password = request.POST["password"]
-    user = auth.authenticate(request, username=username, password=password)
-    if user is not None:
-        login(request, user)
-        return render(request,'dashboard.html',{"header":logged_in_header()})
-    else:
-        return render(request,'login.html',{"header":not_logged_in_header()})
-
 def login(request):
     if request.method == "GET":
         return render(request,'login.html',{"header":not_logged_in_header()})
     elif request.method == "POST":
-        return check_login(request)
+        username = request.POST["username"]
+        password = request.POST["password"]
+        user = auth.authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return render(request,'dashboard.html',{"header":logged_in_header()})
+        else:
+            return render(request,'login.html',{"header":not_logged_in_header()})
 
 def signup(request):
     if request.method == "GET":
