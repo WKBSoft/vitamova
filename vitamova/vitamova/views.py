@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse 
-from django.contrib import auth
 import datetime
 import os
 import sys
@@ -9,6 +8,14 @@ import requests
 from random import randint
 import hashlib
 from random import shuffle
+
+def logged_in_header():
+    with open(os.path.join(BASE_DIR,"templates/sub_templates/logged_in_header.html"),"r") as f:
+        return f.read()
+
+def not_logged_in_header():
+    with open(os.path.join(BASE_DIR,"templates/sub_templates/not_logged_in_header.html"),"r") as f:
+        return f.read()
 
 def home(request):
     #Check if user is logged in
