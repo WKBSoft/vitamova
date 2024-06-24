@@ -27,3 +27,10 @@ def home(request):
         return render(request,'dashboard.html',{"header":logged_in_header()})
     else:
         return HttpResponseRedirect("/login/")
+    
+def poetry(request):
+    #Check if user is logged in
+    if request.user.is_authenticated:
+        return render(request,'poetry.html',{"header":logged_in_header()})
+    else:
+        return HttpResponseRedirect("/login/")
