@@ -118,4 +118,5 @@ def account(request):
                     return HttpResponse("success", content_type="text/plain")
             
 def logout(request):
-    return render(request,'logout.html',{}) 
+    auth.logout(request)
+    return HttpResponseRedirect("/login/")
