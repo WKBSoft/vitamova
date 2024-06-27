@@ -28,6 +28,13 @@ def home(request):
     else:
         return HttpResponseRedirect("/login/")
     
+def daily_article(request):
+    #Check if user is logged in
+    if request.user.is_authenticated:
+        return render(request,'daily_article.html',{"header":logged_in_header()})
+    else:
+        return HttpResponseRedirect("/login/")
+    
 def poetry(request):
     #Check if user is logged in
     if request.user.is_authenticated:
