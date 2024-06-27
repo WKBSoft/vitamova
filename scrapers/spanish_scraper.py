@@ -2,6 +2,7 @@ import requests
 import re
 import boto3
 import os
+import datetime
 
 main_page = requests.get("https://laopinion.com/").text
 start = main_page.find("portada__featured")
@@ -49,4 +50,8 @@ my_session = boto3.Session(
 )
 #Upload the article to the bucket called evenstarsec.vitamova
 s3 = my_session.resource('s3')
-s3.Bucket('evenstarsec.vitamova').put_object(Key="articles/"+title+".json",Body=str(article))
+#The filename will be today's date in the format YYYY-MM-DD.json
+#It will be in the folder articles/spanish
+#The body of the file will be the json object
+filename = str(datetime.date.today())+".json"
+s3.Bucket('evenstarsec.vitamova').put_object(Key="articles/spanish/"+filename,Body=str(article))
