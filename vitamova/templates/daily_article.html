@@ -9,8 +9,11 @@
   
   <div class="row">
         <div class="col-8">
+            <h1>{{title}}</h1>
             <!-- article contents here-->
-             <p>Blah blah blah</p>
+            {% for paragraph in text %}
+                <p>{{paragraph}}</p>
+            {% endfor %}
         </div>
         <div class="col-4">
             <!-- word list here-->
