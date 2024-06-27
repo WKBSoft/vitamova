@@ -52,8 +52,12 @@ def daily_article(request):
         #The filename is the current date in the format YYYY-MM-DD.json
         obj = s3.Object('evenstarsec.vitamova', 'articles/spanish/'+filename)
         article = eval(obj.get()['Body'].read())
+        #Make a list of tags for each paragraph named p1, p2, p3, etc.
+        paragraphs = []
+        for i in range(len(article["text"])):
+            paragraphs.append({"tag":"p"+str(i+1),"text":article["text"][i]})
         #Return the article title and the text as a list of paragraphs
-        return render(request,'daily_article.html',{"title":article["title"],"text":article["text"],"header":logged_in_header()})
+        return render(request,'daily_article.html',{"title":article["title"],"paragraphs":paragraphs,"header":logged_in_header()})
     else:
         return HttpResponseRedirect("/login/")
     

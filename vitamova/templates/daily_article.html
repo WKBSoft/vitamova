@@ -19,8 +19,8 @@
         <div class="col-8" style="background-color: #f8f9fa;">
             <h2>{{title}}</h2>
             <!-- article contents here-->
-            {% for paragraph in text %}
-                <p>{{paragraph}}</p>
+            {% for paragraph in paragraphs %}
+                <p id="{{paragraph.tag}}"">{{paragraph.text}}</p>
             {% endfor %}
         </div>
         <!--make the background dark grey and all the text off-white-->
