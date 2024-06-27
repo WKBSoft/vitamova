@@ -27,6 +27,8 @@ while start != -1:
         sub_text = re.sub(clean, '', sub_text)
         #Replace &#8221; with "
         sub_text = sub_text.replace("&#8221;","\"")
+        #Replace &#8220; with "
+        sub_text = sub_text.replace("&#8220;","\"")
         #If the sub_text starts with Sigue leyendo:, set start to -1 to break the loop
         if sub_text.startswith("Sigue leyendo:"):
             start = -1
