@@ -8,9 +8,10 @@
 <div class="container">
   
   <div class="row">
+        <h1>Article of the Day</h1>
         <!--make the background here light grey-->
         <div class="col-8" style="background-color: #f8f9fa;">
-            <h1>{{title}}</h1>
+            <h2>{{title}}</h2>
             <!-- article contents here-->
             {% for paragraph in text %}
                 <p>{{paragraph}}</p>
@@ -19,7 +20,7 @@
         <!--make the background dark grey and all the text off-white-->
         <div class="col-4" style="background-color: #343a40; color: #f8f9fa;">
             <!-- word list here-->
-            <h2>Vocabulary</h2>
+            <h3>Vocabulary</h3>
         </div>
   </div>
 </div>
