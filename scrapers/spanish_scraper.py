@@ -38,12 +38,14 @@ article = {"title":title,"text":text}
 #Create S3 Session
 #The AWS access key is an environment variable called AWS_ACCESS 
 #The AWS secret key is an environment variable called AWS_SECRET
+#The AWS region is an environment variable called AWS_REGION
 aws_access_key_id = os.environ['AWS_ACCESS']
 aws_secret_access_key = os.environ['AWS_SECRET']
+aws_region = os.environ['AWS_REGION']
 my_session = boto3.Session(
     aws_access_key_id=aws_access_key_id,
     aws_secret_access_key=aws_secret_access_key,
-    region_name="us-east-1"
+    region_name=aws_region
 )
 #Upload the article to the bucket called evenstarsec.vitamova
 s3 = my_session.resource('s3')
