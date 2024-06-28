@@ -55,17 +55,21 @@ def daily_article(request):
         article = eval(obj.get()['Body'].read())
         #Make a list of tags for each paragraph named p1, p2, p3, etc.
         paragraphs = []
+        s_index = 1
+        w_index = 1
         for i in range(len(article["text"])):
             #I want to add a span tag with ids s1, s2, s3, etc. for each sentence
             #I want to add a span tag with ids w1, w2, w3, etc. for each word
             words = article["text"][i].split()
             for j in range(len(words)):
-                words[j] = "<span id='w"+str(j+1)+"'>"+words[j]+"</span>"
+                words[j] = "<span id='w"+str(w_index)+"'>"+words[j]+"</span>"
+                w_index += 1
             article["text"][i] = " ".join(words)
             #Sentences are separated by periods, question marks, and exclamation points
             sentences = re.split(r'\.|\?|\!',article["text"][i])
             for j in range(len(sentences)):
-                sentences[j] = "<span id='s"+str(j+1)+"'>"+sentences[j]+"</span>"
+                sentences[j] = "<span id='s"+str(s_index)+"'>"+sentences[j]+"</span>"
+                s_index += 1
             article["text"][i] = " ".join(sentences)
             paragraphs.append({"tag":"p"+str(i+1),"text":article["text"][i]})
         #Return the article title and the text as a list of paragraphs
