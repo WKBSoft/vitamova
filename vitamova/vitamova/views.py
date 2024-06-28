@@ -72,6 +72,7 @@ def daily_article(request):
                     w2s_map["w"+str(w_index)] = "s"+str(s_index-1)
                     words[k] = "<span id='w"+str(w_index)+"'>"+words[k]+"</span>"
                     w_index += 1
+                sentences[j] = " ".join(words)
             article["text"][i] = " ".join(sentences)
             paragraphs.append({"tag":"p"+str(i+1),"text":article["text"][i]})
         #Return the article title and the text as a list of paragraphs
