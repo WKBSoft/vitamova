@@ -43,6 +43,10 @@
     </div>
 </div>
 
+<form id="step2" hidden>
+    {% csrf_token %}
+</form>
+
 <script>
 
     //Create a global variable to store the vocabulary words and sentences
@@ -51,7 +55,7 @@
     //Create the submit_vocabulary function
     function submit_vocabulary() {
         //Create a form element
-        var form = document.createElement("form");
+        var form = document.getElementById("step2");
         form.setAttribute("method", "POST");
         form.setAttribute("action", "/daily_article/step2/");
         //Create a hidden input element
@@ -59,9 +63,6 @@
         hiddenField.setAttribute("type", "hidden");
         hiddenField.setAttribute("name", "vocabulary");
         hiddenField.setAttribute("value", JSON.stringify(vocabulary));
-        //Add the CSRF token to the form
-        var csrf_token = document.createElement("input");
-        csrf_token.innerHTML = "{% csrf_token %}";
         //Append the hidden input element to the form
         form.appendChild(hiddenField);
         //Append the form to the body
