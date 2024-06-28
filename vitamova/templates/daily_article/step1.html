@@ -59,6 +59,11 @@
         hiddenField.setAttribute("type", "hidden");
         hiddenField.setAttribute("name", "vocabulary");
         hiddenField.setAttribute("value", JSON.stringify(vocabulary));
+        //Add the CSRF token to the form
+        var csrf_token = document.createElement("input");
+        csrf_token.setAttribute("type", "hidden");
+        csrf_token.setAttribute("name", "csrfmiddlewaretoken");
+        csrf_token.setAttribute("value", "{{ csrf_token }}");
         //Append the hidden input element to the form
         form.appendChild(hiddenField);
         //Append the form to the body
