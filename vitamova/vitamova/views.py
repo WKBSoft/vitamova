@@ -62,8 +62,8 @@ def daily_article(request):
         for i in range(len(article["text"])):
             #I want to add a span tag with ids s1, s2, s3, etc. for each sentence
             #I want to add a span tag with ids w1, w2, w3, etc. for each word
-            #Sentences are separated by periods, question marks, and exclamation points
-            sentences = re.split(r'\.|\?|\!',article["text"][i])
+            #Sentences are separated by periods, question marks, and exclamation points followed by a space
+            sentences = re.split(r'(?<=[.!?])\s', article["text"][i])
             for j in range(len(sentences)):
                 words = sentences[j].split(" ")
                 for k in range(len(words)):
