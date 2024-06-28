@@ -58,7 +58,7 @@ def daily_article(request):
         s_index = 1
         w_index = 1
         #Create a word to sentence index
-        w2s_map = {}
+        w2s_map = []
         for i in range(len(article["text"])):
             #I want to add a span tag with ids s1, s2, s3, etc. for each sentence
             #I want to add a span tag with ids w1, w2, w3, etc. for each word
@@ -67,7 +67,7 @@ def daily_article(request):
             for j in range(len(sentences)):
                 words = sentences[j].split(" ")
                 for k in range(len(words)):
-                    w2s_map["w"+str(w_index)] = "s"+str(s_index)
+                    w2s_map.append({"word":"w"+str(w_index),"sentence":"s"+str(s_index)})
                     words[k] = "<span id='w"+str(w_index)+"'>"+words[k]+"</span>"
                     w_index += 1
                 sentences[j] = " ".join(words)

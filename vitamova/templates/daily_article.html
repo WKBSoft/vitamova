@@ -43,11 +43,11 @@
 
 <script>
 
-    {% for key, value in w2s_map %}
+    {% for w in w2s_map.word %}
         //Create an event listener for a span object with id "w1"
-        document.getElementById("{{key}}").addEventListener("click", function() {
+        document.getElementById("{{w}}").addEventListener("click", function() {
             //Change the text color of the span object to red
-            document.getElementById("w1").style.color = "red";
+            document.getElementById("{{w}}").style.color = "red";
         });
     {% endfor %}
 
