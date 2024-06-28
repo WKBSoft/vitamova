@@ -27,6 +27,8 @@
         <div class="col-4" style="background-color: #343a40; color: #f8f9fa;">
             <!-- word list here-->
             <h3>Vocabulary</h3>
+            <br>
+            <span id="wordlist"></span>
         </div>
     </div>
     <div class="row">
@@ -35,8 +37,6 @@
             <div class="d-grid gap-2">
                 <br><br>
                 <button class="btn btn-primary" type="button">Review Vocabulary</button>
-                <br>
-                <div id="wordlist"></div>
                 <br><br>
             </div>
         </div>
@@ -48,10 +48,12 @@
     {% for item in w2s_map %}
         //Create an event listener for a span object with id "w1"
         document.getElementById("{{item.word}}").addEventListener("click", function() {
+            //Get the value 
+            var word_value = document.getElementById("{{item.word}}").innerText;
             //Add the word to the word list
             var wordlist = document.getElementById("wordlist");
             var word = document.createElement("span");
-            word.innerHTML = "{{item.word}}";
+            word.innerHTML = word_value + "<br>";
             wordlist.appendChild(word);
         });
     {% endfor %}
