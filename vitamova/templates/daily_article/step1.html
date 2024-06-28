@@ -50,6 +50,21 @@
 
     //Create the submit_vocabulary function
     function submit_vocabulary() {
+        //Create a form element
+        var form = document.createElement("form");
+        form.setAttribute("method", "POST");
+        form.setAttribute("action", "/daily_article/step2/");
+        //Create a hidden input element
+        var hiddenField = document.createElement("input");
+        hiddenField.setAttribute("type", "hidden");
+        hiddenField.setAttribute("name", "vocabulary");
+        hiddenField.setAttribute("value", JSON.stringify(vocabulary));
+        //Append the hidden input element to the form
+        form.appendChild(hiddenField);
+        //Append the form to the body
+        document.body.appendChild(form);
+        //Submit the form
+        form.submit();
     }
 
 
@@ -65,9 +80,8 @@
             wordlist.appendChild(word);
             //Get the sentence value
             var sentence_value = document.getElementById("{{item.sentence}}").innerText;
-            //Alert the sentence value
-            alert(sentence_value);
-
+            //Add the word and sentence to the vocabulary list
+            vocabulary.push({word: word_value, sentence: sentence_value});
         });
     {% endfor %}
 

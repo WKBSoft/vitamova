@@ -26,5 +26,6 @@ urlpatterns = [
     path("logout/",authentication.logout,name='logout'),
     path("poetry/",views.poetry,name='poetry'),
     path("daily_article/",views.daily_article,name='daily_article'),
+    path("daily_article/step2/",views.daily_article_step2,name='daily_article_step2'),
     path("",views.home,name='home'),
 ]
