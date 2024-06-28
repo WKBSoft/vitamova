@@ -10,6 +10,7 @@ import hashlib
 from random import shuffle
 from pathlib import Path
 import boto3
+import re
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -55,6 +56,17 @@ def daily_article(request):
         #Make a list of tags for each paragraph named p1, p2, p3, etc.
         paragraphs = []
         for i in range(len(article["text"])):
+            #I want to add a span tag with ids s1, s2, s3, etc. for each sentence
+            #I want to add a span tag with ids w1, w2, w3, etc. for each word
+            words = article["text"][i].split()
+            for j in range(len(words)):
+                words[j] = "<span id='w"+str(j+1)+"'>"+words[j]+"</span>"
+            article["text"][i] = " ".join(words)
+            #Sentences are separated by periods, question marks, and exclamation points
+            sentences = re.split(r'\.|\?|\!',article["text"][i])
+            for j in range(len(sentences)):
+                sentences[j] = "<span id='s"+str(j+1)+"'>"+sentences[j]+"</span>"
+            article["text"][i] = " ".join(sentences)
             paragraphs.append({"tag":"p"+str(i+1),"text":article["text"][i]})
         #Return the article title and the text as a list of paragraphs
         return render(request,'daily_article.html',{"title":article["title"],"paragraphs":paragraphs,"header":logged_in_header()})
