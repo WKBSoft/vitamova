@@ -40,6 +40,60 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  // Function to wrap words in span elements
+  function wrapWordsInSpan(paragraph) {
+    const textContent = paragraph.innerText;
+    const words = textContent.split(/(\s+)/).filter(word => word.trim().length > 0);
+    paragraph.innerHTML = words.map(word => `<span class="word">${word}</span>`).join('');
+  }
+
+  // Function to get the complete sentence containing the clicked word
+  function getSentenceContainingWord(paragraphText, clickedWord) {
+    const sentenceRegex = /[^.!?]*[.!?]/g;
+    const sentences = paragraphText.match(sentenceRegex);
+    let clickedSentence = '';
+
+    sentences.forEach(sentence => {
+      if (sentence.includes(clickedWord)) {
+        clickedSentence = sentence.trim();
+      }
+    });
+
+    return clickedSentence;
+  }
+
+  // Initialize a variable to store clicked word and sentence
+  let clickedData = [];
+
+  // Get all paragraphs
+  const paragraphs = document.querySelectorAll('p[id^="paragraph"]');
+
+  // Process each paragraph
+  paragraphs.forEach(paragraph => {
+    // Wrap words in span elements
+    wrapWordsInSpan(paragraph);
+
+    // Add event listeners to each word
+    paragraph.querySelectorAll('.word').forEach(span => {
+      span.addEventListener('click', function(event) {
+        const clickedWord = event.target.innerText;
+        const paragraphText = paragraph.innerText;
+        const clickedSentence = getSentenceContainingWord(paragraphText, clickedWord);
+
+        // Store the clicked word and its sentence
+        clickedData.push({ word: clickedWord, sentence: clickedSentence });
+
+        console.log(clickedData); // For debugging
+
+        // Here you can prepare the XHR request with clickedData
+      });
+    });
+  });
+});
+</script>
     
 
   </body>
