@@ -11,6 +11,7 @@ from random import shuffle
 from pathlib import Path
 import boto3
 import re
+import json
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -84,7 +85,11 @@ def daily_article(request):
 def daily_article_step2(request):
     #Check if user is logged in
     if request.user.is_authenticated:
-        return render(request,'daily_article/step2.html',{"header":logged_in_header()})
+        #Get the post data called vocabulary
+        vocabulary = request.POST.get("vocabulary")
+        #The vocabulary is a string parsable into json
+        vocabulary = json.loads(vocabulary)
+        return render(request,'daily_article/step2.html',{"header":logged_in_header(),"vocabulary":vocabulary})
     else:
         return HttpResponseRedirect("/login/")
     
