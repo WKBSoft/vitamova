@@ -93,6 +93,14 @@ def daily_article_step2(request):
     else:
         return HttpResponseRedirect("/login/")
     
+def daily_article_step3(request):
+    #Check if user is logged in
+    if request.user.is_authenticated:
+        return render(request,'daily_article/step3.html',{"header":logged_in_header()})
+    else:
+        return HttpResponseRedirect("/login/")
+
+    
 def poetry(request):
     #Check if user is logged in
     if request.user.is_authenticated:
