@@ -36,7 +36,7 @@
         <div class="col">
             <div class="d-grid gap-2">
                 <br><br>
-                <button class="btn btn-primary" type="button">Review Vocabulary</button>
+                <button class="btn btn-primary" type="button" onclick="submit_vocabulary()">Review Vocabulary</button>
                 <br><br>
             </div>
         </div>
@@ -44,6 +44,14 @@
 </div>
 
 <script>
+
+    //Create a global variable to store the vocabulary words and sentences
+    var vocabulary = [];
+
+    //Create the submit_vocabulary function
+    function submit_vocabulary() {
+    }
+
 
     {% for item in w2s_map %}
         //Create an event listener for a span object with id "w1"
@@ -55,6 +63,11 @@
             var word = document.createElement("span");
             word.innerHTML = word_value + "<br>";
             wordlist.appendChild(word);
+            //Get the sentence value
+            var sentence_value = document.getElementById("{{item.sentence}}").innerText;
+            //Alert the sentence value
+            alert(sentence_value);
+
         });
     {% endfor %}
 
