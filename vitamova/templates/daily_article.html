@@ -35,6 +35,8 @@
             <div class="d-grid gap-2">
                 <br><br>
                 <button class="btn btn-primary" type="button">Review Vocabulary</button>
+                <br>
+                <div id="wordlist"></div>
                 <br><br>
             </div>
         </div>
@@ -46,8 +48,11 @@
     {% for item in w2s_map %}
         //Create an event listener for a span object with id "w1"
         document.getElementById("{{item.word}}").addEventListener("click", function() {
-            //Change the text color of the span object to red
-            document.getElementById("{{item.word}}").style.color = "red";
+            //Add the word to the word list
+            var wordlist = document.getElementById("wordlist");
+            var word = document.createElement("span");
+            word.innerHTML = "{{item.word}}";
+            wordlist.appendChild(word);
         });
     {% endfor %}
 
