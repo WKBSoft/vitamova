@@ -71,6 +71,15 @@ def daily_article(request):
                     words[k] = "<span id='w"+str(w_index)+"'>"+words[k]+"</span>"
                     w_index += 1
                 sentences[j] = " ".join(words)
+                #Re-add the punctuation
+                #If the sentence begins with an upside down exclamation point, add an exclamation point to the end
+                if sentences[j].startswith("¡"):
+                    sentences[j] += "!"
+                #If the sentence begins with an upside down question mark, add a question mark to the end
+                elif sentences[j].startswith("¿"):
+                    sentences[j] += "?"
+                else:
+                    sentences[j] += "."
                 sentences[j] = "<span id='s"+str(s_index)+"'>"+sentences[j]+"</span>"
                 s_index += 1
             article["text"][i] = " ".join(sentences)
