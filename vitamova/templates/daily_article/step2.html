@@ -25,10 +25,55 @@
     </div>
 </div>
 
+<form id="step3" hidden>
+    {% csrf_token %}
+</form>
+
 <script>
 
     //Create the global variable for vocabulary
     var vocabulary = {{vocabulary|safe}};
+
+    //Create the global variable for the current word
+    var current_word = 0;
+    //Create a global variable for the side of the flashcard
+    var side = 0;
+
+    //Create the function to display the flashcard
+    function display_flashcard() {
+        //Create a variable for the flashcard
+        var flashcard = document.getElementById("flashcard");
+        //Create a variable for the current word
+        var word = vocabulary[current_word];
+        if (side == 0) {
+            flashcard.innerHTML = "<h2>" + word.word + "</h2>";
+            side = 1;
+        } else {
+            flashcard.innerHTML = "<h2>" + word.sentence + "</h2>";
+            side = 0;
+        }
+    }
+
+    //Create an onclick event for the flashcard
+    document.getElementById("flashcard").onclick = function() {
+        //if the side is 0, change it to 1
+        if (side == 0) {
+            side = 1;
+        } else {
+            //if the side is 1, change it to 0 and move to the next word
+            side = 0;
+            current_word++;
+            if (current_word == vocabulary.length) {
+                //Create a form element
+                var form = document.getElementById("step3");
+                form.setAttribute("method", "POST");
+                form.setAttribute("action", "/daily_article_step3/");
+                //Submit the form
+                form.submit();
+            }
+        }
+        display_flashcard();
+    }
 
 </script>
     

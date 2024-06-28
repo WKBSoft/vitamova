@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  
+   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+{{ header|safe }}
+
+<div class="container">
+  
+    <div class="row">
+        <!--center the text-->
+        <div class="col">
+            <h1 class="text-center">Step 3: Re-Read the Article</h1>
+            <br><br>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2"></div>
+        <!--make the background here light grey-->
+        <div class="col-8" style="background-color: #f8f9fa;">
+            <h2>{{title}}</h2>
+            <!-- article contents here-->
+            {% for paragraph in paragraphs %}
+                <p id="{{paragraph.tag}}"">{{paragraph.text | safe}}</p>
+            {% endfor %}
+        </div>
+        <!--make the background dark grey and all the text off-white-->
+        <div class="col-2"></div>
+    </div>
+    <div class="row">
+        <!--center the text-->
+        <div class="col">
+            <div class="d-grid gap-2">
+                <br><br>
+                <button class="btn btn-primary" type="button" onclick="go_to_quiz()">Test Your Understanding</button>
+                <br><br>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form id="step4" hidden>
+    {% csrf_token %}
+</form>
+
+<script>
+
+    //Create the go_to_quiz function
+    function go_to_quiz() {
+        //Create a form element
+        var form = document.getElementById("step4");
+        form.setAttribute("method", "POST");
+        form.setAttribute("action", "/daily_article_step4/");
+        form.submit();
+    }
+
+</script>
+    
+
+  </body>
+</html>
+
