@@ -65,14 +65,14 @@ def daily_article(request):
             #Sentences are separated by periods, question marks, and exclamation points
             sentences = re.split(r'\.|\?|\!',article["text"][i])
             for j in range(len(sentences)):
-                sentences[j] = "<span id='s"+str(s_index)+"'>"+sentences[j]+"</span>"
-                s_index += 1
                 words = sentences[j].split(" ")
                 for k in range(len(words)):
-                    w2s_map["w"+str(w_index)] = "s"+str(s_index-1)
+                    w2s_map["w"+str(w_index)] = "s"+str(s_index)
                     words[k] = "<span id='w"+str(w_index)+"'>"+words[k]+"</span>"
                     w_index += 1
                 sentences[j] = " ".join(words)
+                sentences[j] = "<span id='s"+str(s_index)+"'>"+sentences[j]+"</span>"
+                s_index += 1
             article["text"][i] = " ".join(sentences)
             paragraphs.append({"tag":"p"+str(i+1),"text":article["text"][i]})
         #Return the article title and the text as a list of paragraphs
