@@ -87,9 +87,8 @@ def daily_article_step2(request):
     if request.user.is_authenticated:
         #Get the post data called vocabulary
         vocabulary = request.POST.get("vocabulary")
-        #Write the vocabulary to a file
-        with open(os.path.join(BASE_DIR,"vocabulary.txt"),"a") as f:
-            f.write(vocabulary)
+        #Parse the vocabulary from string to json
+        vocabulary = json.loads(vocabulary)
         return render(request,'daily_article/step2.html',{"header":logged_in_header(),"vocabulary":vocabulary})
     else:
         return HttpResponseRedirect("/login/")
