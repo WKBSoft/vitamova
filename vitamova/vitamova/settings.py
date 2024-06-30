@@ -13,6 +13,18 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import os
 
+#Initiate environment variables
+def source_profile(file_path):
+    with open(file_path) as f:
+        for line in f:
+            if line.startswith('export '):
+                # Strip out 'export ' and split by '=' to get the key and value
+                key, value = line[len('export '):].strip().split('=', 1)
+                # Use shlex to correctly handle different types of quotes
+                value = shlex.split(value)[0]
+                os.environ[key] = value
+source_profile(os.path.expanduser("~/.profile"))
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
