@@ -29,13 +29,19 @@
             <span id="wordlist"></span>
         </div>
     </div>
-    <div id="step2" class="row" hidden>
+    <div id="review_vocab" class="row" hidden>
         <div class="col-3"></div>
         <div class="col-6" style="background-color: #f8f9fa;" id="vocabulary_list">
             
         </div>
         <div class="col-3"></div>
     </div>
+    <div id="test_vocab" class="row" hidden>
+        <div class="col-3"></div>
+        <div class="col-6" style="background-color: #f8f9fa;" id="test_list">
+            
+        </div>
+        <div class="col-3"></div>
     <div class="row">
         <!--center the text-->
         <div class="col">
@@ -52,8 +58,18 @@
 
     //Create a global variable to store the vocabulary words and sentences
     var vocabulary = [];
+    var translated_vocabulary = [];
 
-    function vocabulary_list(my_list) {
+    function vocabulary_list() {
+        //Hide the article and show the vocabulary list
+        document.getElementById("article").hidden = true;
+        document.getElementById("review_vocab").hidden = false;
+        //Change the title of the page
+        document.getElementById("page_title").innerHTML = "Step 2: Review Vocabulary";
+        //Update button
+        document.getElementById("submit_button").innerHTML = "Complete Review!";
+        document.getElementById("submit_button").setAttribute("onclick", "test_vocabulary()");
+        var my_list = translated_vocabulary;
         //For each item in the list, create a span object
         for (var i = 0; i < my_list.length; i++) {
             var word = document.createElement("span");
@@ -69,6 +85,8 @@
             word.id = my_list[i].word;
             document.getElementById("vocabulary_list").appendChild(word);
         }
+        //Bring the user to the top of the page
+        window.scrollTo(0, 0);
     }
 
 
@@ -95,18 +113,36 @@
             success: function(response) {
                 //Log the response to the console
                 console.log(response);
-                vocabulary_list(response);
-                //Hide the article and show the vocabulary list
-                document.getElementById("article").hidden = true;
-                document.getElementById("step2").hidden = false;
-                //Change the title of the page
-                document.getElementById("page_title").innerHTML = "Step 2: Review Vocabulary";
-                document.getElementById("submit_button").innerHTML = "Complete Review!";
+                translated_vocabulary = response;
+                vocabulary_list();
             }
             //If there is an error, print the error to the console
         }).fail(function() {
             console.log("Error submitting vocabulary");
         });
+    }
+
+    function test_vocabulary() {
+        document.getElementById("review_vocab").hidden = true;
+        //Change the title of the page
+        document.getElementById("page_title").innerHTML = "Step 3: Test Vocabulary";
+        //Update button
+        document.getElementById("submit_button").innerHTML = "Review Again!";
+        document.getElementById("submit_button").setAttribute("onclick", "vocabulary_list()");
+        //For each item in the list write the word and put a text box below it
+        for (var i = 0; i < translated_vocabulary.length; i++) {
+            var word = document.createElement("span");
+            word.innerHTML = "<h5>" + translated_vocabulary[i].word + "</h5>";
+            var input = document.createElement("input");
+            input.type = "text";
+            input.id = "testword_" + i.toString();
+            input.placeholder = "Enter the translation here";
+            document.getElementById("test_list").appendChild(word);
+            document.getElementById("test_list").appendChild(input);
+        }
+        document.getElementById("test_vocab").hidden = false;
+        //Bring the user to the top of the page
+        window.scrollTo(0, 0);
     }
 
 
