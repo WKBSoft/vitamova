@@ -88,6 +88,7 @@ def submit_vocabulary(request):
     if request.user.is_authenticated:
         #Get the request json data
         jsondata = json.loads(request.body)
+        print(jsondata)
         #Prepare a ChatGPT request
         openai.api_key = os.environ['CHATGPT_KEY']
         base_text = """
