@@ -98,6 +98,7 @@ def submit_vocabulary(request):
             Translation(s):
             Example sentence:        
         """
+        print(len(base_text))
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
