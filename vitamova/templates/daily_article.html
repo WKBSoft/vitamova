@@ -29,6 +29,18 @@
             <span id="wordlist"></span>
         </div>
     </div>
+    <div id="article_reread" class="row" hidden>
+        <div class="col-2"></div>
+        <!--make the background here light grey-->
+        <div class="col-8" style="background-color: #f8f9fa;">
+            <h2>{{title}}</h2>
+            <!-- article contents here-->
+            {% for paragraph in paragraphs %}
+                <p id="{{paragraph.tag}}"">{{paragraph.text | safe}}</p>
+            {% endfor %}
+        </div>
+        <div class="col-2"></div>
+    </div>
     <div id="review_vocab" class="row" hidden>
         <div class="col-3"></div>
         <div class="col-6" style="background-color: #f8f9fa;" id="vocabulary_list">
@@ -185,6 +197,20 @@
     function reread() {
         //Change the title to Step 4: Reread the Article
         document.getElementById("page_title").innerHTML = "Step 4: Reread the Article";
+        //Hide the test_vocab div
+        document.getElementById("test_vocab").hidden = true;
+        //Show the article div
+        document.getElementById("article_reread").hidden = false;
+        //Update the button
+        document.getElementById("submit_button").innerHTML = "Proceed to test!";
+        document.getElementById("submit_button").setAttribute("onclick", "test_article()");
+    }
+
+    function test_article() {
+        //Hide the article_reread div
+        document.getElementById("article_reread").hidden = true;
+        //Change the title to Step 5: Test Yourself
+        document.getElementById("page_title").innerHTML = "Step 5: Test Reading Comprehension";
     }
 
 
