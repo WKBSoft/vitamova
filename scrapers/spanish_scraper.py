@@ -3,6 +3,7 @@ import re
 import boto3
 import os
 import datetime
+from openai import OpenAI
 
 import os
 
@@ -54,8 +55,57 @@ while start != -1:
             text.append(sub_text)
             start = end
 
-#Make a json object with the title and text
-article = {"title":title,"text":text}
+#Now we will use chatgpt to generate 5 multiple choice questions for the article
+base_text = """
+    Please provide 5 multiple choice questions for the following article. Please make sure that the questions are relevant to the article and that the correct answer is not too obvious. Please provide 4 answer choices for each question. Please do not write anything else and use exactly the below format so that I can parse this. 
+    
+    Example
+    Question: What is the capital of France?
+    Option 1: Washington
+    Option 2: London
+    Option 3: Paris
+    Option 4: Moscow
+    Correct answer: 3
+
+    Article:
+    """
+
+condition = True
+
+client = OpenAI(
+    # This is the default and can be omitted
+    api_key=os.environ.get('CHATGPT_KEY'),
+)
+
+response = client.chat.completions.create(
+    messages=[
+        {
+            "role": "user",
+            "content": base_text + title + "\n" + "\n".join(text),
+        }
+    ],
+    model="gpt-3.5-turbo",
+)
+print(response)
+response_text = response.choices[0].message.content
+response_lines = response_text.split("\n")
+
+quiz_questions = []
+
+for i in range(len(response_lines)):
+    if response_lines[i].startswith("Question:"):
+        question = response_lines[i][10:]
+        option1 = response_lines[i+1][9:]
+        option2 = response_lines[i+2][9:]
+        option3 = response_lines[i+3][9:]
+        option4 = response_lines[i+4][9:]
+        correct_answer = response_lines[i+5][15:]
+        quiz_questions.append({"question":question,"option1":option1,"option2":option2,"option3":option3,"option4":option4,"correct_answer":correct_answer})
+        
+    
+
+#Make a json object with the title, text, and questions
+article = {"title":title,"text":text,"questions":quiz_questions}
 #Create S3 Session
 #The AWS access key is an environment variable called AWS_ACCESS 
 #The AWS secret key is an environment variable called AWS_SECRET
