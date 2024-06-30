@@ -69,10 +69,8 @@
             success: function(response) {
                 //Log the response to the console
                 console.log(response);
-                //The response is a json object, store this in the variable data
-                var data = JSON.parse(response);
                 //If the response is successful, alert "success"
-                if (data["test"] == "success") {
+                if (response["test"] == "success") {
                     //Redirect to the next page
                     alert("success");
                     //Change the page title to "Step 2: Review Vocabulary"
