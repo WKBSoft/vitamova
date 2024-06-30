@@ -64,7 +64,7 @@
             //Set a header
             headers: {
                 "X-Requested-With": "XMLHttpRequest",
-                "X-CSRFToken": getCookie("csrftoken"),
+                "X-CSRFToken": "{{ csrf_token }}"
             },
             success: function(response) {
                 //The response is a json object, store this in the variable data
