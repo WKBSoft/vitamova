@@ -118,7 +118,7 @@ def submit_vocabulary(request):
                 )
                 print(response)
                 #Parse the response
-                response_text += "something"
+                response_text += response["choices"][0]["message"]["content"]
                 #Reset the added text
                 added_text = ""
 
