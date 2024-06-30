@@ -29,9 +29,9 @@
             <span id="wordlist"></span>
         </div>
     </div>
-    <div id="flashcards" class="row" hidden>
+    <div id="step2" class="row" hidden>
         <div class="col-3"></div>
-        <div class="col-6" style="background-color: #f8f9fa;" id="flashcard">
+        <div class="col-6" style="background-color: #f8f9fa;" id="vocabulary_list">
             
         </div>
         <div class="col-3"></div>
@@ -52,6 +52,23 @@
 
     //Create a global variable to store the vocabulary words and sentences
     var vocabulary = [];
+
+    function vocabulary_list(my_list) {
+        //For each item in the list, create a span object
+        for (var i = 0; i < my_list.length; i++) {
+            var word = document.createElement("span");
+            //The elements to add are word, base, translation, and example
+            word.innerHTML = "<p><h5>Word: " + my_list[i].word + "</h5></p>"
+            word.innerHTML += "<p>Base Form: " + my_list[i].base + "</p>"
+            word.innerHTML += "<p>Translation: " + my_list[i].translation + "</p>"
+            word.innerHTML += "<p>Example: " + my_list[i].example + "</p>"
+            //Now add a break
+            word.innerHTML += "<br>"
+            word.id = my_list[i].word;
+            document.getElementById("vocabulary_list").appendChild(word);
+        }
+    }
+
 
     //Create the submit_vocabulary function
     function submit_vocabulary() {
@@ -76,6 +93,11 @@
             success: function(response) {
                 //Log the response to the console
                 console.log(response);
+                vocabulary_list(response);
+                //Hide the article and show the vocabulary list
+                document.getElementById("article").hidden = true;
+                document.getElementById("step2").hidden = false;
+                document.getElementById("submit_button").innerHTML = "<span class=\"spinner-border spinner-border-sm\" role=\"status\" aria-hidden=\"true\"></span>Loading...";
             }
             //If there is an error, print the error to the console
         }).fail(function() {
