@@ -62,6 +62,8 @@
             word.innerHTML += "<p>Base Form: " + my_list[i].base + "</p>"
             word.innerHTML += "<p>Translation: " + my_list[i].translation + "</p>"
             word.innerHTML += "<p>Example: " + my_list[i].example + "</p>"
+            //Add example_translation
+            word.innerHTML += "<p>Example Translation: " + my_list[i].example_translation + "</p>"
             //Now add a break
             word.innerHTML += "<br>"
             word.id = my_list[i].word;
@@ -73,7 +75,7 @@
     //Create the submit_vocabulary function
     function submit_vocabulary() {
         //First make the button load
-        document.getElementById("submit_button").innerHTML = "Complete Review";
+        document.getElementById("submit_button").innerHTML = "<span class=\"spinner-border spinner-border-sm\" role=\"status\" aria-hidden=\"true\"></span>Loading...";
 
         //Send the vocabulary list to the server with an AJAX request
         //The url is /submit_vocabulary
@@ -97,7 +99,9 @@
                 //Hide the article and show the vocabulary list
                 document.getElementById("article").hidden = true;
                 document.getElementById("step2").hidden = false;
-                document.getElementById("submit_button").innerHTML = "<span class=\"spinner-border spinner-border-sm\" role=\"status\" aria-hidden=\"true\"></span>Loading...";
+                //Change the title of the page
+                document.getElementById("page_title").innerHTML = "Step 2: Review Vocabulary";
+                document.getElementById("submit_button").innerHTML = "Complete Review!";
             }
             //If there is an error, print the error to the console
         }).fail(function() {

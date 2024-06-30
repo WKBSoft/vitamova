@@ -93,7 +93,8 @@ def submit_vocabulary(request):
             Word: 
             Base form: 
             Translation:
-            Example sentence:        
+            Example sentence:
+            Example translation:        
         """
         added_text = ""
         response_text = ""
@@ -135,6 +136,8 @@ def submit_vocabulary(request):
                 word_dict["translation"] = response_lines[i][13:].strip()
             elif response_lines[i][0:17] == "Example sentence:":
                 word_dict["example"] = response_lines[i][17:].strip()
+            elif response_lines[i][0:20] == "Example translation:":
+                word_dict["example_translation"] = response_lines[i][20:].strip()
                 words.append(word_dict)
         return HttpResponse(json.dumps(words), content_type="application/json")
     else:
