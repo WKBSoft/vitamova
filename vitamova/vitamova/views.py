@@ -107,14 +107,14 @@ def submit_vocabulary(request):
                 response = openai.ChatCompletion.create(
                     model="gpt-3.5-turbo",
                     messages=[
-                        {"role": "system", "content": base_text+jsondata["text"]}
+                        {"role": "system", "content": base_text+added_text}
                     ]
                 )
                 #Parse the response
                 response_text += response.choices[0].message["content"]
                 #Reset the added text
                 added_text = ""
-                
+
         #Split the response by line
         response_lines = response_text.split("\n")
         #Create a dictionary to hold the words and their data
