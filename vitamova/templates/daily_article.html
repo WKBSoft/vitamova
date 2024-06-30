@@ -133,13 +133,26 @@
         //For each item in the list write the word and put a text box below it
         for (var i = 0; i < translated_vocabulary.length; i++) {
             var word = document.createElement("span");
-            word.innerHTML = "<h5>" + translated_vocabulary[i].word + "</h5>";
+            word.innerHTML = "<h5>" + translated_vocabulary[i].base + "</h5>";
             var input = document.createElement("input");
             input.type = "text";
             input.id = "testword_" + i.toString();
             input.placeholder = "Enter the translation here";
             document.getElementById("test_list").appendChild(word);
             document.getElementById("test_list").appendChild(input);
+            //Add a listener to the input
+            input.addEventListener("input", function() {
+                //Get the value of the input
+                var value = document.getElementById(this.id).value;
+                //Get the index of the input
+                var index = parseInt(this.id.split("_")[1]);
+                //If the value is equal to the translation, change the color to green
+                if (value == translated_vocabulary[index].translation) {
+                    document.getElementById(this.id).style.color = "green";
+                } else {
+                    document.getElementById(this.id).style.color = "red";
+                }
+            });
         }
         document.getElementById("test_vocab").hidden = false;
         //Bring the user to the top of the page
