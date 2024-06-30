@@ -92,7 +92,7 @@ def submit_vocabulary(request):
             Please provide your responses in the 4 line format below. Please do not write anything else so that I can parse this. I am giving you Spanishs word and the sentences they were used in. Please rewrite the word, tell me its base form, its translation in English, and an example sentence which uses the same meaning of the word but in at least a slightly different context. If multiple translations of the word are relevant to the sentence, you can provide the multiple translations separated by a comma. Please do not put more than 3. If AND ONLY IF the word is a verb is used reflexively, please treat the base form as its reflexive form and make the translation for the reflexive verb. Please seperate your responses per word by a single line.
             Word: 
             Base form: 
-            Translation(s):
+            Translation:
             Example sentence:        
         """
         added_text = ""
@@ -131,7 +131,7 @@ def submit_vocabulary(request):
                 word_dict = {"word": response_lines[i][6:].strip()}
             elif response_lines[i][0:11] == "Base form: ":
                 word_dict["base"] = response_lines[i][11:].strip()
-            elif response_lines[i][0:13] == "Translation(s):":
+            elif response_lines[i][0:13] == "Translation: ":
                 word_dict["translation"] = response_lines[i][13:].strip()
             elif response_lines[i][0:17] == "Example sentence:":
                 word_dict["example"] = response_lines[i][17:].strip()
