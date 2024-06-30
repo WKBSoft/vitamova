@@ -57,10 +57,15 @@
         //The method is POST
         //The success function is the function below
         $.ajax({
-            url: "/submit_vocabulary",
+            url: "/submit_vocabulary/",
             data: JSON.stringify(vocabulary),
             type: "POST",
             contentType: "application/json",
+            //Set a header
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
             success: function(response) {
                 //The response is a json object, store this in the variable data
                 var data = JSON.parse(response);
