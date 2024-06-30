@@ -100,7 +100,7 @@ def submit_vocabulary(request):
         """
         added_text = ""
         response_text = ""
-        for i in range(len(jsondata["text"])):
+        for i in range(len(jsondata)):
             added_text += "Word: "+jsondata[i]["word"]+"\n"
             added_text += "Sentence: "+jsondata[i]["sentence"]+"\n"
             if len(base_text) + len(added_text) > 10000:
@@ -112,10 +112,12 @@ def submit_vocabulary(request):
                 )
                 #Parse the response
                 response_text += response.choices[0].message["content"]
+                #Reset the added text
+                added_text = ""
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": base_text+jsondata["text"]}
+                {"role": "system", "content": base_text+added_text}
             ]
         )
         #Parse the response
