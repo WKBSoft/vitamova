@@ -78,25 +78,7 @@ def daily_article(request):
             article["text"][i] = " ".join(sentences)
             paragraphs.append({"tag":"p"+str(i+1),"text":article["text"][i]})
         #Return the article title and the text as a list of paragraphs
-        return render(request,'daily_article/step1.html',{"title":article["title"],"paragraphs":paragraphs,"header":logged_in_header(),"w2s_map":w2s_map})
-    else:
-        return HttpResponseRedirect("/login/")
-    
-def daily_article_step2(request):
-    #Check if user is logged in
-    if request.user.is_authenticated:
-        #Get the post data called vocabulary
-        vocabulary = request.POST.get("vocabulary")
-        #Parse the vocabulary from string to json
-        vocabulary = json.loads(vocabulary)
-        return render(request,'daily_article/step2.html',{"header":logged_in_header(),"vocabulary":vocabulary})
-    else:
-        return HttpResponseRedirect("/login/")
-    
-def daily_article_step3(request):
-    #Check if user is logged in
-    if request.user.is_authenticated:
-        return render(request,'daily_article/step3.html',{"header":logged_in_header()})
+        return render(request,'daily_article.html',{"title":article["title"],"paragraphs":paragraphs,"header":logged_in_header(),"w2s_map":w2s_map})
     else:
         return HttpResponseRedirect("/login/")
 
