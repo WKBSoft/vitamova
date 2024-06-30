@@ -63,7 +63,7 @@
         <div class="col-3"></div>
         <div class="col-6" style="background-color: #f8f9fa;" id="review_questions">
             {% for question in questions %}
-                <p><h4>{{question.text}}</h4></p>
+                <p><h4>{{question.question}}</h4></p>
                 <div class="form-check">
                     <input class="form-check-input" type="radio" id="option1_question1" value="1">
                     <label class="form-check-label" for="question1">
@@ -246,6 +246,46 @@
         document.getElementById("page_title").innerHTML = "Step 5: Test Reading Comprehension";
         //Show the test_article div
         document.getElementById("test_article").hidden = false;
+        //Update the button
+        document.getElementById("submit_button").innerHTML = "Submit Answers";
+        document.getElementById("submit_button").setAttribute("onclick", "submit_answers()");
+    }
+
+    function submit_answers() {
+        //List all the correct answers
+        correct_answers = [];
+        {% for question in questions %}
+            correct_answers.push("{{question.correct_answer}}");
+        {% endfor %}
+        //Convert the correct answers to integers
+        for (var i = 0; i < correct_answers.length; i++) {
+            correct_answers[i] = parseInt(correct_answers[i]);
+        }
+        //Get the selected answers
+        var answers = document.getElementById("review_questions")
+        var selected_answers = [];
+        for (var i = 0; i < answers.children.length; i++) {
+            var children = answers.children[i].children;
+            for (var j = 0; j < children.length; j++) {
+                if (children[j].tagName == "INPUT") {
+                    if (children[j].checked) {
+                        selected_answers.push(parseInt(children[j].value));
+                    }
+                }
+            }
+        }
+        //Iterate through the selected answers and check if they are correct
+        for (var i = 0; i < selected_answers.length; i++) {
+            if (selected_answers[i] != correct_answers[i]) {
+                //If the answer is incorrect, change the color to red
+                document.getElementById("option" + selected_answers[i] + "_question" + (i + 1).toString()).nextElementSibling.style.color = "red";
+                //Change the color of the correct answer to green
+                document.getElementById("option" + correct_answers[i] + "_question" + (i + 1).toString()).nextElementSibling.style.color = "green";
+            } else {
+                //If the answer is correct, change the color to green
+                document.getElementById("option" + selected_answers[i] + "_question" + (i + 1).toString()).nextElementSibling.style.color = "green";
+            }
+        }
     }
 
 
