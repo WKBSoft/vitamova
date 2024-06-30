@@ -12,7 +12,7 @@ from pathlib import Path
 import boto3
 import re
 import json
-import openai
+from openai import OpenAI
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -88,9 +88,6 @@ def submit_vocabulary(request):
     if request.user.is_authenticated:
         #Get the request json data
         jsondata = json.loads(request.body)
-        print(jsondata)
-        #Prepare a ChatGPT request
-        openai.api_key = os.environ['CHATGPT_KEY']
         base_text = """
             Please provide your responses in the 4 line format below. Please do not write anything else so that I can parse this. I am giving you Spanishs word and the sentences they were used in. Please rewrite the word, tell me its base form, its translation in English, and an example sentence which uses the same meaning of the word but in at least a slightly different context. If multiple translations of the word are relevant to the sentence, you can provide the multiple translations separated by a comma. Please do not put more than 3. If AND ONLY IF the word is a verb is used reflexively, please treat the base form as its reflexive form and make the translation for the reflexive verb. Please seperate your responses per word by a single line.
             Word: 
@@ -105,12 +102,19 @@ def submit_vocabulary(request):
             added_text += "Sentence: "+jsondata[i]["sentence"]+"\n"
             if len(base_text) + len(added_text) > 10000 or i == len(jsondata)-1:
                 # Use the new ChatCompletion.create method
-                response = openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo",  # or another model you are using
+                client = OpenAI(
+                    # This is the default and can be omitted
+                    api_key=os.environ.get('CHATGPT_KEY'),
+                )
+
+                response = client.chat.completions.create(
                     messages=[
-                        {"role": "user", "content": base_text + added_text}
+                        {
+                            "role": "user",
+                            "content": base_text+added_text,
+                        }
                     ],
-                    max_tokens=1000
+                    model="gpt-3.5-turbo",
                 )
                 #Parse the response
                 response_text += response.choices[0].message["content"]
