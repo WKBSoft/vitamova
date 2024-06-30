@@ -20,8 +20,11 @@ def source_profile(file_path):
             if line.startswith('export '):
                 # Strip out 'export ' and split by '=' to get the key and value
                 key, value = line[len('export '):].strip().split('=', 1)
-                # Use shlex to correctly handle different types of quotes
-                value = shlex.split(value)[0]
+                # Remove surrounding quotes from value if they exist
+                if value.startswith('"') and value.endswith('"'):
+                    value = value[1:-1]
+                elif value.startswith("'") and value.endswith("'"):
+                    value = value[1:-1]
                 os.environ[key] = value
 source_profile(os.path.expanduser("~/.profile"))
 
