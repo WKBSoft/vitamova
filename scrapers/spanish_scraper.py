@@ -15,6 +15,8 @@ def source_profile(file_path):
                 # Remove surrounding quotes from value if they exist
                 if value.startswith('"') and value.endswith('"'):
                     value = value[1:-1]
+                elif value.startswith("'") and value.endswith("'"):
+                    value = value[1:-1]
                 os.environ[key] = value
 
 # Use the function to source the profile
