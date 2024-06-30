@@ -12,6 +12,7 @@ from pathlib import Path
 import boto3
 import re
 import json
+import openai
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -85,7 +86,40 @@ def daily_article(request):
 def submit_vocabulary(request):
     #Check if user is logged in
     if request.user.is_authenticated:
-        jsondata = {"test":"success"}  
+        #Get the request json data
+        jsondata = json.loads(request.body)
+        #Prepare a ChatGPT request
+        openai.api_key = os.environ['CHATGPT_KEY']
+        base_text = """
+            Please provide your responses in the 4 line format below. Please do not write anything else so that I can parse this. I am giving you Spanishs word and the sentences they were used in. Please rewrite the word, tell me its base form, its translation in English, and an example sentence which uses the same meaning of the word but in at least a slightly different context. If multiple translations of the word are relevant to the sentence, you can provide the multiple translations separated by a comma. Please do not put more than 3. If AND ONLY IF the word is a verb is used reflexively, please treat the base form as its reflexive form and make the translation for the reflexive verb. Please seperate your responses per word by a single line.
+            Word: 
+            Base form: 
+            Translation(s):
+            Example sentence:        
+        """
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": base_text+jsondata["text"]}
+            ]
+        )
+        #Parse the response
+        response_text = response.choices[0].message["content"]
+        #Split the response by line
+        response_lines = response_text.split("\n")
+        #Create a dictionary to hold the words and their data
+        words = {}
+        word_key = 0
+        for i in range(len(response_lines)):
+            if response_lines[i][0:6] == "Word: ":
+                word_key += 1
+                words[word_key] = {"word": response_lines[i][6:].strip()}
+            elif response_lines[i][0:11] == "Base form: ":
+                words[word_key]["base"] = response_lines[i][11:].strip()
+            elif response_lines[i][0:13] == "Translation(s):":
+                words[word_key]["translations"] = response_lines[i][13:].strip().split(",")
+            elif response_lines[i][0:17] == "Example sentence:":
+                words[word_key]["example"] = response_lines[i][17:].strip()
         return HttpResponse(json.dumps(jsondata), content_type="application/json")
     else:
         return HttpResponseRedirect("/login/")

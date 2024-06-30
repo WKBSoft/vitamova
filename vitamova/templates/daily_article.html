@@ -12,7 +12,7 @@
             <br><br>
         </div>
     </div>
-    <div class="row">
+    <div id="article" class="row">
         <!--make the background here light grey-->
         <div class="col-8" style="background-color: #f8f9fa;">
             <h2>{{title}}</h2>
@@ -28,6 +28,13 @@
             <br>
             <span id="wordlist"></span>
         </div>
+    </div>
+    <div id="flashcards" class="row" hidden>
+        <div class="col-3"></div>
+        <div class="col-6" style="background-color: #f8f9fa;" id="flashcard">
+            
+        </div>
+        <div class="col-3"></div>
     </div>
     <div class="row">
         <!--center the text-->
@@ -69,16 +76,6 @@
             success: function(response) {
                 //Log the response to the console
                 console.log(response);
-                //If the response is successful, alert "success"
-                if (response["test"] == "success") {
-                    //Redirect to the next page
-                    alert("success");
-                    //Change the page title to "Step 2: Review Vocabulary"
-                    document.getElementById("page_title").innerHTML = "Step 2: Review Vocabulary";
-                } else {
-                    //If the response is not successful, alert "failure"
-                    alert("failure");
-                }
             }
             //If there is an error, print the error to the console
         }).fail(function() {
