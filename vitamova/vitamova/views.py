@@ -116,8 +116,9 @@ def submit_vocabulary(request):
                     ],
                     model="gpt-3.5-turbo",
                 )
+                print(response)
                 #Parse the response
-                response_text += response.choices[0].message["content"]
+                response_text += "something"
                 #Reset the added text
                 added_text = ""
 
