@@ -82,6 +82,13 @@ def daily_article(request):
     else:
         return HttpResponseRedirect("/login/")
 
+def submit_vocabulary(request):
+    #Check if user is logged in
+    if request.user.is_authenticated:
+        jsondata = {"test":"success"}  
+        return HttpResponse(json.dumps(jsondata), content_type="application/json")
+    else:
+        return HttpResponseRedirect("/login/")
     
 def poetry(request):
     #Check if user is logged in

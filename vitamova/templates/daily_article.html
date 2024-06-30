@@ -10,7 +10,7 @@
     <div class="row">
         <!--center the text-->
         <div class="col">
-            <h1 class="text-center">Step 1: Read the Article</h1>
+            <h1 class="text-center" id="page_title">Step 1: Read the Article</h1>
             <br><br>
         </div>
     </div>
@@ -36,16 +36,12 @@
         <div class="col">
             <div class="d-grid gap-2">
                 <br><br>
-                <button class="btn btn-primary" type="button" onclick="submit_vocabulary()">Review Vocabulary</button>
+                <button class="btn btn-primary" type="button" id="submit_button" onclick="submit_vocabulary()">Review Vocabulary</button>
                 <br><br>
             </div>
         </div>
     </div>
 </div>
-
-<form id="step2" hidden>
-    {% csrf_token %}
-</form>
 
 <script>
 
@@ -54,22 +50,36 @@
 
     //Create the submit_vocabulary function
     function submit_vocabulary() {
-        //Create a form element
-        var form = document.getElementById("step2");
-        form.setAttribute("method", "POST");
-        form.setAttribute("action", "/daily_article_step2/");
-        //Create a hidden input element
-        var hiddenField = document.createElement("input");
-        hiddenField.setAttribute("type", "hidden");
-        hiddenField.setAttribute("name", "vocabulary");
-        hiddenField.setAttribute("value", JSON.stringify(vocabulary));
-        console.log(JSON.stringify(vocabulary));
-        //Append the hidden input element to the form
-        form.appendChild(hiddenField);
-        //Append the form to the body
-        document.body.appendChild(form);
-        //Submit the form
-        form.submit();
+        //First make the button load
+        document.getElementById("page_title").innerHTML = "<span class=\"spinner-border spinner-border-sm\" role=\"status\" aria-hidden=\"true\"></span>Loading..."";
+
+        //Send the vocabulary list to the server with an AJAX request
+        //The url is /submit_vocabulary
+        //The data is the vocabulary list
+        //The method is POST
+        //The success function is the function below
+        $.ajax({
+            url: "/submit_vocabulary",
+            data: JSON.stringify(vocabulary),
+            type: "POST",
+            contentType: "application/json",
+            success: function(response) {
+                //The response is a json object, store this in the variable data
+                var data = JSON.parse(response);
+                //If the response is successful, alert "success"
+                if (data["test"] == "success") {
+                    //Redirect to the next page
+                    alert("success");
+                    //Change the page title to "Step 2: Review Vocabulary"
+                    document.getElementById("page_title").innerHTML = "Step 2: Review Vocabulary";
+                } else {
+                    //If the response is not successful, alert "failure"
+                    alert("failure");
+            }
+            //If there is an error, print the error to the console
+        }).fail(function() {
+            console.log("Error submitting vocabulary");
+        });
     }
 
 
