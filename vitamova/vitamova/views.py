@@ -125,19 +125,18 @@ def submit_vocabulary(request):
         #Split the response by line
         response_lines = response_text.split("\n")
         #Create a dictionary to hold the words and their data
-        words = {}
-        word_key = 0
+        words = []
         for i in range(len(response_lines)):
             if response_lines[i][0:6] == "Word: ":
-                word_key += 1
-                words[word_key] = {"word": response_lines[i][6:].strip()}
+                word_dict = {"word": response_lines[i][6:].strip()}
             elif response_lines[i][0:11] == "Base form: ":
-                words[word_key]["base"] = response_lines[i][11:].strip()
+                word_dict["base"] = response_lines[i][11:].strip()
             elif response_lines[i][0:13] == "Translation(s):":
-                words[word_key]["translations"] = response_lines[i][13:].strip().split(",")
+                word_dict["translation"] = response_lines[i][13:].strip()
             elif response_lines[i][0:17] == "Example sentence:":
-                words[word_key]["example"] = response_lines[i][17:].strip()
-        return HttpResponse(json.dumps(jsondata), content_type="application/json")
+                word_dict["example"] = response_lines[i][17:].strip()
+                words.append(word_dict)
+        return HttpResponse(json.dumps(words), content_type="application/json")
     else:
         return HttpResponseRedirect("/login/")
     
