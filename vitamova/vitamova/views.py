@@ -78,6 +78,9 @@ def daily_article(request):
                 s_index += 1
             article["text"][i] = " ".join(sentences)
             paragraphs.append({"tag":"p"+str(i+1),"text":article["text"][i]})
+        #Iterate through the questions and add an index to each question
+        for i in range(len(article["questions"])):
+            article["questions"][i]["index"] = i+1
         #Return the article title and the text as a list of paragraphs
         return render(request,'daily_article.html',{"title":article["title"],"paragraphs":paragraphs,"header":logged_in_header(),"w2s_map":w2s_map, "questions":article["questions"]})
     else:
