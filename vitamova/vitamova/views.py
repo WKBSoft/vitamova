@@ -104,9 +104,12 @@ def submit_vocabulary(request):
             added_text += "Word: "+jsondata[i]["word"]+"\n"
             added_text += "Sentence: "+jsondata[i]["sentence"]+"\n"
             if len(base_text) + len(added_text) > 10000 or i == len(jsondata)-1:
-                response = openai.Completion.create(
-                    engine="text-davinci-003",
-                    prompt=base_text+added_text,
+                # Use the new ChatCompletion.create method
+                response = openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo",  # or another model you are using
+                    messages=[
+                        {"role": "user", "content": base_text + added_text}
+                    ],
                     max_tokens=1000
                 )
                 #Parse the response
