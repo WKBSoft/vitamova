@@ -98,7 +98,20 @@ def submit_vocabulary(request):
             Translation(s):
             Example sentence:        
         """
-        print(len(base_text))
+        added_text = ""
+        response_text = ""
+        for i in range(len(jsondata["text"])):
+            added_text += "Word: "+jsondata[i]["word"]+"\n"
+            added_text += "Sentence: "+jsondata[i]["sentence"]+"\n"
+            if len(base_text) + len(added_text) > 10000:
+                response = openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": base_text+jsondata["text"]}
+                    ]
+                )
+                #Parse the response
+                response_text += response.choices[0].message["content"]
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -106,7 +119,7 @@ def submit_vocabulary(request):
             ]
         )
         #Parse the response
-        response_text = response.choices[0].message["content"]
+        response_text += response.choices[0].message["content"]
         #Split the response by line
         response_lines = response_text.split("\n")
         #Create a dictionary to hold the words and their data
