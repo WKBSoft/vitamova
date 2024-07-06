@@ -327,7 +327,7 @@
         //Create an XHR request to submit the score to the url /add_points/
         $.ajax({
             url: "/add_points/",
-            data: JSON.stringify({points: score}),
+            data: JSON.stringify({points: score+10}),
             type: "POST",
             contentType: "application/json",
             headers: {
@@ -343,7 +343,7 @@
         });
 
         //You now have a total of 
-        modal_body += "<p>You now have a total of " + total_points.toString() + " points.</p><br>";
+        modal_body += "<p>You now have a total of " + total_points + " points.</p><br>";
 
         //Now the thing about going back to the home page
         modal_body += "<p>Click the button below to return to the home page.</p>";
