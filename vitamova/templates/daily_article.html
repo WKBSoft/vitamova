@@ -337,25 +337,24 @@
             success: function(response) {
                 console.log(response);
                 total_points = response;
+                //You now have a total of 
+                modal_body += "<p>You now have a total of " + total_points + " points.</p><br>";
+
+                //Now the thing about going back to the home page
+                modal_body += "<p>Click the button below to return to the home page.</p>";
+                document.getElementById("modal-body").innerHTML = modal_body;
+                //Show the modal
+                var modal = new bootstrap.Modal(document.getElementById('completionModal'), {
+                    keyboard: false
+                });
+                modal.show();
+                //Change the button to return home
+                document.getElementById("submit_button").innerHTML = "Return Home";
+                document.getElementById("submit_button").setAttribute("onclick", "window.location.href = '/'");
             }
         }).fail(function() {
             console.log("Error submitting points");
         });
-
-        //You now have a total of 
-        modal_body += "<p>You now have a total of " + total_points + " points.</p><br>";
-
-        //Now the thing about going back to the home page
-        modal_body += "<p>Click the button below to return to the home page.</p>";
-        document.getElementById("modal-body").innerHTML = modal_body;
-        //Show the modal
-        var modal = new bootstrap.Modal(document.getElementById('completionModal'), {
-            keyboard: false
-        });
-        modal.show();
-        //Change the button to return home
-        document.getElementById("submit_button").innerHTML = "Return Home";
-        document.getElementById("submit_button").setAttribute("onclick", "window.location.href = '/'");
     }
 
 
