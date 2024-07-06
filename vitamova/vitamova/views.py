@@ -97,7 +97,8 @@ def add_points(request):
     if not hasattr(user, 'points'):
         user.points = 0
     #Get the number of points to add from the request
-    points = int(request.GET.get("points"))
+    #The request has JSON data with a key called points
+    points = int(json.loads(request.body)["points"])
     #Add the points to the user's points
     user.points += points
     #Save the user object
