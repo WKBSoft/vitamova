@@ -104,7 +104,8 @@ def add_points(request):
     #Save the user object
     user.save()
     #Return the user's points
-    return HttpResponse(user.points)        
+    #Content type is text
+    return HttpResponse(user.points, content_type="text/plain")      
 
 def submit_vocabulary(request):
     #Check if user is logged in
