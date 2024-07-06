@@ -104,6 +104,30 @@
     </div>
 </div>
 
+<!-- Button trigger modal -->
+<button id="completionModalButton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CompletionModal" hidden>
+    Launch demo modal
+  </button>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="completionModal" tabindex="-1" aria-labelledby="completionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="completionModalLabel">Congratulations!</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="modal-body">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 <script>
 
     //Create a global variable to store the vocabulary words and sentences
@@ -286,6 +310,27 @@
                 document.getElementById("option" + selected_answers[i] + "_question" + (i + 1).toString()).nextElementSibling.style.color = "green";
             }
         }
+        //Update the modal
+        var modal_body = "<p>You have completed the exercise!</p>";
+        modal_body += "You received 10 points for completing the exercise and ";
+        //You get 2 points for each correct answer
+        var score = 0;
+        for (var i = 0; i < selected_answers.length; i++) {
+            if (selected_answers[i] == correct_answers[i]) {
+                score += 2;
+            }
+        }
+        modal_body += score.toString() + " points for answering ";
+        //Just divide the score by 2 to get the number of correct answers
+        modal_body += (score / 2).toString() + " questions correctly.";
+        //Now the thing about going back to the home page
+        modal_body += "<p>Click the button below to return to the home page.</p>";
+        document.getElementById("modal-body").innerHTML = modal_body;
+        //Show the modal
+        var modal = new bootstrap.Modal(document.getElementById('completionModal'), {
+            keyboard: false
+        });
+        modal.show();
     }
 
 
