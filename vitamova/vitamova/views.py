@@ -85,6 +85,25 @@ def daily_article(request):
         return render(request,'daily_article.html',{"title":article["title"],"paragraphs":paragraphs,"header":logged_in_header(),"w2s_map":w2s_map, "questions":article["questions"]})
     else:
         return HttpResponseRedirect("/login/")
+    
+def add_points(request):
+    #We need to extend the user model to include a points field
+    #If the user is not logged in, return a 403 error
+    if not request.user.is_authenticated:
+        return HttpResponse(status=403)
+    #Get the user object
+    user = request.user
+    #If the user has no points, set the points to 0
+    if not hasattr(user, 'points'):
+        user.points = 0
+    #Get the number of points to add from the request
+    points = int(request.GET.get("points"))
+    #Add the points to the user's points
+    user.points += points
+    #Save the user object
+    user.save()
+    #Return the user's points
+    return HttpResponse(user.points)        
 
 def submit_vocabulary(request):
     #Check if user is logged in

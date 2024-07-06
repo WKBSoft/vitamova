@@ -27,5 +27,6 @@ urlpatterns = [
     path("poetry/",views.poetry,name='poetry'),
     path("daily_article/",views.daily_article,name='daily_article'),
     path("submit_vocabulary/",views.submit_vocabulary,name='submit_vocabulary'),
+    path("add_points/",views.add_points,name='add_points'),
     path("",views.home,name='home'),
 ]

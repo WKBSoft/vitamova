@@ -115,14 +115,12 @@
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="completionModalLabel">Congratulations!</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body" id="modal-body">
           ...
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+          <a type="button" class="btn btn-primary" href="/">Return Home</a>
         </div>
       </div>
     </div>
@@ -311,8 +309,8 @@
             }
         }
         //Update the modal
-        var modal_body = "<p>You have completed the exercise!</p>";
-        modal_body += "You received 10 points for completing the exercise and ";
+        var modal_body = "<p>You have completed the exercise!</p><br>";
+        modal_body += "<p>You received 10 points for completing the exercise and ";
         //You get 2 points for each correct answer
         var score = 0;
         for (var i = 0; i < selected_answers.length; i++) {
@@ -322,7 +320,31 @@
         }
         modal_body += score.toString() + " points for answering ";
         //Just divide the score by 2 to get the number of correct answers
-        modal_body += (score / 2).toString() + " questions correctly.";
+        modal_body += (score / 2).toString() + " questions correctly.</p><br>";
+        //var to store the total number of points
+        var total_points;
+
+        //Create an XHR request to submit the score to the url /add_points/
+        $.ajax({
+            url: "/add_points/",
+            data: JSON.stringify({points: score}),
+            type: "POST",
+            contentType: "application/json",
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            success: function(response) {
+                console.log(response);
+                total_points = response;
+            }
+        }).fail(function() {
+            console.log("Error submitting points");
+        });
+
+        //You now have a total of 
+        modal_body += "<p>You now have a total of " + total_points.toString() + " points.</p><br>";
+
         //Now the thing about going back to the home page
         modal_body += "<p>Click the button below to return to the home page.</p>";
         document.getElementById("modal-body").innerHTML = modal_body;
@@ -331,6 +353,9 @@
             keyboard: false
         });
         modal.show();
+        //Change the button to return home
+        document.getElementById("submit_button").innerHTML = "Return Home";
+        document.getElementById("submit_button").setAttribute("onclick", "window.location.href = '/'");
     }
 
 
