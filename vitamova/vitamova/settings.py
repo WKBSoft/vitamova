@@ -47,9 +47,6 @@ CSRF_TRUSTED_ORIGINS = ['https://www.vitamova.com/','https://www.vitamova.com','
 
 LOGIN_URL = '/login/'
 
-AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend', 'vitamova.backends.extend_user']
-
-
 # Application definition
 
 INSTALLED_APPS = [
