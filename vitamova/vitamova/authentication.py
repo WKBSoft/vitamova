@@ -136,6 +136,7 @@ def update_account(request):
             u.first_name = data["first_name"]
         if "last_name" in data:
             u.last_name = data["last_name"]
+        u.save()
         return HttpResponse("success", content_type="text/plain")
     else:
         return HttpResponse(status=403)
