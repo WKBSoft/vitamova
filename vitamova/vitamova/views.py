@@ -32,6 +32,13 @@ def home(request):
     else:
         return HttpResponseRedirect("/login/")
     
+def account(request):
+    #Check if user is logged in
+    if request.user.is_authenticated:
+        return render(request,'account.html',{"header":logged_in_header(), "user":request.user})
+    else:
+        return HttpResponseRedirect("/login/")
+    
 def daily_article(request):
     #Check if user is logged in
     if request.user.is_authenticated:
