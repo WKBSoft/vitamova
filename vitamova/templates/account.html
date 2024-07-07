@@ -115,6 +115,11 @@
           document.getElementById("change_info").innerHTML = "Make Changes";
           //Show a success message
           alert("Account updated successfully!");
+        } failure: function(data) {
+          //Change button back to "Make Changes"
+          document.getElementById("change_info").innerHTML = "Make Changes";
+          //Show an error message
+          alert("An error occurred. Please try again.");
         }
       });
     }
