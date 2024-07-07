@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse 
+from django.contrib import auth
 import datetime
 import os
 import sys
@@ -35,7 +36,8 @@ def home(request):
 def account(request):
     #Check if user is logged in
     if request.user.is_authenticated:
-        return render(request,'account.html',{"header":logged_in_header(), "user":request.user})
+        u = auth.models.User.objects.get(username=request.user)
+        return render(request,'account.html',{"header":logged_in_header(), "user":request.user, "points":u.status.points})
     else:
         return HttpResponseRedirect("/login/")
     
@@ -101,8 +103,9 @@ def add_points(request):
     #Get the user object
     user = request.user
     #If the user has no points, set the points to 0
+    u = auth.models.User.objects.get(username=user)
     if not hasattr(user, 'points'):
-        user.points = 0
+        
     #Get the number of points to add from the request
     #The request has JSON data with a key called points
     points = int(json.loads(request.body)["points"])
