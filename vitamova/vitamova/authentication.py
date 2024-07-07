@@ -129,16 +129,13 @@ def update_account(request):
         data = json.loads(request.body)
         #Get the user object
         user = request.user
-        #Get the user's email
-        email = user.email
-        #Get the user's data
-        user_data = user_data_c(email).get()
-        #Update the user's data
-        for key in data:
-            user_data[key] = data[key]
-        #Save the user's data
-        user_data_c(email).put(user_data)
-        #Return the user's data
-        return HttpResponse(json.dumps(user_data), content_type="application/json")
+        u = auth.models.User.objects.get(username=user)
+        if "email" in data:
+            u.email = data["email"]
+        if "first_name" in data:
+            u.first_name = data["first_name"]
+        if "last_name" in data:
+            u.last_name = data["last_name"]
+        return HttpResponse("success", content_type="text/plain")
     else:
         return HttpResponse(status=403)
