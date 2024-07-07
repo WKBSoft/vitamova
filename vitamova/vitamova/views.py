@@ -102,17 +102,15 @@ def add_points(request):
         return HttpResponse(status=403)
     #Get the user object
     user = request.user
-    #If the user has no points, set the points to 0
     u = auth.models.User.objects.get(username=user)
-    if not hasattr(user, 'points'):
-        
+      
     #Get the number of points to add from the request
     #The request has JSON data with a key called points
     points = int(json.loads(request.body)["points"])
     #Add the points to the user's points
-    user.points += points
+    u.status.points += points
     #Save the user object
-    user.save()
+    u.save()
     #Return the user's points
     #Content type is text
     return HttpResponse(user.points, content_type="text/plain")      
