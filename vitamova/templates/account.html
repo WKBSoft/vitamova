@@ -100,11 +100,11 @@
           "X-Requested-With": "XMLHttpRequest",
           "X-CSRFToken": "{{ csrf_token }}"
         },
-        data: {
+        data: JSON.stringify({
           email: email,
           first_name: first_name,
           last_name: last_name
-        },
+        }),
         success: function(data) {
           //Change button back to "Make Changes"
           document.getElementById("change_info").innerHTML = "Make Changes";
