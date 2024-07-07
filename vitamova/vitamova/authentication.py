@@ -8,6 +8,7 @@ import hashlib
 import datetime
 import copy
 from pathlib import Path
+import json
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -120,3 +121,24 @@ def account(request):
 def logout(request):
     auth.logout(request)
     return HttpResponseRedirect("/login/")
+
+def update_account(request):
+    #Check if user is logged in
+    if request.user.is_authenticated:
+        #Get the request json data
+        data = json.loads(request.body)
+        #Get the user object
+        user = request.user
+        #Get the user's email
+        email = user.email
+        #Get the user's data
+        user_data = user_data_c(email).get()
+        #Update the user's data
+        for key in data:
+            user_data[key] = data[key]
+        #Save the user's data
+        user_data_c(email).put(user_data)
+        #Return the user's data
+        return HttpResponse(json.dumps(user_data), content_type="application/json")
+    else:
+        return HttpResponse(status=403)

@@ -29,5 +29,6 @@ urlpatterns = [
     path("submit_vocabulary/",views.submit_vocabulary,name='submit_vocabulary'),
     path("add_points/",views.add_points,name='add_points'),
     path("account/",views.account,name='account'),
+    path("update_account/",authentication.update_account,name='update_account'),
     path("",views.home,name='home'),
 ]

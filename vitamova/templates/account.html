@@ -29,7 +29,8 @@
               <label for="InputLast">Last Name</label>
               <input type="text" class="form-control" id="InputLast" name="last_name" value="{{user.last_name}}">
           </div>
-          <button id="change_info" class="btn btn-primary">Make Changes</button>
+          <br>
+          <button id="change_info" class="btn btn-primary" onclick="update_account()">Make Changes</button>
         </form>
       </div>
       <div id="security_info" hidden>
@@ -87,6 +88,35 @@
       document.getElementById("account_info_button").className = "btn btn-outline-secondary";
       document.getElementById("account_security_button").className = "btn btn-outline-secondary";
       document.getElementById("account_points_button").className = "btn btn-secondary";
+    }
+    function update_account() {
+      //Change button to say "Loading"
+      document.getElementById("change_info").innerHTML = "<span class=\"spinner-border spinner-border-sm\" role=\"status\" aria-hidden=\"true\"></span>Loading...";
+      //Get the values of the form
+      var email = document.getElementById("InputEmail").value;
+      var first_name = document.getElementById("InputFirst").value;
+      var last_name = document.getElementById("InputLast").value;
+      //Perform an AJAX request to update the account
+      $.ajax ({
+        type: "POST",
+        url: "/update_account/",
+        contentType: "application/json",
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+          "X-CSRFToken": getCookie("csrftoken")
+        },
+        data: {
+          email: email,
+          first_name: first_name,
+          last_name: last_name
+        },
+        success: function(data) {
+          //Change button back to "Make Changes"
+          document.getElementById("change_info").innerHTML = "Make Changes";
+          //Show a success message
+          alert("Account updated successfully!");
+        }
+      });
     }
   </script>
 
