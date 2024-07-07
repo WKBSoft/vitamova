@@ -33,6 +33,10 @@ article_page = requests.get(link).text
 title_start = article_page.find("<h1 class=\"story__title\">") + 25
 title_end = article_page.find("</h1>",title_start)
 title = article_page[title_start:title_end]
+#Replace &#8221; with "
+title = title.replace("&#8221;","\"")
+#Replace &#8220; with "
+title = title.replace("&#8220;","\"")
 #The article text is scattered throughout the page, but it is all contained within the tag <p> which immediately follows a new line character
 text = []
 start = 0

@@ -28,10 +28,7 @@ def not_logged_in_header():
 def home(request):
     #Check if user is logged in
     if request.user.is_authenticated:
-        #Get the title of the article
-        #The filename we need is the current date in the format YYYY-MM-DD.json
-        filename = str(datetime.date.today())+".json"
-        return render(request,'dashboard.html',{"header":logged_in_header()})
+        return render(request,'dashboard.html',{"header":logged_in_header(), "user":request.user})
     else:
         return HttpResponseRedirect("/login/")
     
