@@ -62,6 +62,7 @@ def daily_article(request):
         #The article is in the folder articles/spanish
         #The filename is the current date in the format YYYY-MM-DD.json
         obj = s3.Object('evenstarsec.vitamova', 'articles/spanish/'+filename)
+        print(filename)
         article = eval(obj.get()['Body'].read())
         #Make a list of tags for each paragraph named p1, p2, p3, etc.
         paragraphs = []
