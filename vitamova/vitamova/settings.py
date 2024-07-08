@@ -94,15 +94,15 @@ WSGI_APPLICATION = 'vitamova.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 #Just go with the default sqlite3 database
-DATABASES = {
+ignore = """DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
-}
+} """"
 
 
-ignore = """{
+DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "vitamova",
@@ -111,7 +111,7 @@ ignore = """{
         "HOST": "db.evenstarsec.local",
         "PORT": "5432",
     }
-}"""
+}
 
 
 # Password validation
