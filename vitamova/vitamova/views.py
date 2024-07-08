@@ -37,7 +37,10 @@ def account(request):
     #Check if user is logged in
     if request.user.is_authenticated:
         u = auth.models.User.objects.get(username=request.user)
-        return render(request,'account.html',{"header":logged_in_header(), "user":request.user, "points":u.status.points})
+        if not hasattr(u, 'points'):
+            u.points = 0
+            u.save()
+        return render(request,'account.html',{"header":logged_in_header(), "user":request.user, "points":u.points})
     else:
         return HttpResponseRedirect("/login/")
     

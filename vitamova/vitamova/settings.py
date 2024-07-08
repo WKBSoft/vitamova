@@ -43,7 +43,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost']
 
-CSRF_TRUSTED_ORIGINS = ['https://www.vitamova.com/','https://www.vitamova.com','https://vitamova.evenstarsec.local']
+CSRF_TRUSTED_ORIGINS = ['https://www.vitamova.com','https://vitamova.evenstarsec.local']
 
 LOGIN_URL = '/login/'
 
