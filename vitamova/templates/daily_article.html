@@ -146,6 +146,10 @@
         //Update button
         document.getElementById("submit_button").innerHTML = "Complete Review!";
         document.getElementById("submit_button").setAttribute("onclick", "test_vocabulary()");
+
+        //Clear the vocabulary_list div
+        document.getElementById("vocabulary_list").innerHTML = "";
+
         //For each item in the list, create a span object
         for (var i = 0; i < translated_vocabulary.length; i++) {
             var word = document.createElement("span");
@@ -211,6 +215,10 @@
             //Update button
             document.getElementById("submit_button").innerHTML = "Review Again!";
             document.getElementById("submit_button").setAttribute("onclick", "vocabulary_list()");
+
+            //Clear the test_list div
+            document.getElementById("test_list").innerHTML = "";
+
             //For each item in the list write the word and put a text box below it
             for (var i = 0; i < translated_vocabulary.length; i++) {
                 var word = document.createElement("span");
