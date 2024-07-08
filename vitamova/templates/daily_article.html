@@ -128,6 +128,17 @@
 
 <script>
 
+    // Function to initialize the vocabulary lists
+    function initializeVocabulary() {
+        window.vocabulary = [];
+        window.translated_vocabulary = [];
+    }
+
+    // Call the function to initialize the vocabulary lists on page load
+    window.onload = function() {
+        initializeVocabulary();
+    };
+
     //Create a global variable to store the vocabulary words and sentences
     var vocabulary = [];
     var translated_vocabulary = [];
