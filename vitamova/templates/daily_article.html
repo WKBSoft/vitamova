@@ -150,15 +150,15 @@
         for (var i = 0; i < translated_vocabulary.length; i++) {
             var word = document.createElement("span");
             //The elements to add are word, base, translation, and example
-            word.innerHTML = "<p><h5>Word: " + my_list[i].word + "</h5></p>"
-            word.innerHTML += "<p>Base Form: " + my_list[i].base + "</p>"
-            word.innerHTML += "<p>Translation: " + my_list[i].translation + "</p>"
-            word.innerHTML += "<p>Example: " + my_list[i].example + "</p>"
+            word.innerHTML = "<p><h5>Word: " + translated_vocabulary[i].word + "</h5></p>"
+            word.innerHTML += "<p>Base Form: " + translated_vocabulary[i].base + "</p>"
+            word.innerHTML += "<p>Translation: " + translated_vocabulary[i].translation + "</p>"
+            word.innerHTML += "<p>Example: " + translated_vocabulary[i].example + "</p>"
             //Add example_translation
-            word.innerHTML += "<p>Example Translation: " + my_list[i].example_translation + "</p>"
+            word.innerHTML += "<p>Example Translation: " + translated_vocabulary[i].example_translation + "</p>"
             //Now add a break
             word.innerHTML += "<br>"
-            word.id = my_list[i].word;
+            word.id = translated_vocabulary[i].word;
             document.getElementById("vocabulary_list").appendChild(word);
         }
         //Bring the user to the top of the page
