@@ -44,7 +44,7 @@ def daily_article(request):
     #Check if user is logged in
     if request.user.is_authenticated:
         #The filename we need is the current date in the format YYYY-MM-DD.json
-        filename = str(datetime.date.today())+".json"
+        filename = str(datetime.datetime.now().date())+".json"
         #Create S3 Session
         #The AWS access key is an environment variable called AWS_ACCESS
         #The AWS secret key is an environment variable called AWS_SECRET
