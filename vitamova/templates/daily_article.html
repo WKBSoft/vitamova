@@ -146,9 +146,8 @@
         //Update button
         document.getElementById("submit_button").innerHTML = "Complete Review!";
         document.getElementById("submit_button").setAttribute("onclick", "test_vocabulary()");
-        var my_list = translated_vocabulary;
         //For each item in the list, create a span object
-        for (var i = 0; i < my_list.length; i++) {
+        for (var i = 0; i < translated_vocabulary.length; i++) {
             var word = document.createElement("span");
             //The elements to add are word, base, translation, and example
             word.innerHTML = "<p><h5>Word: " + my_list[i].word + "</h5></p>"
