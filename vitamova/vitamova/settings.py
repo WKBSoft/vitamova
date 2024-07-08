@@ -95,6 +95,13 @@ WSGI_APPLICATION = 'vitamova.wsgi.application'
 
 
 DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+}
+
+
+ignore = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "vitamova",
