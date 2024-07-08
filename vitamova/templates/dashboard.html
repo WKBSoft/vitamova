@@ -49,22 +49,34 @@
 </div>
     
 <script type="text/javascript">
-  const { format, utcToZonedTime } = require('date-fns-tz');
+  function pad(num) {
+    return num < 10 ? '0' : '' + num;
+  }
 
-  // Function to get the current date and time in America/New_York time zone
   function getNewYorkISODateString() {
       // Get the current date in UTC
-      const date = new Date();
+      const now = new Date();
 
-      // Convert the date to the New York time zone
-      const timeZone = 'America/New_York';
-      const zonedDate = utcToZonedTime(date, timeZone);
+      // Create a new date in the New York time zone
+      const options = { timeZone: 'America/New_York', hour12: false };
+      const newYorkDate = new Date(now.toLocaleString('en-US', options));
 
-      // Format the date to ISO 8601 string with time zone offset
-      const pattern = "yyyy-MM-dd'T'HH:mm:ssXXX";
-      const formattedDate = format(zonedDate, pattern, { timeZone });
+      // Calculate the time zone offset
+      const offset = -newYorkDate.getTimezoneOffset();
+      const sign = offset >= 0 ? '+' : '-';
+      const hours = pad(Math.floor(Math.abs(offset) / 60));
+      const minutes = pad(Math.abs(offset) % 60);
 
-      return formattedDate;
+      // Construct the ISO 8601 string
+      const isoString = newYorkDate.getFullYear() +
+          '-' + pad(newYorkDate.getMonth() + 1) +
+          '-' + pad(newYorkDate.getDate()) +
+          'T' + pad(newYorkDate.getHours()) +
+          ':' + pad(newYorkDate.getMinutes()) +
+          ':' + pad(newYorkDate.getSeconds()) +
+          sign + hours + ':' + minutes;
+
+      return isoString;
   }
   //If last_article_date is today, disable the daily_article button
   //And make it say "Already Completed"
