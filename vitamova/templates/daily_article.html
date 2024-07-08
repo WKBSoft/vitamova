@@ -133,9 +133,11 @@
     var translated_vocabulary = [];
 
     function vocabulary_list() {
-        //Hide the article and show the vocabulary list
+        //Hide everything except the vocabulary list
         document.getElementById("article").hidden = true;
         document.getElementById("review_vocab").hidden = false;
+        document.getElementById("test_vocab").hidden = true;
+        document.getElementById("article_reread").hidden = true;
         //Change the title of the page
         document.getElementById("page_title").innerHTML = "Step 2: Review Vocabulary";
         //Update button
