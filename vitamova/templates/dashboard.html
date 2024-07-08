@@ -49,12 +49,29 @@
 </div>
     
 <script type="text/javascript">
+  const { format, utcToZonedTime } = require('date-fns-tz');
+
+  // Function to get the current date and time in America/New_York time zone
+  function getNewYorkISODateString() {
+      // Get the current date in UTC
+      const date = new Date();
+
+      // Convert the date to the New York time zone
+      const timeZone = 'America/New_York';
+      const zonedDate = utcToZonedTime(date, timeZone);
+
+      // Format the date to ISO 8601 string with time zone offset
+      const pattern = "yyyy-MM-dd'T'HH:mm:ssXXX";
+      const formattedDate = format(zonedDate, pattern, { timeZone });
+
+      return formattedDate;
+  }
   //If last_article_date is today, disable the daily_article button
   //And make it say "Already Completed"
-  if ({{ last_article_date }} == {{ today }}) {
+  if (localStorage.getItem("last_article_date") == getNewYorkISODateString()) {
     document.getElementById("daily_article").disabled = true;
     document.getElementById("daily_article").innerText = "Already Completed";
-  } 
+  }
 
   google.charts.load('current', {'packages':['gauge']});
   google.charts.setOnLoadCallback(drawChart);

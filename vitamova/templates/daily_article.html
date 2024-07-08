@@ -127,6 +127,23 @@
   </div>
 
 <script>
+    const { format, utcToZonedTime } = require('date-fns-tz');
+
+    // Function to get the current date and time in America/New_York time zone
+    function getNewYorkISODateString() {
+        // Get the current date in UTC
+        const date = new Date();
+
+        // Convert the date to the New York time zone
+        const timeZone = 'America/New_York';
+        const zonedDate = utcToZonedTime(date, timeZone);
+
+        // Format the date to ISO 8601 string with time zone offset
+        const pattern = "yyyy-MM-dd'T'HH:mm:ssXXX";
+        const formattedDate = format(zonedDate, pattern, { timeZone });
+
+        return formattedDate;
+    }
 
     //Create a global variable to store the vocabulary words and sentences
     var vocabulary = [];
@@ -363,7 +380,7 @@
                 modal_body += "<p>Click the button below to return to the home page.</p>";
                 document.getElementById("modal-body").innerHTML = modal_body;
                 //Set the localstorage value of last_article_date to today
-                localStorage.setItem("last_article_date", new Date().toISOString());
+                localStorage.setItem("last_article_date", getNewYorkISODateString());
                 //Show the modal
                 var modal = new bootstrap.Modal(document.getElementById('completionModal'), {
                     keyboard: false
