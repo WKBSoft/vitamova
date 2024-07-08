@@ -49,7 +49,7 @@ def login(request):
         user = auth.authenticate(request, username=username, password=password)
         if user is not None:
             auth.login(request, user)
-            return render(request,'dashboard.html',{"header":logged_in_header()})
+            return HttpResponseRedirect("/")
         else:
             return render(request,'login.html',{"header":not_logged_in_header()})
 
