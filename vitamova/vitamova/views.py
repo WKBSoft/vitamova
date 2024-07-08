@@ -107,7 +107,10 @@ def add_points(request):
     #The request has JSON data with a key called points
     points = int(json.loads(request.body)["points"])
     #We're storing points in the last_name field for now
-    current_points = int(u.last_name)
+    if u.last_name == "":
+        current_points = 0
+    else:
+        current_points = int(u.last_name)
     #Add the points to the user's points
     u.last_name = str(current_points + points)
     #Save the user object
