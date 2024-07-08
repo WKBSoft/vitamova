@@ -8,45 +8,41 @@
 <div class="container">
 
   <div id="chart_div" style="width: 400px; height: 120px;" hidden></div>
-  <div class="row">
+  <div class="row gy-1">
     <div class="col">
       <h1>Welcome, {{ user.first_name }}!</h1>
     </div>
     <div class="col">
       <h2>Points: {{ user.last_name }}</h2>
+    </div>  
+  <div class="row gy-1">
+    <div class="col-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Article of the Day</h5>
+          <p class="card-text">Read today's article and earn up to 20 points after completing the multiple choice test at the end.</p>
+          <button id="daily_article" onclick="window.location.href='/daily_article'" class="btn btn-primary">Get Started!</a>
+        </div>
+      </div>
     </div>
-  <br><br>
-  
-  <div class="row">
-        <div class="col-4">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Article of the Day</h5>
-              <p class="card-text">Read today's article and earn up to 20 points after completing the multiple choice test at the end.</p>
-              <button id="daily_article" onclick="window.location.href='/daily_article'" class="btn btn-primary">Get Started!</a>
-            </div>
-          </div>
+    <div class="col-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Flashcards</h5>
+          <p class="card-text">You have XX words in your queue to learn. Earn 1 point per word memorized!</p>
+          <button onclick="window.location.href='/flashcards'" class="btn btn-primary" disabled>Coming soon!</a>
         </div>
-        <div class="col-4">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Flashcards</h5>
-              <p class="card-text">You have XX words in your queue to learn. Earn 1 point per word memorized!</p>
-              <button onclick="window.location.href='/flashcards'" class="btn btn-primary" disabled>Coming soon!</a>
-            </div>
-          </div>
+      </div>
+    </div>
+    <div class="col-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Writing</h5>
+          <p class="card-text">Earn 15 points by writing a short passage!</p>
+          <button onclick="window.location.href='/write'" class="btn btn-primary" disabled>Coming Soon!</a>
         </div>
-        <div class="col-4">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Writing</h5>
-              <p class="card-text">Earn 15 points by writing a short passage!</p>
-              <button onclick="window.location.href='/write'" class="btn btn-primary" disabled>Coming Soon!</a>
-            </div>
-          </div>
-        </div>
-  </div>
-  <div class="row">
+      </div>
+    </div>
     <div class="col-4">
       <div class="card">
         <div class="card-body">
@@ -65,10 +61,7 @@
         </div>
       </div>
     </div>
-    <div class="col-4">
-
-    </div>
-</div>
+  </div>
 </div>
     
 <script type="text/javascript">
