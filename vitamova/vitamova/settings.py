@@ -14,7 +14,7 @@ from pathlib import Path
 import os
 
 #Initiate environment variables
-def source_profile(file_path):
+ignore = """def source_profile(file_path):
     with open(file_path) as f:
         for line in f:
             if line.startswith('export '):
@@ -26,7 +26,7 @@ def source_profile(file_path):
                 elif value.startswith("'") and value.endswith("'"):
                     value = value[1:-1]
                 os.environ[key] = value
-source_profile(os.path.expanduser("~/.profile"))
+source_profile(os.path.expanduser("~/.profile"))"""
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -36,7 +36,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # Django key is a system variable called django_key
-SECRET_KEY = os.environ.get('django_key')
+SECRET_KEY = "y6D8dtw68BFSsa9qc2LRs12FbyhUNfaZ" #os.environ.get('django_key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -122,6 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'accounts.CustomUser'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
