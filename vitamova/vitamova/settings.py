@@ -14,7 +14,7 @@ from pathlib import Path
 import os
 
 #Initiate environment variables
-ignore = def source_profile(file_path):
+def source_profile(file_path):
     with open(file_path) as f:
         for line in f:
             if line.startswith('export '):
