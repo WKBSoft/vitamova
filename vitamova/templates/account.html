@@ -24,10 +24,6 @@
             <label for="InputFirst">First Name</label>
             <input type="text" class="form-control" id="InputFirst" name="first_name" value="{{user.first_name}}">
         </div>
-        <div class="form-group">
-            <label for="InputLast">Last Name</label>
-            <input type="text" class="form-control" id="InputLast" name="last_name" value="{{user.last_name}}">
-        </div>
         <br>
         <button id="change_info" class="btn btn-primary" onclick="update_account()">Make Changes</button>
       </div>
@@ -48,7 +44,7 @@
         </div>
       </div>
       <div id="points_info" hidden>
-        <h1> Total Points {{points}} </h1>
+        <h1> Total Points {{user.last_name}} </h1>
         </form>
       </div>
     </div>

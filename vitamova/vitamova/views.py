@@ -36,11 +36,7 @@ def home(request):
 def account(request):
     #Check if user is logged in
     if request.user.is_authenticated:
-        u = auth.models.User.objects.get(username=request.user)
-        if not hasattr(u, 'points'):
-            u.points = 0
-            u.save()
-        return render(request,'account.html',{"header":logged_in_header(), "user":request.user, "points":u.points})
+        return render(request,'account.html',{"header":logged_in_header(), "user":request.user})
     else:
         return HttpResponseRedirect("/login/")
     
@@ -106,17 +102,18 @@ def add_points(request):
     #Get the user object
     user = request.user
     u = auth.models.User.objects.get(username=user)
-      
     #Get the number of points to add from the request
     #The request has JSON data with a key called points
     points = int(json.loads(request.body)["points"])
+    #We're storing points in the last_name field for now
+    current_points = int(u.last_name)
     #Add the points to the user's points
-    u.status.points += points
+    u.last_name = str(current_points + points)
     #Save the user object
     u.save()
     #Return the user's points
     #Content type is text
-    return HttpResponse(user.points, content_type="text/plain")      
+    return HttpResponse(u.last_name, content_type="text/plain")      
 
 def submit_vocabulary(request):
     #Check if user is logged in
