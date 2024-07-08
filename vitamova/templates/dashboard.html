@@ -49,40 +49,10 @@
 </div>
     
 <script type="text/javascript">
-  function pad(num) {
-    return num < 10 ? '0' : '' + num;
-  }
 
-  function getNewYorkISODateString() {
-      // Get the current date in UTC
-      const now = new Date();
-
-      // Create a new date in the New York time zone
-      const options = { timeZone: 'America/New_York', hour12: false };
-      const newYorkDate = new Date(now.toLocaleString('en-US', options));
-
-      // Calculate the time zone offset
-      const offset = -newYorkDate.getTimezoneOffset();
-      const sign = offset >= 0 ? '+' : '-';
-      const hours = pad(Math.floor(Math.abs(offset) / 60));
-      const minutes = pad(Math.abs(offset) % 60);
-
-      // Construct the ISO 8601 string
-      const isoString = newYorkDate.getFullYear() +
-          '-' + pad(newYorkDate.getMonth() + 1) +
-          '-' + pad(newYorkDate.getDate()) +
-          'T' + pad(newYorkDate.getHours()) +
-          ':' + pad(newYorkDate.getMinutes()) +
-          ':' + pad(newYorkDate.getSeconds()) +
-          sign + hours + ':' + minutes;
-
-      return isoString;
-  }
-  console.log(getNewYorkISODateString());
-  console.log(localStorage.getItem("last_article_date"));
   //If last_article_date is today, disable the daily_article button
   //And make it say "Already Completed"
-  if (localStorage.getItem("last_article_date") == getNewYorkISODateString()) {
+  if (localStorage.getItem("last_article_date") == "{{date}}") {
     document.getElementById("daily_article").disabled = true;
     document.getElementById("daily_article").innerText = "Already Completed";
   }

@@ -29,7 +29,7 @@ def not_logged_in_header():
 def home(request):
     #Check if user is logged in
     if request.user.is_authenticated:
-        return render(request,'dashboard.html',{"header":logged_in_header(), "user":request.user})
+        return render(request,'dashboard.html',{"header":logged_in_header(), "user":request.user, "date":str(datetime.datetime.now().date()))
     else:
         return HttpResponseRedirect("/login/")
     
@@ -91,7 +91,14 @@ def daily_article(request):
         for i in range(len(article["questions"])):
             article["questions"][i]["index"] = i+1
         #Return the article title and the text as a list of paragraphs
-        return render(request,'daily_article.html',{"title":article["title"],"paragraphs":paragraphs,"header":logged_in_header(),"w2s_map":w2s_map, "questions":article["questions"]})
+        return render(request,'daily_article.html',{
+            "title":article["title"],
+            "paragraphs":paragraphs,
+            "header":logged_in_header(),
+            "w2s_map":w2s_map, 
+            "questions":article["questions"], 
+            "date":str(datetime.datetime.now().date())
+            })
     else:
         return HttpResponseRedirect("/login/")
     
