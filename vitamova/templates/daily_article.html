@@ -132,6 +132,9 @@
     var vocabulary = [];
     var translated_vocabulary = [];
 
+    console.log(vocabulary);
+    console.log(translated_vocabulary);
+
     function vocabulary_list() {
         //Hide everything except the vocabulary list
         document.getElementById("article").hidden = true;
@@ -166,6 +169,8 @@
 
     //Create the submit_vocabulary function
     function submit_vocabulary() {
+        console.log(vocabulary);
+        console.log(translated_vocabulary);
         //First make the button load
         document.getElementById("submit_button").innerHTML = "<span class=\"spinner-border spinner-border-sm\" role=\"status\" aria-hidden=\"true\"></span>Loading...";
 
@@ -366,7 +371,7 @@
 
 
     {% for item in w2s_map %}
-        //Create an event listener for a span object with id "w1"
+        //Create an event listener for a span object with id {{item.word}}
         document.getElementById("{{item.word}}").addEventListener("click", function() {
             //Get the value 
             var word_value = document.getElementById("{{item.word}}").innerText;
