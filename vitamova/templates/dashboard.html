@@ -78,6 +78,8 @@
 
       return isoString;
   }
+  console.log(getNewYorkISODateString());
+  console.log(localStorage.getItem("last_article_date"));
   //If last_article_date is today, disable the daily_article button
   //And make it say "Already Completed"
   if (localStorage.getItem("last_article_date") == getNewYorkISODateString()) {
