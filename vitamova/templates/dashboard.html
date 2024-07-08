@@ -23,7 +23,7 @@
             <div class="card-body">
               <h5 class="card-title">Article of the Day</h5>
               <p class="card-text">Read today's article and earn up to 20 points after completing the multiple choice test at the end.</p>
-              <a href="/daily_article" class="btn btn-primary">Coming soon!</a>
+              <a id="daily_article" href="/daily_article" class="btn btn-primary">Get Started!</a>
             </div>
           </div>
         </div>
@@ -32,7 +32,7 @@
             <div class="card-body">
               <h5 class="card-title">Flashcards</h5>
               <p class="card-text">You have XX words in your queue to learn. Earn 1 point per word memorized!</p>
-              <a href="#" class="btn btn-primary">Coming soon!</a>
+              <a href="#" class="btn btn-primary" disabled>Coming soon!</a>
             </div>
           </div>
         </div>
@@ -41,7 +41,7 @@
             <div class="card-body">
               <h5 class="card-title">Memorize Poetry</h5>
               <p class="card-text">Earn 30 points by memorizing a poem!</p>
-              <a href="/poetry" class="btn btn-primary">Coming Soon!</a>
+              <a href="/poetry" class="btn btn-primary" disabled>Coming Soon!</a>
             </div>
           </div>
         </div>
@@ -49,6 +49,13 @@
 </div>
     
 <script type="text/javascript">
+  //If last_article_date is today, disable the daily_article button
+  //And make it say "Already Completed"
+  if ({{ last_article_date }} == {{ today }}) {
+    document.getElementById("daily_article").disabled = true;
+    document.getElementById("daily_article").innerText = "Already Completed";
+  } 
+
   google.charts.load('current', {'packages':['gauge']});
   google.charts.setOnLoadCallback(drawChart);
 
