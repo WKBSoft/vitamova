@@ -60,7 +60,7 @@ class user_info:
     def __init__(self, conn):
         self.conn = connect()
 
-    class get(self, username):
+    class get:
         def __init__(self, parent, username):
             self.parent = parent
             self.username = username
