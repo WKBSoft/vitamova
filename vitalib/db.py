@@ -54,6 +54,7 @@ class vocabulary:
         self.conn = connect()
 
     def add(self, username, word_id, language):
+        pass
 
 class user_info:
     def __init__(self, conn):
