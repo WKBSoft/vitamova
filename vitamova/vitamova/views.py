@@ -5,10 +5,6 @@ from django.contrib import auth
 import datetime
 import os
 import sys
-import requests
-from random import randint
-import hashlib
-from random import shuffle
 from pathlib import Path
 import boto3
 import re
