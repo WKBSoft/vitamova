@@ -1,6 +1,6 @@
 import psycopg2
 
-class Spanish:
+class spanish:
     def __init__(self, conn):
         self.conn = conn
 
