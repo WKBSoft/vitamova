@@ -36,7 +36,7 @@ def home(request):
             request.user.last_name = "0"
             request.user.save()
         db_connection = vitalib.db.connection.open()
-        points = vitalib.db.user_info(db_connection).get(request.user.username).points()
+        points = vitalib.db.user_info.get(db_connection,request.user.username).points()
         vitalib.db.connection.close(db_connection)
         return render(request,'dashboard.html',{"header":logged_in_header(), "user":request.user, "date":str(datetime.datetime.now().date()), "points":points})
     else:

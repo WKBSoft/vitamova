@@ -36,26 +36,24 @@ class connection:
 
 #Retrieve user information
 class user_info:
-    def __init__(self,conn):
-        self.conn = conn
-
     class get:
-        def __init__(self, parent, username):
+        def __init__(self, parent, conn, username):
             self.parent = parent
             self.username = username
+            self.conn = conn
 
         def language(self):
-            with self.parent.conn.cursor() as cur:
+            with self.conn.cursor() as cur:
                 cur.execute("SELECT language FROM user_info WHERE username=%s", (self.username,))
                 return cur.fetchone()[0]
 
         def last_article_read(self):
-            with self.parent.conn.cursor() as cur:
+            with self.conn.cursor() as cur:
                 cur.execute("SELECT last_article_read FROM user_info WHERE username=%s", (self.username,))
                 return cur.fetchone()[0]
 
         def points(self):
-            with self.parent.conn.cursor() as cur:
+            with self.conn.cursor() as cur:
                 cur.execute("SELECT points FROM user_info WHERE username=%s", (self.username,))
                 return cur.fetchone()[0]
 
