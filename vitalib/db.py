@@ -37,8 +37,7 @@ class connection:
 #Retrieve user information
 class user_info:
     class get:
-        def __init__(self, parent, conn, username):
-            self.parent = parent
+        def __init__(self, conn, username):
             self.username = username
             self.conn = conn
 
