@@ -15,8 +15,13 @@ import re
 import json
 from openai import OpenAI
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+#Import vitalib
+sys.path.insert(BASE_DIR.parent / 'vitalib')
+import vitalib
 
 def logged_in_header():
     with open(os.path.join(BASE_DIR,"templates/sub_templates/logged_in_header.html"),"r") as f:
@@ -32,6 +37,8 @@ def home(request):
         if request.user.last_name == "":
             request.user.last_name = "0"
             request.user.save()
+        #Test vitalib
+        print(vitalib.db.spanish.test())
         return render(request,'dashboard.html',{"header":logged_in_header(), "user":request.user, "date":str(datetime.datetime.now().date())})
     else:
         return HttpResponseRedirect("/login/")
