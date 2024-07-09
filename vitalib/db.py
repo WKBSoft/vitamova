@@ -43,17 +43,20 @@ class user_info:
         def __init__(self, parent, username):
             self.parent = parent
             self.username = username
+
         def language(self):
             with self.parent.conn.cursor() as cur:
-                cur.execute("SELECT language FROM user_info WHERE username=%s",(self.username,))
+                cur.execute("SELECT language FROM user_info WHERE username=%s", (self.username,))
                 return cur.fetchone()[0]
+
         def last_article_read(self):
             with self.parent.conn.cursor() as cur:
-                cur.execute("SELECT last_article_read FROM user_info WHERE username=%s",(self.username,))
+                cur.execute("SELECT last_article_read FROM user_info WHERE username=%s", (self.username,))
                 return cur.fetchone()[0]
+
         def points(self):
             with self.parent.conn.cursor() as cur:
-                cur.execute("SELECT points FROM user_info WHERE username=%s",(self.username,))
+                cur.execute("SELECT points FROM user_info WHERE username=%s", (self.username,))
                 return cur.fetchone()[0]
 
 class spanish:
