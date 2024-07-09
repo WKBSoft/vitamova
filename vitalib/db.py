@@ -57,7 +57,7 @@ class vocabulary:
         pass
 
 class user_info:
-    def __init__(self, conn):
+    def __init__(self):
         self.conn = connect()
 
     class get:
