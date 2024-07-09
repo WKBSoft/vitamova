@@ -22,7 +22,7 @@ sys.path.insert(0, str(BASE_DIR.parent))
 import vitalib
 
 #Test vitalib
-print(vitalib.db.spanish.test())
+print(vitalib.db.spanish.test(self))
 
 def logged_in_header():
     with open(os.path.join(BASE_DIR,"templates/sub_templates/logged_in_header.html"),"r") as f:
