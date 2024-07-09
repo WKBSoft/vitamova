@@ -18,7 +18,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 print(BASE_DIR.parent / 'vitalib')
 
 #Import vitalib
-sys.path.insert(0, BASE_DIR.parent)
+sys.path.insert(0, str(BASE_DIR.parent))
 import vitalib
 
 #Test vitalib
