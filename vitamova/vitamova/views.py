@@ -20,7 +20,7 @@ from openai import OpenAI
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 #Import vitalib
-sys.path.insert(BASE_DIR.parent / 'vitalib')
+sys.path.insert(0, BASE_DIR.parent / 'vitalib')
 import vitalib
 
 def logged_in_header():
