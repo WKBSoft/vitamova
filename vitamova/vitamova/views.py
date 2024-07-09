@@ -35,8 +35,9 @@ def home(request):
         if request.user.last_name == "":
             request.user.last_name = "0"
             request.user.save()
-        user_info = vitalib.db.user_info()
-        points = user_info.get(request.user.username).points()
+        db_connection = vitalib.db.connection.open()
+        points = vitalib.db.user_info.get(db_connection, request.user.username).points()
+        vitalib.db.connection.close(db_connection)
         return render(request,'dashboard.html',{"header":logged_in_header(), "user":request.user, "date":str(datetime.datetime.now().date()), "points":points})
     else:
         return HttpResponseRedirect("/login/")

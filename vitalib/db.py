@@ -19,18 +19,22 @@ def source_profile(file_path):
 source_profile(os.path.expanduser("~/.profile"))
 
 # Database connection
-def connect():
-    return psycopg2.connect(
-        dbname="vitamova",
-        user="vitamova",
-        password=os.environ.get('db_password'),
-        host="db.evenstarsec.local",
-        port="5432"
-    )
+class connection:
+    def open():
+        conn = psycopg2.connect(
+            dbname="vitamova",
+            user="vitamova",
+            password=os.environ.get('db_password'),
+            host="db.evenstarsec.local",
+            port="5432"
+        )
+        return conn
+    def close(conn):
+        conn.close()
 
 class spanish:
     def __init__(self, conn):      
-        self.conn = connect()
+        self.conn = conn
 
     def add(self, word, definition, example):
         with self.conn.cursor() as cur:
@@ -51,14 +55,14 @@ class spanish:
     
 class vocabulary:
     def __init__(self, conn):
-        self.conn = connect()
+        self.conn = conn
 
     def add(self, username, word_id, language):
         pass
 
 class user_info:
-    def __init__(self):
-        self.conn = connect()
+    def __init__(self,conn):
+        self.conn = conn
 
     class get:
         def __init__(self, parent, username):
