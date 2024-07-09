@@ -20,6 +20,7 @@ source_profile(os.path.expanduser("~/.profile"))
 
 # Database connection
 class connection:
+    @staticmethod
     def open():
         conn = psycopg2.connect(
             dbname="vitamova",
@@ -29,8 +30,31 @@ class connection:
             port="5432"
         )
         return conn
+    @staticmethod
     def close(conn):
         conn.close()
+
+#Retrieve user information
+class user_info:
+    def __init__(self,conn):
+        self.conn = conn
+
+    class get:
+        def __init__(self, parent, username):
+            self.parent = parent
+            self.username = username
+        def language(self):
+            with self.parent.conn.cursor() as cur:
+                cur.execute("SELECT language FROM user_info WHERE username=%s",(self.username,))
+                return cur.fetchone()[0]
+        def last_article_read(self):
+            with self.parent.conn.cursor() as cur:
+                cur.execute("SELECT last_article_read FROM user_info WHERE username=%s",(self.username,))
+                return cur.fetchone()[0]
+        def points(self):
+            with self.parent.conn.cursor() as cur:
+                cur.execute("SELECT points FROM user_info WHERE username=%s",(self.username,))
+                return cur.fetchone()[0]
 
 class spanish:
     def __init__(self, conn):      
@@ -59,24 +83,3 @@ class vocabulary:
 
     def add(self, username, word_id, language):
         pass
-
-class user_info:
-    def __init__(self,conn):
-        self.conn = conn
-
-    class get:
-        def __init__(self, parent, username):
-            self.parent = parent
-            self.username = username
-        def language(self):
-            with self.conn.cursor() as cur:
-                cur.execute("SELECT language FROM user_info WHERE username=%s",(self.username,))
-                return cur.fetchone()[0]
-        def last_article_read(self):
-            with self.conn.cursor() as cur:
-                cur.execute("SELECT last_article_read FROM user_info WHERE username=%s",(self.username,))
-                return cur.fetchone()[0]
-        def points(self):
-            with self.conn.cursor() as cur:
-                cur.execute("SELECT points FROM user_info WHERE username=%s",(self.username,))
-                return cur.fetchone()[0]
