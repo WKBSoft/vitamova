@@ -105,8 +105,7 @@ def daily_article(request):
             "paragraphs":paragraphs,
             "header":logged_in_header(),
             "w2s_map":w2s_map, 
-            "questions":article["questions"], 
-            "date":str(datetime.datetime.now().date())
+            "questions":article["questions"] 
             })
     else:
         return HttpResponseRedirect("/login/")
@@ -116,22 +115,13 @@ def add_points(request):
     #If the user is not logged in, return a 403 error
     if not request.user.is_authenticated:
         return HttpResponse(status=403)
-    #Get the user object
-    user = request.user
-    u = auth.models.User.objects.get(username=user)
     #Get the number of points to add from the request
     #The request has JSON data with a key called points
     points = int(json.loads(request.body)["points"])
-    #We're storing points in the last_name field for now
-    if u.last_name == "":
-        current_points = 0
-    else:
-        current_points = int(u.last_name)
-    #Add the points to the user's points
-    u.last_name = str(current_points + points)
-    #Save the user object
-    u.save()
-    #Return the user's points
+    #Use the add_points method from the user_info class in the db module
+    db_connection = vitalib.db.connection.open()
+    vitalib.db.user_info.update(db_connection,request.user.username).points(points)
+    vitalib.db.connection.close(db_connection)
     #Content type is text
     return HttpResponse(u.last_name, content_type="text/plain")      
 

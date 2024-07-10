@@ -56,6 +56,19 @@ class user_info:
             with self.conn.cursor() as cur:
                 cur.execute("SELECT points FROM user_info WHERE username=%s", (self.username,))
                 return cur.fetchone()[0]
+    class update:
+        def __init__(self, conn, username):
+            self.username = username
+            self.conn = conn
+        
+        def points(self, add_points):
+            #Add add_points to the current points
+            with self.conn.cursor() as cur:
+                cur.execute("SELECT points FROM user_info WHERE username=%s", (self.username,))
+                points = cur.fetchone()[0]
+            points += add_points
+            with self.conn.cursor() as cur:
+                cur.execute("UPDATE user_info SET points=%s WHERE username=%s", (points, self.username))
 
 class vocabulary:
     @staticmethod
