@@ -59,7 +59,7 @@ class user_info:
 
 class vocabulary:
     @staticmethod
-    def add(self, conn, username, word, definition, example):
+    def add(conn, username, word, definition, example):
         #Get language from username using user_info class
         language = user_info.get(conn,username).language()
         vocab_table = "vocabulary_"+language
