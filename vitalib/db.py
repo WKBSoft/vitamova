@@ -86,10 +86,13 @@ class vocabulary:
         with conn.cursor() as cur:
             cur.execute("SELECT id FROM "+dict_table+" WHERE word=%s", (word,))
             word_id = cur.fetchone()[0]
+        print("Added word", word, "with id", word_id, "to the dictionary")
         #Now insert the word_id, username, a level of 0, and next_review as tomorrow
         tomorrow = str((datetime.datetime.now() + datetime.timedelta(days=1)).date())
         with conn.cursor() as cur:
             cur.execute("INSERT INTO "+vocab_table+" (word_id, username, level, next_review) VALUES (%s, %s, 0, %s)", (word_id, username, tomorrow))
+            vocab_id = cur.fetchone()[0]
+        print("Added word", word, "with id", word_id, "to the vocabulary and the vocabulary id is", vocab_id)
 
     class level:
         def __init__(self, conn, username):
