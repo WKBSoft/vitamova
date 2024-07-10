@@ -381,6 +381,8 @@
         document.getElementById("{{item.word}}").addEventListener("click", function() {
             //Get the value 
             var word_value = document.getElementById("{{item.word}}").innerText;
+            //Clean the word of any punctuation
+            word_value = word_value.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
             //Add the word to the word list
             var wordlist = document.getElementById("wordlist");
             var word = document.createElement("span");
