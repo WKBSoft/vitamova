@@ -120,10 +120,10 @@ def add_points(request):
     points = int(json.loads(request.body)["points"])
     #Use the add_points method from the user_info class in the db module
     db_connection = vitalib.db.connection.open()
-    vitalib.db.user_info.update(db_connection,request.user.username).points(points)
+    new_points = vitalib.db.user_info.update(db_connection,request.user.username).points(points)
     vitalib.db.connection.close(db_connection)
     #Content type is text
-    return HttpResponse(u.last_name, content_type="text/plain")      
+    return HttpResponse(str(new_points), content_type="text/plain")   
 
 def submit_vocabulary(request):
     #Check if user is logged in

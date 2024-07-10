@@ -71,6 +71,8 @@ class user_info:
             points += add_points
             with self.conn.cursor() as cur:
                 cur.execute("UPDATE user_info SET points=%s WHERE username=%s", (points, self.username))
+            #return the new points
+            return points
 
 class vocabulary:
     @staticmethod
