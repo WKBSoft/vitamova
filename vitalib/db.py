@@ -81,18 +81,24 @@ class vocabulary:
         with conn.cursor() as cur:
             cur.execute("SELECT id FROM "+dict_table+" WHERE word=%s", (word,))
             if cur.fetchone() is None:
+                print("Word", word, "is not in the dictionary, adding it now")
                 cur.execute("INSERT INTO "+dict_table+" (word, definition, example) VALUES (%s, %s, %s)", (word, definition, example))
         #Get the id of the word from the dictionary
         with conn.cursor() as cur:
             cur.execute("SELECT id FROM "+dict_table+" WHERE word=%s", (word,))
             word_id = cur.fetchone()[0]
         print("Added word", word, "with id", word_id, "to the dictionary")
-        #Now insert the word_id, username, a level of 0, and next_review as tomorrow
+        #If the word is in the vocabulary, change the level to 0 and the next review to tomorrow
         tomorrow = str((datetime.datetime.now() + datetime.timedelta(days=1)).date())
         with conn.cursor() as cur:
-            cur.execute("INSERT INTO "+vocab_table+" (word_id, username, level, next_review) VALUES (%s, %s, 0, %s)", (word_id, username, tomorrow))
-            vocab_id = cur.fetchone()[0]
-        print("Added word", word, "with id", word_id, "to the vocabulary and the vocabulary id is", vocab_id)
+            cur.execute("SELECT word_id FROM "+vocab_table+" WHERE username=%s AND word_id=%s", (username, word_id))
+            if cur.fetchone() is not None:
+                print("Word", word, "is already in the vocabulary, resetting it now")
+                cur.execute("UPDATE "+vocab_table+" SET level=0, next_review=%s WHERE username=%s AND word_id=%s", (tomorrow, username, word_id))
+            #If the word is not in the vocabulary, add it with level 0 and next review tomorrow
+            else:
+                print("Word", word, "is not in the vocabulary, adding it now")
+                cur.execute("INSERT INTO "+vocab_table+" (username, word_id, level, next_review) VALUES (%s, %s, 0, %s)", (username, word_id, tomorrow))
 
     class level:
         def __init__(self, conn, username):
