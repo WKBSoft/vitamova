@@ -191,6 +191,11 @@ def submit_vocabulary(request):
             elif response_lines[i][0:20] == "Example translation:":
                 word_dict["example_translation"] = response_lines[i][20:].strip()
                 words.append(word_dict)
+        #Add the words to the database
+        db_connection = vitalib.db.connection.open()
+        for word in words:
+            vitalib.db.vocabulary.add(db_connection,request.user.username,word["word"],word["translation"],word["example"])
+        vitalib.db.connection.close(db_connection)
         return HttpResponse(json.dumps(words), content_type="application/json")
     else:
         return HttpResponseRedirect("/login/")

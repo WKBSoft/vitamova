@@ -132,11 +132,6 @@
     var vocabulary = [];
     var translated_vocabulary = [];
 
-    //If localStorage.getItem("last_article_date") is equal to today, go home
-    if (localStorage.getItem("last_article_date") == "{{date}}") {
-        window.location.href = "/";
-    }
-
     function vocabulary_list() {
         //Hide everything except the vocabulary list
         document.getElementById("article").hidden = true;
