@@ -88,7 +88,7 @@ response = client.chat.completions.create(
             "content": base_text + title + "\n" + "\n".join(text),
         }
     ],
-    model="gpt-3.5-turbo",
+    model="gpt-4o",
 )
 print(response)
 response_text = response.choices[0].message.content
