@@ -66,13 +66,6 @@
     
 <script type="text/javascript">
 
-  //If last_article_date is today, disable the daily_article button
-  //And make it say "Already Completed"
-  if (localStorage.getItem("last_article_date") == "{{date}}") {
-    document.getElementById("daily_article").disabled = true;
-    document.getElementById("daily_article").innerText = "Already Completed";
-  }
-
   google.charts.load('current', {'packages':['gauge']});
   google.charts.setOnLoadCallback(drawChart);
 
