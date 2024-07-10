@@ -58,6 +58,7 @@ class user_info:
                 return cur.fetchone()[0]
 
 class vocabulary:
+    @staticmethod
     def add(self, conn, username, word, definition, example):
         #Get language from username using user_info class
         language = user_info.get(conn,username).language()
