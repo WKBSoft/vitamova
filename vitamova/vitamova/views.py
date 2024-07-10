@@ -32,9 +32,6 @@ def not_logged_in_header():
 def home(request):
     #Check if user is logged in
     if request.user.is_authenticated:
-        if request.user.last_name == "":
-            request.user.last_name = "0"
-            request.user.save()
         db_connection = vitalib.db.connection.open()
         points = vitalib.db.user_info.get(db_connection,request.user.username).points()
         vitalib.db.connection.close(db_connection)
