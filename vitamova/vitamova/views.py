@@ -194,7 +194,7 @@ def submit_vocabulary(request):
         #Add the words to the database
         db_connection = vitalib.db.connection.open()
         for word in words:
-            vitalib.db.vocabulary.add(conn=db_connection,username=request.user.username,word=word["word"],definition=word["translation"],example=word["example"])
+            vitalib.db.vocabulary.add(conn=db_connection, username=request.user.username, word=word["word"], definition=word["translation"], example=word["example"])
         vitalib.db.connection.close(db_connection)
         return HttpResponse(json.dumps(words), content_type="application/json")
     else:
