@@ -33,6 +33,8 @@ class connection:
         return conn
     @staticmethod
     def close(conn):
+        #Commit changes and close the connection
+        conn.commit()
         conn.close()
 
 #Retrieve user information
