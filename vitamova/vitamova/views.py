@@ -34,8 +34,9 @@ def home(request):
     if request.user.is_authenticated:
         db_connection = vitalib.db.connection.open()
         points = vitalib.db.user_info.get(db_connection,request.user.username).points()
+        flashcard_count = vitalib.db.vocabulary.count(db_connection,request.user.username).today()
         vitalib.db.connection.close(db_connection)
-        return render(request,'dashboard.html',{"header":logged_in_header(), "user":request.user, "date":str(datetime.datetime.now().date()), "points":points})
+        return render(request,'dashboard.html',{"header":logged_in_header(), "user":request.user, "date":str(datetime.datetime.now().date()), "points":points, "flashcard_count":flashcard_count})
     else:
         return HttpResponseRedirect("/login/")
     

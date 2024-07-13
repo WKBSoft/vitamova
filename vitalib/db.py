@@ -103,6 +103,38 @@ class vocabulary:
             else:
                 print("Word", word, "is not in the vocabulary, adding it now")
                 cur.execute("INSERT INTO "+vocab_table+" (username, word_id, level, next_review) VALUES (%s, %s, 0, %s)", (username, word_id, tomorrow))
+    class count:
+        def __init__(self, conn, username):
+            self.username = username
+            self.conn = conn
+            #Get the language from the username using user_info class
+            self.language = user_info.get(self.conn, self.username).language()
+        def all(self):
+            with self.conn.cursor() as cur:
+                cur.execute("SELECT COUNT(*) FROM vocabulary_"+self.language+" WHERE username=%s", (self.username,))
+                return cur.fetchone()[0]
+        def today(self):
+            #This will return the number of words that need to be reviewed today
+            #These will have a next_review date of today or earlier
+            with self.conn.cursor() as cur:
+                cur.execute("SELECT COUNT(*) FROM vocabulary_"+self.language+" WHERE username=%s AND next_review<=%s", (self.username, str(datetime.datetime.now().date())))
+                return cur.fetchone()[0]
+    class get:
+        def __init__(self, conn, username):
+            self.username = username
+            self.conn = conn
+            #Get the language from the username using user_info class
+            self.language = user_info.get(self.conn, self.username).language()
+        def all(self):
+            #Get all words in the vocabulary
+            with self.conn.cursor() as cur:
+                cur.execute("SELECT word_id, level, next_review FROM vocabulary_"+self.language+" WHERE username=%s", (self.username,))
+                return cur.fetchall()
+        def today(self):
+            #Get all words that need to be reviewed today
+            with self.conn.cursor() as cur:
+                cur.execute("SELECT word_id, level, next_review FROM vocabulary_"+self.language+" WHERE username=%s AND next_review<=%s", (self.username, str(datetime.datetime.now().date())))
+                return cur.fetchall()
 
     class level:
         def __init__(self, conn, username):
