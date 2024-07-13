@@ -106,6 +106,8 @@
       //Get the values of the form
       var email = document.getElementById("InputEmail").value;
       var first_name = document.getElementById("InputFirst").value;
+      var last_name = document.getElementById("InputLast").value;
+      var language = document.getElementById("InputLanguage").value;
       //Perform an AJAX request to update the account
       $.ajax ({
         type: "POST",
@@ -118,6 +120,8 @@
         data: JSON.stringify({
           email: email,
           first_name: first_name,
+          last_name: last_name,
+          language: language
         }),
         success: function(data) {
           //Change button back to "Make Changes"
