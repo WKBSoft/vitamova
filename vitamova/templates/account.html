@@ -38,8 +38,8 @@
         <div class="form-group">
           <label for="InputLanguage">Language</label>
           <select class="form-select" id="InputLanguage" name="language">
-              <option value="uk" {% if user.language == 'uk' %}selected{% endif %}>Ukrainian</option>
-              <option value="es" {% if user.language == 'es' %}selected{% endif %}>Spanish</option>
+              <option value="uk" {% if language == 'uk' %}selected{% endif %}>Ukrainian</option>
+              <option value="es" {% if language == 'es' %}selected{% endif %}>Spanish</option>
           </select>
         </div>
 
@@ -64,7 +64,7 @@
         </div>
       </div>
       <div id="points_info" hidden>
-        <h1> Total Points {{user.last_name}} </h1>
+        <h1> Total Points {{points}} </h1>
         </form>
       </div>
     </div>

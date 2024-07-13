@@ -43,7 +43,12 @@ def home(request):
 def account(request):
     #Check if user is logged in
     if request.user.is_authenticated:
-        return render(request,'account.html',{"header":logged_in_header(), "user":request.user})
+        #Get language and points from the database
+        db_connection = vitalib.db.connection.open()
+        language = vitalib.db.user_info.get(db_connection,request.user.username).language()
+        points = vitalib.db.user_info.get(db_connection,request.user.username).points()
+        vitalib.db.connection.close(db_connection)
+        return render(request,'account.html',{"header":logged_in_header(), "user":request.user, "language":language, "points":points})
     else:
         return HttpResponseRedirect("/login/")
     
