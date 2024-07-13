@@ -13,8 +13,9 @@ import json
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-#sys.path.insert(0, os.path.join(BASE_DIR,'scripts/'))
-#import database as db
+#Import vitalib
+sys.path.insert(0, str(BASE_DIR.parent))
+import vitalib
 
 def logged_in_header():
     with open(os.path.join(BASE_DIR,"templates/sub_templates/logged_in_header.html"),"r") as f:
@@ -136,6 +137,10 @@ def update_account(request):
             u.first_name = data["first_name"]
         if "last_name" in data:
             u.last_name = data["last_name"]
+        if "language" in data:
+            db_connection = vitalib.db.connection.open()
+            vitalib.db.user_info.update(db_connection, u.username).language(data["language"])
+            vitalib.db.connection.close(db_connection)
         u.save()
         return HttpResponse("success", content_type="text/plain")
     else:

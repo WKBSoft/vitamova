@@ -73,6 +73,9 @@ class user_info:
                 cur.execute("UPDATE user_info SET points=%s WHERE username=%s", (points, self.username))
             #return the new points
             return points
+        def language(self, language):
+            with self.conn.cursor() as cur:
+                cur.execute("UPDATE user_info SET language=%s WHERE username=%s", (language, self.username))
 
 class vocabulary:
     @staticmethod
@@ -134,7 +137,7 @@ class vocabulary:
             #Get all words that need to be reviewed today
             with self.conn.cursor() as cur:
                 cur.execute("SELECT word_id, level, next_review FROM vocabulary_"+self.language+" WHERE username=%s AND next_review<=%s", (self.username, str(datetime.datetime.now().date())))
-                return cur.fetchall()
+                return cur.fetchall()  
 
     class level:
         def __init__(self, conn, username):

@@ -14,7 +14,13 @@
     </div>
     <div class="col-8">
       <div id="account_info">
-        <h1> Account info for {{user.username}} </h1>
+        <h1> Your Account </h1>
+        <!--Uneditable text field with username-->
+        <div class="form-group">
+            <label for="InputUsername">Username</label>
+            <input type="text" class="form-control" id="InputUsername" aria-describedby="usernameHelp" value="{{user.username}}" readonly>
+            <small id="usernameHelp" class="form-text text-muted">You cannot change your username.</small>
+        </div>
         <div class="form-group">
             <label for="InputEmail">Email address</label>
             <input type="email" class="form-control" id="InputEmail" aria-describedby="emailHelp" name="email" value="{{user.email}}">
@@ -24,6 +30,19 @@
             <label for="InputFirst">First Name</label>
             <input type="text" class="form-control" id="InputFirst" name="first_name" value="{{user.first_name}}">
         </div>
+        <div class="form-group">
+            <label for="InputLast">Last Name</label>
+            <input type="text" class="form-control" id="InputLast" name="last_name" value="{{user.last_name}}">
+        </div>
+        <!--Dropdown with Languages, only list Ukrainian and Spanish for now-->
+        <div class="form-group">
+            <label for="InputLanguage">Language</label>
+            <select class="form-select" id="InputLanguage" name="language" value="{{user.language}}">
+              <option value="uk">Ukrainian</option>
+              <option value="es">Spanish</option>
+            </select>
+        </div>
+
         <br>
         <button id="change_info" class="btn btn-primary" onclick="update_account()">Make Changes</button>
       </div>
