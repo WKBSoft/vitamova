@@ -36,12 +36,13 @@
         </div>
         <!--Dropdown with Languages, only list Ukrainian and Spanish for now-->
         <div class="form-group">
-            <label for="InputLanguage">Language</label>
-            <select class="form-select" id="InputLanguage" name="language" value="{{user.language}}">
-              <option value="uk">Ukrainian</option>
-              <option value="es">Spanish</option>
-            </select>
+          <label for="InputLanguage">Language</label>
+          <select class="form-select" id="InputLanguage" name="language">
+              <option value="uk" {% if user.language == 'uk' %}selected{% endif %}>Ukrainian</option>
+              <option value="es" {% if user.language == 'es' %}selected{% endif %}>Spanish</option>
+          </select>
         </div>
+
 
         <br>
         <button id="change_info" class="btn btn-primary" onclick="update_account()">Make Changes</button>
