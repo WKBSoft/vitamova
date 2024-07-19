@@ -72,9 +72,13 @@ def daily_article(request):
         )
         #Download the article from the bucket called evenstarsec.vitamova
         s3 = my_session.resource('s3')
-        #The article is in the folder articles/spanish
+        #Get the user's language
+        db_connection = vitalib.db.connection.open()
+        language_code = vitalib.db.user_info.get(db_connection,request.user.username).language()
+        vitalib.db.connection.close(db_connection)
+        #The article is in the folder articles/language
         #The filename is the current date in the format YYYY-MM-DD.json
-        obj = s3.Object('evenstarsec.vitamova', 'articles/spanish/'+filename)
+        obj = s3.Object('evenstarsec.vitamova', 'articles/'+language_code+'/'+filename)
         article = eval(obj.get()['Body'].read())
         #Make a list of tags for each paragraph named p1, p2, p3, etc.
         paragraphs = []

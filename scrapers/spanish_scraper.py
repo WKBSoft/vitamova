@@ -134,4 +134,4 @@ s3 = my_session.resource('s3')
 #It will be in the folder articles/spanish
 #The body of the file will be the json object
 filename = str(datetime.datetime.now().date())+".json"
-s3.Bucket('evenstarsec.vitamova').put_object(Key="articles/spanish/"+filename,Body=str(article))
+s3.Bucket('evenstarsec.vitamova').put_object(Key="articles/es/"+filename,Body=str(article))
