@@ -16,8 +16,10 @@
           <div class="card-body">
             <h5 id="card_title"  class="card-title"></h5>
             <p id="card_text" class="card-text"></p>
-            <a id="right_answer" onclick="wrong_answer()" class="btn btn-danger">Wrong</a>
-            <a id="wrong_answer" onclick="right_answer()" class="btn btn-primary">Right</a>
+            <div class="d-flex justify-content-between">
+              <a id="right_answer" onclick="wrong_answer()" class="btn btn-danger">Wrong</a>
+              <a id="wrong_answer" onclick="right_answer()" class="btn btn-primary">Right</a>
+            </div>
             <a id="show_answer" onclick="show_answer()" class="btn btn-primary">Show Answer</a>
           </div>
         </div>
