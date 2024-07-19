@@ -64,6 +64,12 @@
     $.ajax({
       type: "POST",
       url: "/flashcards/",
+      contentType: "application/json",
+      //Set a header
+      headers: {
+          "X-Requested-With": "XMLHttpRequest",
+          "X-CSRFToken": "{{ csrf_token }}"
+      },
       data: {
         word_id: words[current_word].id,
         correct: true
@@ -89,6 +95,12 @@
     $.ajax({
       type: "POST",
       url: "/flashcards/",
+      contentType: "application/json",
+      //Set a header
+      headers: {
+          "X-Requested-With": "XMLHttpRequest",
+          "X-CSRFToken": "{{ csrf_token }}"
+      },
       data: {
         word_id: words[current_word].id,
         correct: false
