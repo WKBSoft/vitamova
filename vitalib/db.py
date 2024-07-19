@@ -143,7 +143,11 @@ class vocabulary:
             for word_id in word_list:
                 with self.conn.cursor() as cur:
                     cur.execute("SELECT word, definition, example FROM dictionary_"+self.language+" WHERE id=%s", (word_id,))
-                    words.append(cur.fetchone())
+                    word_dict = {
+                        "word": cur.fetchone()[0],
+                        "definition": cur.fetchone()[1],
+                        "example": cur.fetchone()[2]
+                    }
             return words
 
     class level:
