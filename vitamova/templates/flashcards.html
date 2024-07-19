@@ -70,10 +70,10 @@
           "X-Requested-With": "XMLHttpRequest",
           "X-CSRFToken": "{{ csrf_token }}"
       },
-      data: {
+      data: JSON.stringify({
         word_id: words[current_word].id,
         correct: true
-      },
+      }),
       success: function(data) {
         console.log(data);
         //If the current word is the last word
@@ -101,10 +101,10 @@
           "X-Requested-With": "XMLHttpRequest",
           "X-CSRFToken": "{{ csrf_token }}"
       },
-      data: {
+      data: JSON.stringify({
         word_id: words[current_word].id,
         correct: false
-      },
+      }),
       success: function(data) {
         console.log(data);
         //If the current word is the last word
