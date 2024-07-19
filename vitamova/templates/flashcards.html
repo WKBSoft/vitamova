@@ -31,17 +31,18 @@
     "word1": {
       "word": "hola",
       "definition": "hello",
-      "example": "Hola, ¿cómo estás?",
+      "example": "Hola, ¿cómo estás?"
     },
     "word2": {
       "word": "adiós",
       "definition": "goodbye",
-      "example": "Adiós, hasta luego.",
+      "example": "Adiós, hasta luego."
     }
   ];
-  //{{ words | safe }};
   //Shuffle the words
-
+  words = shuffle(words);
+  //Set the first word
+  var current_word = 0;
 
   function show_word() {
     document.getElementById("card_title").innerHTML = words[current_word].word;
@@ -53,10 +54,9 @@
     document.getElementById("show_answer").style.display = "block";
   }
 
-  words = shuffle(words);
-  //Set the first word
-  var current_word = 0;
-  show_word();  
+  
+  
+   
 
   function right_answer() {
     console.log("Right Answer");
@@ -95,6 +95,8 @@
     document.getElementById("card_text").innerHTML = words[current_word].definition;
   }
     
+  show_word();
+
 </script>
 
   </body>
