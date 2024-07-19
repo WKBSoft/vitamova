@@ -14,11 +14,11 @@
       <div class="col-4 text-center">
         <div class="card" style="width: 18rem;">
           <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
+            <h5 id="card_title"  class="card-title"></h5>
+            <p id="card_text" class="card-text"></p>
+            <a id="right_answer" onclick="right_answer()" class="btn btn-danger">Right</a>
+            <a id="wrong_answer" onclick="wrong_answer()" class="btn btn-primary">Wrong</a>
+            <a id="show_answer" onclick="show_answer()" class="btn btn-primary">Show Answer</a>
           </div>
         </div>
       </div>
@@ -26,6 +26,72 @@
 </div>
 
 <script>
+
+  var words = [
+    "word1": {
+      "word": "hola",
+      "definition": "hello",
+      "example": "Hola, ¿cómo estás?",
+    },
+    "word2": {
+      "word": "adiós",
+      "definition": "goodbye",
+      "example": "Adiós, hasta luego.",
+    }
+  ];
+  //{{ words | safe }};
+  //Shuffle the words
+  words = shuffle(words);
+  //Set the first word
+  var current_word = 0;
+  show_word();
+
+  function show_word() {
+    document.getElementById("card_title").innerHTML = words[current_word].word;
+    document.getElementById("card_text").innerHTML = words[current_word].example;
+    //Hide the right and wrong buttons
+    document.getElementById("right_answer").style.display = "none";
+    document.getElementById("wrong_answer").style.display = "none";
+    //Show the show answer button
+    document.getElementById("show_answer").style.display = "block";
+  }
+
+  function right_answer() {
+    console.log("Right Answer");
+    //If the current word is the last word
+    if (current_word == words.length - 1) {
+      //Redirect to the home page
+      window.location.href = "/";
+    } else {
+      //Show the next word
+      current_word++;
+      show_word();
+    }
+  }
+
+  function wrong_answer() {
+    console.log("Wrong Answer");
+    //If the current word is the last word
+    if (current_word == words.length - 1) {
+      //Redirect to the home page
+      window.location.href = "/";
+    } else {
+      //Show the next word
+      current_word++;
+      show_word();
+    }
+  }
+
+  function show_answer() {
+    console.log("Show Answer");
+    //Show the right and wrong buttons
+    document.getElementById("right_answer").style.display = "block";
+    document.getElementById("wrong_answer").style.display = "block";
+    //Hide the show answer button
+    document.getElementById("show_answer").style.display = "none";
+    //Make the card text the definition
+    document.getElementById("card_text").innerHTML = words[current_word].definition;
+  }
     
 </script>
 
