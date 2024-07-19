@@ -115,11 +115,30 @@ def daily_article(request):
 def flashcards(request):
     #Check if user is logged in
     if request.user.is_authenticated:
-        db_connection = vitalib.db.connection.open()
-        flashcards = vitalib.db.vocabulary.get(db_connection,request.user.username).today()
-        print(flashcards)
-        vitalib.db.connection.close(db_connection)
-        return render(request,'flashcards.html',{"header":logged_in_header(),"flashcards":json.dumps(flashcards)})
+        #If request is GET
+        if request.method == 'GET':
+            db_connection = vitalib.db.connection.open()
+            flashcards = vitalib.db.vocabulary.get(db_connection,request.user.username).today()
+            print(flashcards)
+            vitalib.db.connection.close(db_connection)
+            return render(request,'flashcards.html',{"header":logged_in_header(),"flashcards":json.dumps(flashcards)})
+        elif request.method == 'POST':
+            #Get the request json data
+            jsondata = json.loads(request.body)
+            db_connection = vitalib.db.connection.open()
+            #If the word is correct, correct will be true in the data
+            #If the word is incorrect, correct will be false in the data
+            if jsondata["correct"]:
+                #Use the level.increase method from the vocabulary class in the db module
+                vitalib.db.vocabulary.level(db_connection,request.user.username).increase(jsondata["word_id"])
+            elif not jsondata["correct"]:
+                #Use the level.reset method from the vocabulary class in the db module
+                vitalib.db.vocabulary.level(db_connection,request.user.username).reset(jsondata["word_id"])
+            #Close the database connection
+            vitalib.db.connection.close(db_connection)
+            #Return text like "word + word_id + successfully updated"
+            response = "Word " + str(jsondata["word_id"]) + " successfully updated"
+            return HttpResponse(response, content_type="text/plain")
     else:
         return HttpResponseRedirect("/login/")
     

@@ -159,7 +159,7 @@ class vocabulary:
             self.username = username
             #Get the language from the username using user_info class
             self.language = user_info.get(self.conn, self.username).language()
-        def increase(self, username, word_id):
+        def increase(self, word_id):
             #We will use the ebbinghaus forgetting curve to determine the next review date
             #If the current level is 0, increase to 1 and the next review is 3 days from now
             #If the current level is 1, increase to 2 and the next review is 7 days from now
@@ -169,7 +169,7 @@ class vocabulary:
             #If the current level is 5, increase to 6 and the next review is in year 3000
             #6 is the highest level
             with self.conn.cursor() as cur:
-                cur.execute("SELECT level FROM vocabulary_"+self.language+" WHERE username=%s AND word_id=%s", (username, word_id))
+                cur.execute("SELECT level FROM vocabulary_"+self.language+" WHERE username=%s AND word_id=%s", (self.username, word_id))
                 level = cur.fetchone()[0]
             if level == 0:
                 next_review = str((datetime.datetime.now() + datetime.timedelta(days=3)).date())
@@ -190,11 +190,10 @@ class vocabulary:
                 next_review = "3000-01-01"
                 level = 6
             with self.conn.cursor() as cur:
-                cur.execute("UPDATE vocabulary_"+self.language+" SET level=%s, next_review=%s WHERE username=%s AND word_id=%s", (level, next_review, username, word_id))
+                cur.execute("UPDATE vocabulary_"+self.language+" SET level=%s, next_review=%s WHERE username=%s AND word_id=%s", (level, next_review, self.username, word_id))
 
-        def reset(self):
-            #Reset all levels to 0 and next review to tomorrow
+        def reset(self, word_id):
+            #Reset word level to 0 and next review to tomorrow
             tomorrow = str((datetime.datetime.now() + datetime.timedelta(days=1)).date())
             with self.conn.cursor() as cur:
-                #remember the language is in self.language
-                cur.execute("UPDATE vocabulary_"+self.language+" SET level=0, next_review=%s", (tomorrow,))
+                cur.execute("UPDATE vocabulary_"+self.language+" SET level=0, next_review=%s WHERE username=%s AND word_id=%s", (tomorrow, self.username, word_id))

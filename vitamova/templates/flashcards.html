@@ -60,28 +60,52 @@
 
   function right_answer() {
     console.log("Right Answer");
-    //If the current word is the last word
-    if (current_word == words.length - 1) {
-      //Redirect to the home page
-      window.location.href = "/";
-    } else {
-      //Show the next word
-      current_word++;
-      show_word();
-    }
+    //Open an AJAX request to the server
+    $.ajax({
+      type: "POST",
+      url: "/flashcards",
+      data: {
+        word_id: words[current_word].id,
+        correct: true
+      },
+      success: function(data) {
+        console.log(data);
+        //If the current word is the last word
+        if (current_word == words.length - 1) {
+          //Redirect to the home page
+          window.location.href = "/";
+        } else {
+          //Show the next word
+          current_word++;
+          show_word();
+        }
+      }
+    });
   }
 
   function wrong_answer() {
     console.log("Wrong Answer");
-    //If the current word is the last word
-    if (current_word == words.length - 1) {
-      //Redirect to the home page
-      window.location.href = "/";
-    } else {
-      //Show the next word
-      current_word++;
-      show_word();
-    }
+    //Open an AJAX request to the server
+    $.ajax({
+      type: "POST",
+      url: "/flashcards",
+      data: {
+        word_id: words[current_word].id,
+        correct: false
+      },
+      success: function(data) {
+        console.log(data);
+        //If the current word is the last word
+        if (current_word == words.length - 1) {
+          //Redirect to the home page
+          window.location.href = "/";
+        } else {
+          //Show the next word
+          current_word++;
+          show_word();
+        }
+      }
+    });
   }
 
   function show_answer() {
