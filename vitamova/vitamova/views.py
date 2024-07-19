@@ -123,7 +123,6 @@ def flashcards(request):
             return render(request,'flashcards.html',{"header":logged_in_header(),"flashcards":json.dumps(flashcards)})
         elif request.method == 'POST':
             #Get the request json data
-            print(request.body)
             jsondata = json.loads(request.body)
             db_connection = vitalib.db.connection.open()
             #If the word is correct, correct will be true in the data
@@ -134,6 +133,8 @@ def flashcards(request):
             elif not jsondata["correct"]:
                 #Use the level.reset method from the vocabulary class in the db module
                 vitalib.db.vocabulary.level(db_connection,request.user.username).reset(jsondata["word_id"])
+            #Add one point to the user
+            vitalib.db.user_info.update(db_connection,request.user.username).points(1)
             #Close the database connection
             vitalib.db.connection.close(db_connection)
             #Return text like "word + word_id + successfully updated"
