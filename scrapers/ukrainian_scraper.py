@@ -15,6 +15,7 @@ link_end = main_page.find("\"",link_start)
 
 #Get the link to the article
 link = main_page[link_start:link_end]
+print(link)
 #Get the article page
 article_page = requests.get(link).text
 #The article title starts with the tag <h1 class="post-item__title">
