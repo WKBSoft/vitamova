@@ -41,10 +41,7 @@
   ];
   //{{ words | safe }};
   //Shuffle the words
-  words = shuffle(words);
-  //Set the first word
-  var current_word = 0;
-  show_word();
+
 
   function show_word() {
     document.getElementById("card_title").innerHTML = words[current_word].word;
@@ -55,6 +52,11 @@
     //Show the show answer button
     document.getElementById("show_answer").style.display = "block";
   }
+
+  words = shuffle(words);
+  //Set the first word
+  var current_word = 0;
+  show_word();  
 
   function right_answer() {
     console.log("Right Answer");
