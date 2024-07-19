@@ -58,10 +58,12 @@ def signup(request):
         password = request.POST["password"]
         language = request.POST["language"]
         subscription = request.POST["subscription"]
+        first_name = request.POST["first_name"]
+        last_name = request.POST["last_name"]
         #Check if the user already exists
         if auth.models.User.objects.filter(username=username).exists():
             return render(request,'signup.html',{"header":not_logged_in_header()})
-        user = auth.models.User.objects.create_user(username=username, email=email, password=password)
+        user = auth.models.User.objects.create_user(username=username, email=email, password=password, first_name=first_name, last_name=last_name)
         user.save()
         if subscription == "pro":
             #add user to the pro group
