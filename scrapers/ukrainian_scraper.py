@@ -2,6 +2,7 @@ import requests
 import boto3
 import datetime
 import os
+import re
 
 #Get the website https://ua.korrespondent.net/
 main_page = requests.get("https://ua.korrespondent.net/").text
