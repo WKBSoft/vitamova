@@ -45,7 +45,8 @@ def account(request):
     if request.user.is_authenticated:
         #Get language and points from the database
         db_connection = vitalib.db.connection.open()
-        language = vitalib.db.user_info.get(db_connection,request.user.username).language()
+        language_code = vitalib.db.user_info.get(db_connection,request.user.username).language()
+        language = vitalib.transform.language(language_code).code_to_name()
         points = vitalib.db.user_info.get(db_connection,request.user.username).points()
         vitalib.db.connection.close(db_connection)
         return render(request,'account.html',{"header":logged_in_header(), "user":request.user, "language":language, "points":points})
