@@ -3,6 +3,7 @@ import boto3
 import datetime
 import os
 import re
+from openai import OpenAI
 
 #Get the website https://ua.korrespondent.net/
 main_page = requests.get("https://ua.korrespondent.net/").text
