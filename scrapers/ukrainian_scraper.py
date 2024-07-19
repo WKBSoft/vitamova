@@ -9,7 +9,7 @@ main_page = requests.get("https://ua.korrespondent.net/").text
 #Start by finding the top news article which is under tag <div class="article article_top">
 start = main_page.find("<div class=\"article article_top\">")
 #Now find the link which follows <div class="article__title"><a href="
-link_start = main_page.find("<div class=\"article__title\"><a href=\"",start) + 33
+link_start = main_page.find("<div class=\"article__title\"><a href=\"",start) + 37
 #The link ends with the next "
 link_end = main_page.find("\"",link_start)
 
