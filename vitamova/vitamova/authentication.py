@@ -42,6 +42,11 @@ def userpass_put(data):
     return 0 #db.send("userpass","1",data)
 
 def login(request):
+    #Get User Agent
+    user_agent = request.META.get('HTTP_USER_AGENT')
+    #Check if user is mobile
+    if vitalib.web.is_mobile(user_agent):
+        return render(request,'mobile.html')
     if request.method == "GET":
         return render(request,'login.html',{"header":not_logged_in_header()})
     elif request.method == "POST":
