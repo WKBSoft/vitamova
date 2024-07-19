@@ -61,7 +61,11 @@ while start != -1:
 
 #Now we will use chatgpt to generate 5 multiple choice questions for the article
 base_text = """
-    Please provide 5 multiple choice questions for the following article. Please make sure that the questions are relevant to the article and that the correct answer is not too obvious. Please provide 4 answer choices for each question. Please do not write anything else and use exactly the below format so that I can parse this. The questions and answers should be in ENGLISH. 
+    Please provide 5 multiple choice questions for the following article. 
+    Please make sure that the questions are relevant to the article and that the correct answer is not too obvious. 
+    Please provide 4 answer choices for each question. 
+    Please do not write anything else and use exactly the below format so that I can parse this. 
+    The questions and answers should be in ENGLISH. 
     
     Example
     Question: What is the capital of France?
@@ -70,6 +74,8 @@ base_text = """
     Option 3: Paris
     Option 4: Moscow
     Correct answer: 3
+
+    AGAIN, EVEN THOUGH THE ARTICLE IS IN SPANISH, THE QUESTIONS AND ANSWERS SHOULD BE IN ENGLISH!
 
     Article:
     """
