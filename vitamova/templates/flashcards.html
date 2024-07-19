@@ -63,7 +63,7 @@
     //Open an AJAX request to the server
     $.ajax({
       type: "POST",
-      url: "/flashcards",
+      url: "/flashcards/",
       data: {
         word_id: words[current_word].id,
         correct: true
@@ -88,7 +88,7 @@
     //Open an AJAX request to the server
     $.ajax({
       type: "POST",
-      url: "/flashcards",
+      url: "/flashcards/",
       data: {
         word_id: words[current_word].id,
         correct: false
