@@ -31,5 +31,6 @@ urlpatterns = [
     path("account/",views.account,name='account'),
     path("update_account/",authentication.update_account,name='update_account'),
     path("flashcards/",views.flashcards,name='flashcards'),
+    path("signup/",authentication.signup,name='signup'),
     path("",views.home,name='home'),
 ]
