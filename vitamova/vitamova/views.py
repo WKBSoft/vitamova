@@ -112,6 +112,16 @@ def daily_article(request):
     else:
         return HttpResponseRedirect("/login/")
     
+def flashcards(request):
+    #Check if user is logged in
+    if request.user.is_authenticated:
+        db_connection = vitalib.db.connection.open()
+        flashcards = vitalib.db.vocabulary.get(db_connection,request.user.username).today()
+        vitalib.db.connection.close(db_connection)
+        return render(request,'flashcards.html',{"header":logged_in_header(),"flashcards":flashcards})
+    else:
+        return HttpResponseRedirect("/login/")
+    
 def add_points(request):
     #We need to extend the user model to include a points field
     #If the user is not logged in, return a 403 error

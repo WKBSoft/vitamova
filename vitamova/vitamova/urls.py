@@ -30,5 +30,6 @@ urlpatterns = [
     path("add_points/",views.add_points,name='add_points'),
     path("account/",views.account,name='account'),
     path("update_account/",authentication.update_account,name='update_account'),
+    path("flashcards/",views.flashcards,name='flashcards'),
     path("",views.home,name='home'),
 ]
