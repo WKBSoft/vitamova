@@ -39,6 +39,15 @@
       "example": "Adiós, hasta luego."
     }
   ];
+
+  // Function to shuffle the words array
+  function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+      }
+  }
+  
   //Shuffle the words
   words = shuffle(words);
   //Set the first word
