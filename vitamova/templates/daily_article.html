@@ -257,8 +257,8 @@
                     //Create a list of translations which is the value of translation separated by commas
                     var translations = translated_vocabulary[index].translation.split(",");
                     //Remove any spaces at the beginning of each translation
-                    for (var i = 0; i < translations.length; i++) {
-                        translations[i] = translations[i].trim();
+                    for (var j = 0; i < translations.length; j++) {
+                        translations[j] = translations[j].trim();
                     }
                     //If the value is equal to one of the values in the list, change the color to green
                     if (translations.includes(value)) {
@@ -277,8 +277,13 @@
                 for (var i = 0; i < translated_vocabulary.length; i++) {
                     //Get the value of the input
                     var value = document.getElementById("testword_" + i.toString()).value;
-                    //If the value is equal to the translation, increment the correct variable
-                    if (value == translated_vocabulary[i].translation) {
+                    //Get all translations
+                    var translations = translated_vocabulary[i].translation.split(",");
+                    for (var j = 0; j < translations.length; j++) {
+                        translations[j] = translations[j].trim();
+                    }
+                    //If the value is equal to one of the values in the list, increment the correct variable
+                    if (translations.includes(value)) {
                         correct++;
                     }
                 }
