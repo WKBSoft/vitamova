@@ -119,7 +119,6 @@ def flashcards(request):
         if request.method == 'GET':
             db_connection = vitalib.db.connection.open()
             flashcards = vitalib.db.vocabulary.get(db_connection,request.user.username).today()
-            print(flashcards)
             vitalib.db.connection.close(db_connection)
             return render(request,'flashcards.html',{"header":logged_in_header(),"flashcards":json.dumps(flashcards)})
         elif request.method == 'POST':
