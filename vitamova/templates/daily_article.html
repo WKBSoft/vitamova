@@ -254,8 +254,10 @@
                     var value = document.getElementById(this.id).value;
                     //Get the index of the input
                     var index = parseInt(this.id.split("_")[1]);
-                    //If the value is equal to the translation, change the color to green
-                    if (value == translated_vocabulary[index].translation) {
+                    //Create a list of translations which is the value of translation separated by commas
+                    var translations = translated_vocabulary[index].translation.split(",");
+                    //If the value is equal to one of the values in the list, change the color to green
+                    if (translations.includes(value)) {
                         document.getElementById(this.id).style.color = "green";
                     } else {
                         document.getElementById(this.id).style.color = "red";
