@@ -184,6 +184,11 @@ def submit_vocabulary(request):
         for i in range(len(jsondata)):
             added_text += "Word: "+jsondata[i]["word"]+"\n"
             added_text += "Sentence: "+jsondata[i]["sentence"]+"\n"
+            model = "gpt-3.5-turbo"
+            #Check if user is in the "pro" group
+            if request.user.groups.filter(name="pro").exists():
+                #Then they can use the gpt-4o model
+                model = "gpt-4o"
             if len(base_text) + len(added_text) > 10000 or i == len(jsondata)-1:
                 # Use the new ChatCompletion.create method
                 client = OpenAI(
@@ -198,7 +203,7 @@ def submit_vocabulary(request):
                             "content": base_text+added_text,
                         }
                     ],
-                    model="gpt-3.5-turbo",
+                    model=model,
                 )
                 print(response)
                 #Parse the response
