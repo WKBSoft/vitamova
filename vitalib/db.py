@@ -117,13 +117,13 @@ class vocabulary:
             self.language = user_info.get(self.conn, self.username).language()
         def all(self):
             with self.conn.cursor() as cur:
-                cur.execute("SELECT COUNT(*) FROM vocabulary_"+self.language+" WHERE username=%s", (self.username,))
+                cur.execute("SELECT COUNT(*) FROM vocabulary WHERE username=%s", (self.username,))
                 return cur.fetchone()[0]
         def today(self):
             #This will return the number of words that need to be reviewed today
             #These will have a next_review date of today or earlier
             with self.conn.cursor() as cur:
-                cur.execute("SELECT COUNT(*) FROM vocabulary_"+self.language+" WHERE username=%s AND next_review<=%s", (self.username, str(datetime.datetime.now().date())))
+                cur.execute("SELECT COUNT(*) FROM vocabulary WHERE username=%s AND next_review<=%s", (self.username, str(datetime.datetime.now().date())))
                 return cur.fetchone()[0]
     class get:
         def __init__(self, conn, username):
@@ -134,12 +134,12 @@ class vocabulary:
         def all(self):
             #Get all words in the vocabulary
             with self.conn.cursor() as cur:
-                cur.execute("SELECT word_id, level, next_review FROM vocabulary_"+self.language+" WHERE username=%s", (self.username,))
+                cur.execute("SELECT word_id, level, next_review FROM vocabulary WHERE username=%s", (self.username,))
                 return cur.fetchall()
         def today(self):
             #Get all words that need to be reviewed today
             with self.conn.cursor() as cur:
-                cur.execute("SELECT word_id FROM vocabulary_"+self.language+" WHERE username=%s AND next_review<=%s", (self.username, str(datetime.datetime.now().date())))
+                cur.execute("SELECT word_id FROM vocabulary WHERE username=%s AND next_review<=%s", (self.username, str(datetime.datetime.now().date())))
                 word_list = cur.fetchall()
             #Now get all the words with matching word_id from the dictionary
             words = []
@@ -172,7 +172,7 @@ class vocabulary:
             #If the current level is 5, increase to 6 and the next review is in year 3000
             #6 is the highest level
             with self.conn.cursor() as cur:
-                cur.execute("SELECT level FROM vocabulary_"+self.language+" WHERE username=%s AND word_id=%s", (self.username, word_id))
+                cur.execute("SELECT level FROM vocabulary WHERE username=%s AND word_id=%s", (self.username, word_id))
                 level = cur.fetchone()[0]
             if level == 0:
                 next_review = str((datetime.datetime.now() + datetime.timedelta(days=3)).date())
@@ -193,10 +193,10 @@ class vocabulary:
                 next_review = "3000-01-01"
                 level = 6
             with self.conn.cursor() as cur:
-                cur.execute("UPDATE vocabulary_"+self.language+" SET level=%s, next_review=%s WHERE username=%s AND word_id=%s", (level, next_review, self.username, word_id))
+                cur.execute("UPDATE vocabulary SET level=%s, next_review=%s WHERE username=%s AND word_id=%s", (level, next_review, self.username, word_id))
 
         def reset(self, word_id):
             #Reset word level to 0 and next review to tomorrow
             tomorrow = str((datetime.datetime.now() + datetime.timedelta(days=1)).date())
             with self.conn.cursor() as cur:
-                cur.execute("UPDATE vocabulary_"+self.language+" SET level=0, next_review=%s WHERE username=%s AND word_id=%s", (tomorrow, self.username, word_id))
+                cur.execute("UPDATE vocabulary SET level=0, next_review=%s WHERE username=%s AND word_id=%s", (tomorrow, self.username, word_id))
