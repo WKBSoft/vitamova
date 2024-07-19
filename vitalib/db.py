@@ -93,7 +93,7 @@ class vocabulary:
     def add(conn, username, word, definition, example):
         #Get language from username using user_info class
         language = user_info.get(conn,username).language()
-        vocab_table = "vocabulary_"+language
+        vocab_table = "vocabulary"
         dict_table = "dictionary_"+language
         #if the word is not in the dictionary, add it with the definition and example
         with conn.cursor() as cur:
