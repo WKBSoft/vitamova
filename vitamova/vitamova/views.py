@@ -123,6 +123,7 @@ def flashcards(request):
             return render(request,'flashcards.html',{"header":logged_in_header(),"flashcards":json.dumps(flashcards)})
         elif request.method == 'POST':
             #Get the request json data
+            print(request.body)
             jsondata = json.loads(request.body)
             db_connection = vitalib.db.connection.open()
             #If the word is correct, correct will be true in the data
