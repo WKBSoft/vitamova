@@ -25,16 +25,6 @@ def not_logged_in_header():
     with open(os.path.join(BASE_DIR,"templates/sub_templates/not_logged_in_header.html"),"r") as f:
         return f.read()
 
-class user_data_c:
-    def __init__(self,email):
-        self.email = email
-    def get(self):
-        return 0 #db.retrieve("userdata",self.email)
-    def put(self,data):
-        return 0 #db.send("userdata",self.email,data)
-    def delete(self):
-        return 0 #db.delete("userdata")
-
 def userpass_get():
     return 0 #db.retrieve("userpass","1")
     
@@ -63,25 +53,23 @@ def signup(request):
     if request.method == "GET":
         return render(request,'signup.html',{"header":not_logged_in_header()})
     else:
-        login_email = request.POST["email"]
+        username = request.POST["username"]
+        email = request.POST["email"]
         password = request.POST["password"]
-        pass_b = bytes(password,encoding="utf-8")
-        pass_hash = hashlib.sha256(pass_b).hexdigest()
-        userpass = userpass_get()
-        if login_email not in userpass:
-            userpass.update({login_email:{"password":pass_hash}})
-            userpass_put(userpass)
-            user_data = {
-                "transcribe": {"level": "0"},
-                "read": {"articles": 0},
-                "typing": {"level": "0"},
-                "start_date":str(datetime.date.today()),
-                "history":[0],"points":0
-            }
-            user_data_c(login_email).put(user_data)
-            return HttpResponseRedirect('/login')
-        else:
-            return render(request,'signup.html',{"header":not_logged_in_header()})
+        language = request.POST["language"]
+        subscription = request.POST["subscription"]
+        user = auth.models.User.objects.create_user(username=username, email=email, password=password)
+        user.save()
+        if subscription == "pro":
+            #add user to the pro group
+            group = auth.models.Group.objects.get(name='pro')
+            user.groups.add(group)
+            user.save()
+        #Save user info
+        db_connection = vitalib.db.connection.open()
+        vitalib.db.user_info.add(db_connection, username).new(language)
+        vitalib.db.connection.close(db_connection)
+        return HttpResponseRedirect("/login")
 
 def account(request):
     if request.method == "GET":

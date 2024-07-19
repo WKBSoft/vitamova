@@ -39,6 +39,18 @@ class connection:
 
 #Retrieve user information
 class user_info:
+    class add:
+        def __init__(self, conn, username, language):
+            self.username = username
+            self.language = language
+            self.conn = conn
+        def new(self):
+            #Add the user to the user_info table
+            #Make the last_article_read yesterday
+            yesterday = str((datetime.datetime.now() - datetime.timedelta(days=1)).date())
+            #Make the points 0
+            with self.conn.cursor() as cur:
+                cur.execute("INSERT INTO user_info (username, language, last_article_read, points) VALUES (%s, %s, %s, 0)", (self.username, self.language, yesterday))
     class get:
         def __init__(self, conn, username):
             self.username = username
