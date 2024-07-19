@@ -25,6 +25,13 @@
         </div>
       </div>
     </div>
+    <div class="row justify-content-center">
+      <div class="col-6 text-center">
+        <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+          <div class="progress-bar w-0"></div>
+        </div>
+      </div>
+    </div>
 </div>
 
 <script>
@@ -52,6 +59,8 @@
     document.getElementById("wrong_answer").style.display = "none";
     //Show the show answer button
     document.getElementById("show_answer").style.display = "block";
+    //Update the progress bar
+    document.querySelector(".progress-bar").style.width = (current_word / words.length) * 100 + "%";
   }
 
   
