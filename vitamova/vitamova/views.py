@@ -118,9 +118,16 @@ def flashcards(request):
         #If request is GET
         if request.method == 'GET':
             db_connection = vitalib.db.connection.open()
-            flashcards = vitalib.db.vocabulary.get(db_connection,request.user.username).today()
-            vitalib.db.connection.close(db_connection)
-            return render(request,'flashcards.html',{"header":logged_in_header(),"flashcards":json.dumps(flashcards)})
+            #Get the flashcard count for today
+            flashcard_count = vitalib.db.vocabulary.count(db_connection,request.user.username).today()
+            #If the flashcard count is zero, redirect to the home page
+            if flashcard_count == 0:
+                vitalib.db.connection.close(db_connection)
+                return HttpResponseRedirect("/")
+            else:
+                flashcards = vitalib.db.vocabulary.get(db_connection,request.user.username).today()
+                vitalib.db.connection.close(db_connection)
+                return render(request,'flashcards.html',{"header":logged_in_header(),"flashcards":json.dumps(flashcards)})
         elif request.method == 'POST':
             #Get the request json data
             jsondata = json.loads(request.body)
