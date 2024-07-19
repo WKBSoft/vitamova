@@ -90,11 +90,14 @@ class vocabulary:
             if cur.fetchone() is None:
                 print("Word", word, "is not in the dictionary, adding it now")
                 cur.execute("INSERT INTO "+dict_table+" (word, definition, example) VALUES (%s, %s, %s)", (word, definition, example))
+            else:
+                print("Word", word, "is already in the dictionary")
         #Get the id of the word from the dictionary
         with conn.cursor() as cur:
             cur.execute("SELECT id FROM "+dict_table+" WHERE word=%s", (word,))
             word_id = cur.fetchone()[0]
-        print("Added word", word, "with id", word_id, "to the dictionary")
+        #Print the word id
+        print("The word "+word+" has an id of ", word_id)
         #If the word is in the vocabulary, change the level to 0 and the next review to tomorrow
         tomorrow = str((datetime.datetime.now() + datetime.timedelta(days=1)).date())
         with conn.cursor() as cur:
