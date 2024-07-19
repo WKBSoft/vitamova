@@ -188,6 +188,7 @@ def submit_vocabulary(request):
             #Check if user is in the "pro" group
             if request.user.groups.filter(name="pro").exists():
                 #Then they can use the gpt-4o model
+                print("User is in the pro group")
                 model = "gpt-4o"
             if len(base_text) + len(added_text) > 10000 or i == len(jsondata)-1:
                 # Use the new ChatCompletion.create method
