@@ -29,18 +29,7 @@
 
 <script>
 
-  var words = [
-    {
-      "word": "hola",
-      "definition": "hello",
-      "example": "Hola, ¿cómo estás?"
-    },
-    {
-      "word": "adiós",
-      "definition": "goodbye",
-      "example": "Adiós, hasta luego."
-    }
-  ];
+  var words = {{ flashcards | safe }};
 
   // Function to shuffle the words array
   function shuffle(array) {
