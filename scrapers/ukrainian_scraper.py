@@ -5,6 +5,22 @@ import os
 import re
 from openai import OpenAI
 
+def source_profile(file_path):
+    with open(file_path) as f:
+        for line in f:
+            if line.startswith('export '):
+                # Strip out 'export ' and split by '=' to get the key and value
+                key, value = line[len('export '):].strip().split('=', 1)
+                # Remove surrounding quotes from value if they exist
+                if value.startswith('"') and value.endswith('"'):
+                    value = value[1:-1]
+                elif value.startswith("'") and value.endswith("'"):
+                    value = value[1:-1]
+                os.environ[key] = value
+
+# Use the function to source the profile
+source_profile(os.path.expanduser("~/.profile"))
+
 #Get the website https://ua.korrespondent.net/
 main_page = requests.get("https://ua.korrespondent.net/").text
 
