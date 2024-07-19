@@ -1,0 +1,15 @@
+[Unit]
+Description=Vitamova Django Server
+After=network.target
+
+[Service]
+User=vitamova
+WorkingDirectory=/home/vitamova/vitamova/vitamova
+ExecStart=/usr/bin/python3 /home/vitamova/vitamova/vitamova/manage.py runserver localhost:8888
+Restart=always
+RestartSec=10
+Environment=PATH=/usr/bin:/usr/local/bin
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
