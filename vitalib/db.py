@@ -142,13 +142,14 @@ class vocabulary:
             words = []
             for word_id in word_list:
                 with self.conn.cursor() as cur:
-                    cur.execute("SELECT word, definition, example FROM dictionary_"+self.language+" WHERE id=%s", (word_id,))
+                    cur.execute("SELECT id, word, definition, example FROM dictionary_"+self.language+" WHERE id=%s", (word_id,))
                     result = cur.fetchone()
                     if result is not None:
                         words.append({
-                            "word": result[0],
-                            "definition": result[1],
-                            "example": result[2]
+                            "id": result[0], #We need to use id instead of word_id because we are getting the id from the dictionary table
+                            "word": result[1],
+                            "definition": result[2],
+                            "example": result[3]
                         })
             return words
 
