@@ -137,10 +137,10 @@ def update_account(request):
             u.first_name = data["first_name"]
         if "last_name" in data:
             u.last_name = data["last_name"]
-        if "language" in data:
-            db_connection = vitalib.db.connection.open()
-            vitalib.db.user_info.update(db_connection, u.username).language(data["language"])
-            vitalib.db.connection.close(db_connection)
+        #if "language" in data:
+            #db_connection = vitalib.db.connection.open()
+            #vitalib.db.user_info.update(db_connection, u.username).language(data["language"])
+            #vitalib.db.connection.close(db_connection)
         u.save()
         return HttpResponse("success", content_type="text/plain")
     else:
