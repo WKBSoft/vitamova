@@ -136,8 +136,15 @@ class vocabulary:
         def today(self):
             #Get all words that need to be reviewed today
             with self.conn.cursor() as cur:
-                cur.execute("SELECT word_id, level, next_review FROM vocabulary_"+self.language+" WHERE username=%s AND next_review<=%s", (self.username, str(datetime.datetime.now().date())))
-                return cur.fetchall()  
+                cur.execute("SELECT word_id FROM vocabulary_"+self.language+" WHERE username=%s AND next_review<=%s", (self.username, str(datetime.datetime.now().date())))
+                word_list = cur.fetchall()
+            #Now get all the words with matching word_id from the dictionary
+            words = []
+            for word_id in word_list:
+                with self.conn.cursor() as cur:
+                    cur.execute("SELECT word, definition, example FROM dictionary_"+self.language+" WHERE id=%s", (word_id,))
+                    words.append(cur.fetchone())
+            return words
 
     class level:
         def __init__(self, conn, username):
