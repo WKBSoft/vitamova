@@ -22,34 +22,31 @@ def source_profile(file_path):
 source_profile(os.path.expanduser("~/.profile"))
 
 #Get initial page
-main_page = requests.get("https://www.dw.com/de/").text
+main_page = requests.get("https://www.sapo.pt").text
 
-#First find #post-top-story
-start = main_page.find("#post-top-story")
-#The next HREF will be the path to the article
+#The main article follows the first <h3 tag
+start = main_page.find("<h3")
+#The link follows the first href after the <h3 tag
 link_start = main_page.find("href",start) + 6
 link_end = main_page.find("\"",link_start)
-full_link = "https://www.dw.com" + main_page[link_start:link_end]
+full_link = "https://www.sapo.pt" + main_page[link_start:link_end]
 
-#The article title follows the link after a title= attribute
-title_start = main_page.find("title=",link_end) + 7
-title_end = main_page.find("\"",title_start)
+#The article title is in <span> tags after the link
+title_start = main_page.find("<span>",link_end) + 6
+title_end = main_page.find("</span>",title_start)
 title = main_page[title_start:title_end]
 
 #Get the article page
 article_page = requests.get(full_link).text
 
-#The article text is contained within <p> or <h2> tags
+#The article text is contained within <p> tags
 text = []
 start = 0
 while start != -1:
-    start = min(article_page.find("<p>",start), article_page.find("<h2>",start))
+    start = article_page.find("<p>",start)
     if start != -1:
-        end = min(article_page.find("</p>",start), article_page.find("</h2>",start))
-        if article_page[start:start+3] == "<h2":
-            sub_text = article_page[start+4:end]
-        elif article_page[start:start+3] == "<p>":
-            sub_text = article_page[start+3:end]
+        end = article_page.find("</p>",start)
+        sub_text = article_page[start+3:end]
         #Remove any html tags from the text
         clean = re.compile('<.*?>')
         sub_text = re.sub(clean, '', sub_text)
@@ -76,7 +73,7 @@ base_text = """
     Option 4: Moscow
     Correct answer: 3
 
-    AGAIN, EVEN THOUGH THE ARTICLE IS IN GERMAN, THE QUESTIONS AND ANSWERS SHOULD BE IN ENGLISH!
+    AGAIN, EVEN THOUGH THE ARTICLE IS IN PORTUGUESE, THE QUESTIONS AND ANSWERS SHOULD BE IN ENGLISH!
 
     Article:
     """
@@ -133,4 +130,4 @@ s3 = my_session.resource('s3')
 #It will be in the folder articles/spanish
 #The body of the file will be the json object
 filename = str(datetime.datetime.now().date())+".json"
-s3.Bucket('evenstarsec.vitamova').put_object(Key="articles/de/"+filename,Body=str(article))
+s3.Bucket('evenstarsec.vitamova').put_object(Key="articles/pt/"+filename,Body=str(article))
