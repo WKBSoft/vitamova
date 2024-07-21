@@ -323,6 +323,8 @@
     }
 
     function submit_answers() {
+        //Have the button load
+        document.getElementById("submit_button").innerHTML = "<span class=\"spinner-border spinner-border-sm\" role=\"status\" aria-hidden=\"true\"></span>Loading...";
         //Send the selected answers to the server with an AJAX request
         var answers = document.getElementById("review_questions")
         var selected_answers = [];
@@ -368,22 +370,19 @@
                 //Update the modal
                 var modal_body = "<p>You have completed the exercise!</p><br>";
                 modal_body += "<p>You received 10 points for completing the exercise and ";
-                //You get 2 points for each correct answer
-                var score = 0;
-                for (var i = 0; i < selected_answers.length; i++) {
-                    if (selected_answers[i] == correct_answers[i]) {
-                        score += 2;
-                    }
-                }
-                modal_body += score.toString() + " points for answering ";
+                modal_body += ({{ response.total_correct }} *2).toString() + " points for answering ";
                 //Just divide the score by 2 to get the number of correct answers
-                modal_body += (score / 2).toString() + " questions correctly.</p><br>";
+                modal_body += ({{ response.total_correct }}).toString() + " questions correctly.</p><br>";
+                //Change the button to say return home
+                document.getElementById("submit_button").innerHTML = "Return Home";
+                //Make the button's action to return home
+                document.getElementById("submit_button").setAttribute("onclick", "window.location.href = '/'");
+                //Show the modal
+                document.getElementById("completionModalButton").click();
             }
         }).fail(function() {
             console.log("Error submitting answers");
-        });
- 
-        
+        });        
     }
 
 

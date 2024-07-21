@@ -112,13 +112,20 @@ def daily_article(request):
                 correct_answers.append(int(question["correct_answer"].strip()))
             #Compare the correct answers to the user's answers
             user_answers = json.loads(request.body)["answers"]
+            total_correct = 0
             for i in range(len(user_answers)):
                 if user_answers[i] == correct_answers[i]:
                     #Add one point to the user
-                    vitalib.db.user_info.update(db_connection,request.user.username).points(1)
+                    vitalib.db.user_info.update(db_connection,request.user.username).points(2)
+                    total_correct += 1
+            #Add 10 points to the user
+            vitalib.db.user_info.update(db_connection,request.user.username).points(10)
             vitalib.db.connection.close(db_connection)
             return HttpResponse(
-                json.dumps({"correct_answers": correct_answers}), content_type="application/json")
+                json.dumps({
+                    "correct_answers": correct_answers, 
+                    "total_correct": total_correct
+                }), content_type="application/json")
         elif request.method == 'GET':
             vitalib.db.connection.close(db_connection)
             return render(request,'daily_article.html',{
