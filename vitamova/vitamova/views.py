@@ -124,7 +124,7 @@ def daily_article(request):
             return HttpResponse(
                 json.dumps({
                     "correct_answers": correct_answers, 
-                    "total_correct": str(total_correct)
+                    "total_correct": total_correct
                 }), content_type="application/json")
         elif request.method == 'GET':
             vitalib.db.connection.close(db_connection)

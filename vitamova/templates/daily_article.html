@@ -370,9 +370,9 @@
                 //Update the modal
                 var modal_body = "<p>You have completed the exercise!</p><br>";
                 modal_body += "<p>You received 10 points for completing the exercise and ";
-                modal_body += ({{ response.total_correct }} *2).toString() + " points for answering ";
+                modal_body += (response.total_correct*2).toString() + " points for answering ";
                 //Just divide the score by 2 to get the number of correct answers
-                modal_body += ({{ response.total_correct }}).toString() + " questions correctly.</p><br>";
+                modal_body += (response.total_correct).toString() + " questions correctly.</p><br>";
                 //Change the button to say return home
                 document.getElementById("submit_button").innerHTML = "Return Home";
                 //Make the button's action to return home
