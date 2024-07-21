@@ -138,18 +138,6 @@
 
 <script>
 
-    window.addEventListener('scroll', function() {
-        var vocabulary = document.getElementById('vocabulary');
-        var article = document.getElementById('article');
-        var articleTop = article.offsetTop;
-
-        if (window.scrollY > articleTop) {
-            vocabulary.classList.add('fixed');
-        } else {
-            vocabulary.classList.remove('fixed');
-        }
-    });
-
     //Create a global variable to store the vocabulary words and sentences
     var vocabulary = [];
     var translated_vocabulary = [];
