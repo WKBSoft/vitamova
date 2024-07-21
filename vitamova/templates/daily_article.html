@@ -323,16 +323,7 @@
     }
 
     function submit_answers() {
-        //List all the correct answers
-        correct_answers = [];
-        {% for question in questions %}
-            correct_answers.push("{{question.correct_answer}}");
-        {% endfor %}
-        //Convert the correct answers to integers
-        for (var i = 0; i < correct_answers.length; i++) {
-            correct_answers[i] = parseInt(correct_answers[i]);
-        }
-        //Get the selected answers
+        //Send the selected answers to the server with an AJAX request
         var answers = document.getElementById("review_questions")
         var selected_answers = [];
         for (var i = 0; i < answers.children.length; i++) {
@@ -345,38 +336,13 @@
                 }
             }
         }
-        //Iterate through the selected answers and check if they are correct
-        for (var i = 0; i < selected_answers.length; i++) {
-            if (selected_answers[i] != correct_answers[i]) {
-                //If the answer is incorrect, change the color to red
-                document.getElementById("option" + selected_answers[i] + "_question" + (i + 1).toString()).nextElementSibling.style.color = "red";
-                //Change the color of the correct answer to green
-                document.getElementById("option" + correct_answers[i] + "_question" + (i + 1).toString()).nextElementSibling.style.color = "green";
-            } else {
-                //If the answer is correct, change the color to green
-                document.getElementById("option" + selected_answers[i] + "_question" + (i + 1).toString()).nextElementSibling.style.color = "green";
-            }
-        }
-        //Update the modal
-        var modal_body = "<p>You have completed the exercise!</p><br>";
-        modal_body += "<p>You received 10 points for completing the exercise and ";
-        //You get 2 points for each correct answer
-        var score = 0;
-        for (var i = 0; i < selected_answers.length; i++) {
-            if (selected_answers[i] == correct_answers[i]) {
-                score += 2;
-            }
-        }
-        modal_body += score.toString() + " points for answering ";
-        //Just divide the score by 2 to get the number of correct answers
-        modal_body += (score / 2).toString() + " questions correctly.</p><br>";
-        //var to store the total number of points
-        var total_points;
-
-        //Create an XHR request to submit the score to the url /add_points/
+        //The url is /daily_article/ 
+        //The data is the selected answers
+        //The method is POST
+        //The success function is the function below
         $.ajax({
-            url: "/add_points/",
-            data: JSON.stringify({points: score+10}),
+            url: "/daily_article/",
+            data: JSON.stringify({answers: selected_answers}),
             type: "POST",
             contentType: "application/json",
             headers: {
@@ -385,26 +351,39 @@
             },
             success: function(response) {
                 console.log(response);
-                total_points = response;
-                //You now have a total of 
-                modal_body += "<p>You now have a total of " + total_points + " points.</p><br>";
-
-                //Now the thing about going back to the home page
-                modal_body += "<p>Click the button below to return to the home page.</p>";
-                document.getElementById("modal-body").innerHTML = modal_body;
-
-                //Show the modal
-                var modal = new bootstrap.Modal(document.getElementById('completionModal'), {
-                    keyboard: false
-                });
-                modal.show();
-                //Change the button to return home
-                document.getElementById("submit_button").innerHTML = "Return Home";
-                document.getElementById("submit_button").setAttribute("onclick", "window.location.href = '/'");
+                //The response is a dictionary with the keys "correct_answers"
+                var correct_answers = response.correct_answers;
+                //Iterate through the selected answers and check if they are correct
+                for (var i = 0; i < selected_answers.length; i++) {
+                    if (selected_answers[i] != correct_answers[i]) {
+                        //If the answer is incorrect, change the color to red
+                        document.getElementById("option" + selected_answers[i] + "_question" + (i + 1).toString()).nextElementSibling.style.color = "red";
+                        //Change the color of the correct answer to green
+                        document.getElementById("option" + correct_answers[i] + "_question" + (i + 1).toString()).nextElementSibling.style.color = "green";
+                    } else {
+                        //If the answer is correct, change the color to green
+                        document.getElementById("option" + selected_answers[i] + "_question" + (i + 1).toString()).nextElementSibling.style.color = "green";
+                    }
+                }
+                //Update the modal
+                var modal_body = "<p>You have completed the exercise!</p><br>";
+                modal_body += "<p>You received 10 points for completing the exercise and ";
+                //You get 2 points for each correct answer
+                var score = 0;
+                for (var i = 0; i < selected_answers.length; i++) {
+                    if (selected_answers[i] == correct_answers[i]) {
+                        score += 2;
+                    }
+                }
+                modal_body += score.toString() + " points for answering ";
+                //Just divide the score by 2 to get the number of correct answers
+                modal_body += (score / 2).toString() + " questions correctly.</p><br>";
             }
         }).fail(function() {
-            console.log("Error submitting points");
+            console.log("Error submitting answers");
         });
+ 
+        
     }
 
 
