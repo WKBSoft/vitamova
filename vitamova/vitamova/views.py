@@ -35,15 +35,6 @@ def home(request):
         flashcard_count = vitalib.db.vocabulary.count(db_connection,request.user.username).today()
         last_article = vitalib.db.user_info.get(db_connection,request.user.username).last_article_read()
         vitalib.db.connection.close(db_connection)
-        #Print today's date
-        print(str(datetime.datetime.now().date()))
-        #Print the last article read
-        print(last_article)
-        #Print an equality check
-        print(str(datetime.datetime.now().date()) == last_article)
-        #Check the type of each
-        print(type(str(datetime.datetime.now().date())))
-        print(type(last_article))
         return render(request,'dashboard.html',{
             "header":logged_in_header(), 
             "user":request.user, 
@@ -73,7 +64,7 @@ def daily_article(request):
         db_connection = vitalib.db.connection.open()
         #If the user's last article read is today ridirect to the home page
         last_article = vitalib.db.user_info.get(db_connection,request.user.username).last_article_read()
-        if str(datetime.datetime.now().date()) == last_article:
+        if datetime.datetime.now().date() == last_article:
             vitalib.db.connection.close(db_connection)
             return HttpResponseRedirect("/")
         #Get the user's language
