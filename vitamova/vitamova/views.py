@@ -33,8 +33,14 @@ def home(request):
         db_connection = vitalib.db.connection.open()
         points = vitalib.db.user_info.get(db_connection,request.user.username).points()
         flashcard_count = vitalib.db.vocabulary.count(db_connection,request.user.username).today()
+        last_article = vitalib.db.user_info.get(db_connection,request.user.username).last_article_read()
         vitalib.db.connection.close(db_connection)
-        return render(request,'dashboard.html',{"header":logged_in_header(), "user":request.user, "date":str(datetime.datetime.now().date()), "points":points, "flashcard_count":flashcard_count})
+        return render(request,'dashboard.html',{
+            "header":logged_in_header(), 
+            "user":request.user, 
+            "article_read":str(datetime.datetime.now().date()) == last_article, 
+            "points":points, 
+            "flashcard_count":flashcard_count})
     else:
         return HttpResponseRedirect("/login/")
     
@@ -54,6 +60,15 @@ def account(request):
 def daily_article(request):
     #Check if user is logged in
     if request.user.is_authenticated:
+        #Open the database connection
+        db_connection = vitalib.db.connection.open()
+        #If the user's last article read is today ridirect to the home page
+        last_article = vitalib.db.user_info.get(db_connection,request.user.username).last_article_read()
+        if str(datetime.datetime.now().date()) == last_article:
+            vitalib.db.connection.close(db_connection)
+            return HttpResponseRedirect("/")
+        #Get the user's language
+        language_code = vitalib.db.user_info.get(db_connection,request.user.username).language()
         #The filename we need is the current date in the format YYYY-MM-DD.json
         filename = str(datetime.datetime.now().date())+".json"
         #Create S3 Session
@@ -70,9 +85,6 @@ def daily_article(request):
         )
         #Download the article from the bucket called evenstarsec.vitamova
         s3 = my_session.resource('s3')
-        #Get the user's language
-        db_connection = vitalib.db.connection.open()
-        language_code = vitalib.db.user_info.get(db_connection,request.user.username).language()
         #The article is in the folder articles/language
         #The filename is the current date in the format YYYY-MM-DD.json
         obj = s3.Object('evenstarsec.vitamova', 'articles/'+language_code+'/'+filename)
@@ -120,6 +132,8 @@ def daily_article(request):
                     total_correct += 1
             #Add 10 points to the user
             vitalib.db.user_info.update(db_connection,request.user.username).points(10)
+            #Make the user's last article read the current date
+            vitalib.db.user_info.update(db_connection,request.user.username).last_article_read(str(datetime.datetime.now().date()))
             vitalib.db.connection.close(db_connection)
             return HttpResponse(
                 json.dumps({

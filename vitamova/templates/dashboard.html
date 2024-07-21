@@ -39,7 +39,7 @@
         <div class="card-body">
           <h5 class="card-title">Article of the Day</h5>
           <p class="card-text">Read today's article and earn up to 20 points after completing the multiple choice test at the end.</p>
-          <button id="daily_article" onclick="window.location.href='/daily_article'" class="btn btn-primary">Read the Article</button>
+          <button id="daily_article" onclick="window.location.href='/daily_article'" class="btn btn-primary" {% if article_read %}disabled{% endif %}>Read the Article</button>
         </div>
       </div>
     </div>

@@ -87,6 +87,9 @@ class user_info:
         def language(self, language):
             with self.conn.cursor() as cur:
                 cur.execute("UPDATE user_info SET language=%s WHERE username=%s", (language, self.username))
+        def last_article_read(self, date):
+            with self.conn.cursor() as cur:
+                cur.execute("UPDATE user_info SET last_article_read=%s WHERE username=%s", (date, self.username))
 
 class vocabulary:
     @staticmethod
