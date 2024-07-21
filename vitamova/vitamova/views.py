@@ -35,6 +35,10 @@ def home(request):
         flashcard_count = vitalib.db.vocabulary.count(db_connection,request.user.username).today()
         last_article = vitalib.db.user_info.get(db_connection,request.user.username).last_article_read()
         vitalib.db.connection.close(db_connection)
+        #Print today's date
+        print(str(datetime.datetime.now().date()))
+        #Print the last article read
+        print(last_article)
         return render(request,'dashboard.html',{
             "header":logged_in_header(), 
             "user":request.user, 
