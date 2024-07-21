@@ -378,7 +378,7 @@
                 //Make the button's action to return home
                 document.getElementById("submit_button").setAttribute("onclick", "window.location.href = '/'");
                 //Show the modal
-                document.getElementById("completionModalButton").click();
+                document.getElementById("completionModal").hidden = false;
             }
         }).fail(function() {
             console.log("Error submitting answers");
