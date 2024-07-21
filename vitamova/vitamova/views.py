@@ -47,7 +47,7 @@ def home(request):
         return render(request,'dashboard.html',{
             "header":logged_in_header(), 
             "user":request.user, 
-            "article_read":str(datetime.datetime.now().date()) == last_article, 
+            "article_read":datetime.datetime.now().date() == last_article, 
             "points":points, 
             "flashcard_count":flashcard_count})
     else:
