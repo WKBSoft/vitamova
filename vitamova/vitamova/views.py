@@ -109,7 +109,7 @@ def daily_article(request):
             correct_answers = []
             for question in article["questions"]:
                 #Strop the correct answer of white space and make it an integer
-                correct_answers.append(int(question["correct"].strip()))
+                correct_answers.append(int(question["correct_answer"].strip()))
             #Compare the correct answers to the user's answers
             user_answers = json.loads(request.body)["answers"]
             for i in range(len(user_answers)):
