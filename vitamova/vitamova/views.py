@@ -41,6 +41,9 @@ def home(request):
         print(last_article)
         #Print an equality check
         print(str(datetime.datetime.now().date()) == last_article)
+        #Check the type of each
+        print(type(str(datetime.datetime.now().date())))
+        print(type(last_article))
         return render(request,'dashboard.html',{
             "header":logged_in_header(), 
             "user":request.user, 
