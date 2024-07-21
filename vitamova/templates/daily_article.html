@@ -105,7 +105,7 @@
 </div>
 
 <!-- Button trigger modal -->
-<button id="completionModalButton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CompletionModal" hidden>
+<button id="completionModalButton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CompletionModal">
     Launch demo modal
   </button>
   
@@ -361,6 +361,7 @@
                 modal_body += (response.total_correct*2).toString() + " points for answering ";
                 //Just divide the score by 2 to get the number of correct answers
                 modal_body += (response.total_correct).toString() + " questions correctly.</p><br>";
+                document.getElementById("modal-body").innerHTML = modal_body;
                 //Change the button to say return home
                 document.getElementById("submit_button").innerHTML = "Return Home";
                 //Make the button's action to return home
