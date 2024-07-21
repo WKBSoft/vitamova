@@ -190,6 +190,7 @@ def submit_vocabulary(request):
             Please seperate your responses per word by a single line. Please only provide one response per word/sentence pair below. 
             If the word is the base form, please rewrite the word as the base form. Do NOT write the base form as none. 
             If the word is the reflexive form, please rewrite the word as the reflexive form.
+            Please make sure you include the words before the : symbol in your response. I am using these to parse the data.
             Word: 
             Base form: 
             Translation:
