@@ -73,7 +73,6 @@ def daily_article(request):
         #Get the user's language
         db_connection = vitalib.db.connection.open()
         language_code = vitalib.db.user_info.get(db_connection,request.user.username).language()
-        vitalib.db.connection.close(db_connection)
         #The article is in the folder articles/language
         #The filename is the current date in the format YYYY-MM-DD.json
         obj = s3.Object('evenstarsec.vitamova', 'articles/'+language_code+'/'+filename)
@@ -105,13 +104,33 @@ def daily_article(request):
         for i in range(len(article["questions"])):
             article["questions"][i]["index"] = i+1
         #Return the article title and the text as a list of paragraphs
-        return render(request,'daily_article.html',{
-            "title":article["title"],
-            "paragraphs":paragraphs,
-            "header":logged_in_header(),
-            "w2s_map":w2s_map, 
-            "questions":article["questions"] 
-            })
+        if request.method == 'POST':
+            #Get the correct answers from the article
+            correct_answers = []
+            for question in article["questions"]:
+                #Strop the correct answer of white space and make it an integer
+                correct_answers.append(int(question["correct"].strip()))
+            #Compare the correct answers to the user's answers
+            user_answers = json.loads(request.body)["answers"]
+            for i in range(len(user_answers)):
+                if user_answers[i] == correct_answers[i]:
+                    #Add one point to the user
+                    vitalib.db.user_info.update(db_connection,request.user.username).points(1)
+            vitalib.db.connection.close(db_connection)
+            return HttpResponse(
+                json.dumps({"correct_answers": correct_answers}), content_type="application/json")
+        elif request.method == 'GET':
+            vitalib.db.connection.close(db_connection)
+            return render(request,'daily_article.html',{
+                "title":article["title"],
+                "paragraphs":paragraphs,
+                "header":logged_in_header(),
+                "w2s_map":w2s_map, 
+                "questions":article["questions"] 
+                })
+        else:
+            #Return error
+            return HttpResponse("Error: Invalid request method", content_type="text/plain")
     else:
         return HttpResponseRedirect("/login/")
     
@@ -152,21 +171,6 @@ def flashcards(request):
             return HttpResponse(response, content_type="text/plain")
     else:
         return HttpResponseRedirect("/login/")
-    
-def add_points(request):
-    #We need to extend the user model to include a points field
-    #If the user is not logged in, return a 403 error
-    if not request.user.is_authenticated:
-        return HttpResponse(status=403)
-    #Get the number of points to add from the request
-    #The request has JSON data with a key called points
-    points = int(json.loads(request.body)["points"])
-    #Use the add_points method from the user_info class in the db module
-    db_connection = vitalib.db.connection.open()
-    new_points = vitalib.db.user_info.update(db_connection,request.user.username).points(points)
-    vitalib.db.connection.close(db_connection)
-    #Content type is text
-    return HttpResponse(str(new_points), content_type="text/plain")   
 
 def submit_vocabulary(request):
     #Check if user is logged in
