@@ -39,6 +39,8 @@ def home(request):
         print(str(datetime.datetime.now().date()))
         #Print the last article read
         print(last_article)
+        #Print an equality check
+        print(str(datetime.datetime.now().date()) == last_article)
         return render(request,'dashboard.html',{
             "header":logged_in_header(), 
             "user":request.user, 
