@@ -53,7 +53,7 @@
         <div class="col-6" style="background-color: #f8f9fa;" id="test_list">
             <div class="card">
                 <div class="card-body text-center">
-                    <h5 id="card_title"  class="card-title"></h5>
+                    <h5 id="card_title" class="card-title"></h5>
                     <p id="card_text" class="card-text"></p>
                     <!--add a text box-->
                     <input type="text" class="form-control" id="answer" placeholder="Enter the translation here">
@@ -293,6 +293,7 @@
                     console.log(test_vocabulary);
                     console.log(i);
                     console.log(test_vocabulary[i]);
+                    console.log(test_vocabulary[i].base);
                     document.getElementById("card_title").innerHTML = test_vocabulary[i].base;
                     //Make the card text the example
                     document.getElementById("card_text").innerHTML = test_vocabulary[i].example;
