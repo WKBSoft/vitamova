@@ -191,8 +191,6 @@
 
     //Create the submit_vocabulary function
     function submit_vocabulary() {
-        console.log(vocabulary);
-        console.log(translated_vocabulary);
         //First make the button load
         document.getElementById("submit_button").innerHTML = "<span class=\"spinner-border spinner-border-sm\" role=\"status\" aria-hidden=\"true\"></span>Loading...";
 
@@ -284,6 +282,7 @@
             var test_vocabulary = translated_vocabulary
             //Shuffle the list
             test_vocabulary.sort(() => Math.random() - 0.5);
+            console.log(test_vocabulary);
             //While the test list is not empty
             while (test_vocabulary.length > 0) {
                 //show the div
@@ -292,7 +291,7 @@
                 var words_to_remove = [];
                 for (var i=0; i < test_vocabulary.length; i++) {
                     //Make the card title the word
-                    document.getElementById("card_title").innerHTML = test_vocabulary[i].word;
+                    document.getElementById("card_title").innerHTML = test_vocabulary[i].base;
                     //Make the card text the example
                     document.getElementById("card_text").innerHTML = test_vocabulary[i].example;
                     //Hide the next card button and show the text box and dont remember button
@@ -387,7 +386,6 @@
                 "X-CSRFToken": "{{ csrf_token }}"
             },
             success: function(response) {
-                console.log(response);
                 //The response is a dictionary with the keys "correct_answers"
                 var correct_answers = response.correct_answers;
                 //Iterate through the selected answers and check if they are correct
