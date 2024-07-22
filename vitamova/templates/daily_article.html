@@ -48,13 +48,25 @@
         </div>
         <div class="col-3"></div>
     </div>
-    <div id="test_vocab" class="row" hidden>
+    <div id="test_vocab" class="row justify-content-center" hidden>
         <div class="col-3"></div>
         <div class="col-6" style="background-color: #f8f9fa;" id="test_list">
-            <p><h4>Instructions</h4></p>
-            <p>For each word, type the translation in the box below. If you get it right, the text will turn green.</p>
-            <p>Once you translate all of the words correctly, you will automatically proceed to the next page.</p>
-            <p>Click the button below to review the vocabulary again.</p>	
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 id="card_title"  class="card-title"></h5>
+                    <p id="card_text" class="card-text"></p>
+                    <!--add a text box-->
+                    <input type="text" class="form-control" id="answer" placeholder="Enter the translation here">
+                    <!--add a button-->
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary" type="button" id="dont_remember">I Don't Remember</button>
+                    </div>
+                    <!--add a button-->
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary" type="button" id="next_card">Next Card</button>
+                    </div>
+                </div>
+            </div>
             
         </div>
         <div class="col-3"></div>
@@ -211,7 +223,49 @@
         });
     }
 
-    function test_vocabulary() {
+    //See if the user correctly translated the word
+    function step3_correct(answer) {
+        //Create an event listener for the input box
+        //The input box's id is answer
+        return new Promise ((resolve, reject) => {
+            document.getElementById("answer").addEventListener("input", function() {
+                //Split the answer by commas
+                var answer = answer.split(",");
+                //Check if the answer is in the list
+                if (answer.includes(document.getElementById("answer").value)) {
+                    //If the answer is correct, resolve the promise
+                    resolve("Correct");
+                } else {
+                    //If the answer is incorrect, make the text box red
+                    document.getElementById("answer").style.backgroundColor = "red";
+                }
+            });
+        });
+    }
+
+    //Create a function for the test_vocabulary button
+    function step3_incorrect() {
+        //If the button dont_remember is clicked
+        //Return the promise
+        return new Promise((resolve, reject) => {
+            document.getElementById("dont_remember").addEventListener("click", function() {
+                resolve("Incorrect");
+            });
+        });
+    }
+
+    //Create a function for the test_vocabulary button next_card
+    function step3_next_card() {
+        //If the button next_card is clicked
+        //Return the promise
+        return new Promise((resolve, reject) => {
+            document.getElementById("next_card").addEventListener("click", function() {
+                resolve("Continue");
+            });
+        });
+    }
+
+    async function test_vocabulary() {
         //If the vocabulary list is empty run the reread function
         if (translated_vocabulary.length == 0) {
             reread();
@@ -226,60 +280,53 @@
             //Clear the test_list div
             document.getElementById("test_list").innerHTML = "";
 
-            //For each item in the list write the word and put a text box below it
-            for (var i = 0; i < translated_vocabulary.length; i++) {
-                var word = document.createElement("span");
-                word.innerHTML = "<h5>" + translated_vocabulary[i].base + "</h5>";
-                var input = document.createElement("input");
-                input.type = "text";
-                input.id = "testword_" + i.toString();
-                input.placeholder = "Enter the translation here";
-                document.getElementById("test_list").appendChild(word);
-                document.getElementById("test_list").appendChild(input);
-                //Add a listener to the input
-                input.addEventListener("input", function() {
-                    //Get the value of the input
-                    var value = document.getElementById(this.id).value;
-                    //Get the index of the input
-                    var index = parseInt(this.id.split("_")[1]);
-                    //Create a list of translations which is the value of translation separated by commas
-                    var translations = translated_vocabulary[index].translation.split(",");
-                    //Remove any spaces at the beginning of each translation
-                    for (var j = 0; j < translations.length; j++) {
-                        translations[j] = translations[j].trim();
-                    }
-                    //If the value is equal to one of the values in the list, change the color to green
-                    if (translations.includes(value)) {
-                        document.getElementById(this.id).style.color = "green";
+            //Copy the vocabulary list to a new list
+            var test_vocabulary = translated_vocabulary
+            //Shuffle the list
+            test_vocabulary.sort(() => Math.random() - 0.5);
+            //While the test list is not empty
+            while (test_vocabulary.length > 0) {
+                //Iterate through all the words
+                var words_to_remove = [];
+                for (i==0; i.test_vocabulary.length; i++) {
+                    //Make the card title the word
+                    document.getElementById("card_title").innerHTML = test_vocabulary[i].word;
+                    //Make the card text the example
+                    document.getElementById("card_text").innerHTML = test_vocabulary[i].example;
+                    //Hide the next card button and show the text box and dont remember button
+                    document.getElementById("next_card").hidden = true;
+                    document.getElementById("answer").hidden = false;
+                    document.getElementById("dont_remember").hidden = false;
+                    //Get the answer
+                    var answer = test_vocabulary[i].translation;
+                    promise_result = await Promise.race([
+                        step3_correct(answer),
+                        step3_incorrect()
+                    ]);
+                    if (promise_result == "Correct") {
+                        //If the promise is correct, add the word to the words_to_remove list
+                        words_to_remove.push(i);
                     } else {
-                        document.getElementById(this.id).style.color = "red";
+                        //Hide the dont remember button and the text box and show the next card button
+                        document.getElementById("next_card").hidden = false;
+                        document.getElementById("answer").hidden = true;
+                        document.getElementById("dont_remember").hidden = true;
+                        //Make the card text show the translation
+                        document.getElementById("card_text").innerHTML = test_vocabulary[i].translation;
+                        //Wait for the next card button to be clicked
+                        promise_result = await step3_next_card();
                     }
-                });
+                }
+                //Reverse sort the words_to_remove list
+                words_to_remove.sort((a, b) => b - a);
+                //Remove the words from the test_vocabulary list
+                for (var i = 0; i < words_to_remove.length; i++) {
+                    test_vocabulary.splice(words_to_remove[i], 1);
+                }
             }
-            //Add an event listener to the "test_list" div
-            //Once the user has translated all of the words correctly, we will execute the reread function
-            document.getElementById("test_list").addEventListener("input", function() {
-                //Create a variable to store the number of correct translations
-                var correct = 0;
-                //For each item in the list, check if the translation is correct
-                for (var i = 0; i < translated_vocabulary.length; i++) {
-                    //Get the value of the input
-                    var value = document.getElementById("testword_" + i.toString()).value;
-                    //Get all translations
-                    var translations = translated_vocabulary[i].translation.split(",");
-                    for (var j = 0; j < translations.length; j++) {
-                        translations[j] = translations[j].trim();
-                    }
-                    //If the value is equal to one of the values in the list, increment the correct variable
-                    if (translations.includes(value)) {
-                        correct++;
-                    }
-                }
-                //If the number of correct translations is equal to the length of the list, execute the reread function
-                if (correct == translated_vocabulary.length) {
-                    reread();
-                }
-            });
+                
+
+
             document.getElementById("test_vocab").hidden = false;
             //Bring the user to the top of the page
             window.scrollTo(0, 0);
