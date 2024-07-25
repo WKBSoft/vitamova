@@ -287,11 +287,13 @@
             while (test_vocabulary.length > 0) {
                 //show the div
                 document.getElementById("test_vocab").hidden = false;
+                var card_title = document.getElementById("card_title");
+                console.log(card_title.innerHTML);
                 //Iterate through all the words
                 var words_to_remove = [];
                 for (var i=0; i < test_vocabulary.length; i++) {
                     //Make the card title the word
-                    //document.getElementById("card_title").innerHTML = test_vocabulary[i].base;
+                    document.getElementById("card_title").innerHTML = test_vocabulary[i].base;
                     //Make the card text the example
                     document.getElementById("card_text").innerHTML = test_vocabulary[i].example;
                     //Hide the next card button and show the text box and dont remember button
