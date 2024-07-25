@@ -215,8 +215,8 @@
     function no_vocab_continue() {
         //Hide the modal
         document.getElementById("noVocabModalDismissalButton").click();
-        //Proceed to the next step
-        reread();
+        //Proceed to the final step
+        test_article();
     }
 
 
@@ -320,7 +320,7 @@
     async function test_vocabulary() {
         //If the vocabulary list is empty run the reread function
         if (translated_vocabulary.length == 0) {
-            reread();
+            test_article();
         } else {
             document.getElementById("review_vocab").hidden = true;
             //Change the title of the page
@@ -404,6 +404,8 @@
     function test_article() {
         //Hide the article_reread div
         document.getElementById("article_reread").hidden = true;
+        //Make sure the article div is hidden
+        document.getElementById("article").hidden = true;
         //Change the title to Step 5: Test Yourself
         document.getElementById("page_title").innerHTML = "Step 5: Test Reading Comprehension";
         //Show the test_article div
