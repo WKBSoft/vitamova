@@ -165,7 +165,8 @@
         //Update button
         document.getElementById("submit_button").innerHTML = "Complete Review!";
         document.addEventListener("DOMContentLoaded", function() {
-            document.getElementById("submit_button").addEventListener("click", test_vocabulary);
+            //Create an onclick event for the submit button
+            document.getElementById("submit_button").setAttribute("onclick", "test_vocabulary()");
         });
 
 
