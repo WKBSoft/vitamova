@@ -168,7 +168,19 @@ def flashcards(request):
                 vitalib.db.connection.close(db_connection)
                 return HttpResponseRedirect("/")
             else:
-                flashcards = vitalib.db.vocabulary.get(db_connection,request.user.username).today()
+                #See if the get request has a query parameter called "q"
+                if "q" in request.GET:
+                    #q should be a number
+                    try:
+                        q = int(request.GET["q"])
+                    except:
+                        #If q is not a number, set q the flashcard count
+                        q = flashcard_count
+                else:
+                    #If there is no q parameter, set q to the flashcard count
+                    q = flashcard_count
+                #Get the flashcards for today
+                flashcards = vitalib.db.vocabulary.get(db_connection,request.user.username).today(q)
                 vitalib.db.connection.close(db_connection)
                 return render(request,'flashcards.html',{"header":logged_in_header(),"flashcards":json.dumps(flashcards)})
         elif request.method == 'POST':

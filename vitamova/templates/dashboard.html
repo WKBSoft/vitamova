@@ -48,7 +48,10 @@
         <div class="card-body">
           <h5 class="card-title">Flashcards</h5>
           <p class="card-text">You have {{flashcard_count}} words in your queue to learn. Earn 1 point per word reviewed.</p>
-          <button onclick="window.location.href='/flashcards'" class="btn btn-primary" {% if flashcard_count == 0 %}disabled{% endif %}>Review All</button>
+          <div class="d-flex justify-content-between">
+            <button onclick="window.location.href='/flashcards'" class="btn btn-primary" {% if flashcard_count == 0 %}disabled{% endif %}>Review All</button>
+            <button onclick="window.location.href='/flashcards?q=10'" class="btn btn-primary" {% if flashcard_count == 0 %}disabled{% endif %}>Review 10</button>
+          </div>
         </div>
       </div>
     </div>

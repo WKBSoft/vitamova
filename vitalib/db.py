@@ -150,10 +150,12 @@ class vocabulary:
             with self.conn.cursor() as cur:
                 cur.execute("SELECT word_id, level, next_review FROM vocabulary WHERE username=%s", (self.username,))
                 return cur.fetchall()
-        def today(self):
+        def today(self, quantity):
             #Get all words that need to be reviewed today
             with self.conn.cursor() as cur:
-                cur.execute("SELECT word_id FROM vocabulary WHERE username=%s AND next_review<=%s", (self.username, str(datetime.datetime.now().date())))
+                #The quantity parameter will be used to limit the number of words returned
+                #The older words will be returned first
+                cur.execute("SELECT word_id FROM vocabulary WHERE username=%s AND next_review<=%s ORDER BY next_review LIMIT %s", (self.username, str(datetime.datetime.now().date()), quantity))
                 word_list = cur.fetchall()
             #Now get all the words with matching word_id from the dictionary
             words = []
