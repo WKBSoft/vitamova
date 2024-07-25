@@ -224,19 +224,17 @@
 
     //See if the user correctly translated the word
     function step3_correct(answer) {
-        //Create an event listener for the input box
-        //The input box's id is answer
-        return new Promise ((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             document.getElementById("answer").addEventListener("input", function() {
-                //Split the answer by commas
-                var answer = answer.split(",");
-                //Check if the answer is in the list
-                if (answer.includes(document.getElementById("answer").value)) {
-                    //If the answer is correct, resolve the promise
+                // Split the provided answer by commas
+                var correctAnswers = answer.split(",");
+                // Check if the current input value is in the list of correct answers
+                if (correctAnswers.includes(this.value)) {
+                    // If the answer is correct, resolve the promise
                     resolve("Correct");
                 } else {
-                    //If the answer is incorrect, make the text box red
-                    document.getElementById("answer").style.backgroundColor = "red";
+                    // If the answer is incorrect, make the text box red
+                    this.style.backgroundColor = "red";
                 }
             });
         });
