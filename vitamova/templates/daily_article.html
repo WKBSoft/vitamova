@@ -286,7 +286,9 @@
             //While the test list is not empty
             while (test_vocabulary.length > 0) {
                 //show the div
-                document.getElementById("test_vocab").hidden = false;
+                var test_vocab = document.getElementById("test_vocab")
+                test_vocab.hidden = false;
+                console.log(test_vocab);
                 var card_title = document.getElementById("card_title");
                 console.log(card_title);
                 //Iterate through all the words
