@@ -139,9 +139,8 @@
   </div>
 
 <!-- Button trigger modal -->
-<button id="noVocabModalButton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#noVocabModal" hidden>
-    Launch demo modal
-  </button>
+<button id="noVocabModalButton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#noVocabModal" hidden></button>
+  <button id="noVocabModalDismissalButton" type="button" class="btn-close" data-bs-dismiss="modal" data-bs-target="#noVocabModal" aria-label="Close" hidden></button>
 
   <!-- No Vocab Modal -->
   <div class="modal fade" id="noVocabModal" tabindex="-1" aria-labelledby="noVocabModalLabel" aria-hidden="true">
@@ -182,6 +181,7 @@
         document.getElementById("article").hidden = true;
         document.getElementById("review_vocab").hidden = false;
         document.getElementById("test_vocab").hidden = true;
+        document.getElementById("test_article").hidden = true;
         document.getElementById("article_reread").hidden = true;
         //Change the title of the page
         document.getElementById("page_title").innerHTML = "Step 2: Review Vocabulary";
@@ -214,7 +214,7 @@
 
     function no_vocab_continue() {
         //Hide the modal
-        document.getElementById("noVocabModal").hidden = true;
+        document.getElementById("noVocabModalDismissalButton").click();
         //Proceed to the next step
         reread();
     }
@@ -392,6 +392,8 @@
         document.getElementById("page_title").innerHTML = "Step 4: Reread the Article";
         //Hide the test_vocab div
         document.getElementById("test_vocab").hidden = true;
+        //Make sure the article div is hidden
+        document.getElementById("article").hidden = true;
         //Show the article div
         document.getElementById("article_reread").hidden = false;
         //Update the button
