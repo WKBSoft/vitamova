@@ -198,81 +198,98 @@ def submit_vocabulary(request):
     if request.user.is_authenticated:
         #Get the request json data
         jsondata = json.loads(request.body)
-        base_text = """
-            Please provide your responses in the 4 line format below. 
-            Please do not write anything else so that I can parse this. 
-            I am giving you Spanishs word and the sentences they were used in. 
-            Please rewrite the word, tell me its base form, its translation in English, 
-            and an example sentence which uses the same meaning of the word but in at least a slightly different context. 
-            If multiple translations of the word are relevant to the sentence, you can provide the multiple translations separated by a comma.
-            The translation must be of the base form of the verb.
-            Please do not put more than 3 translations per word. If AND ONLY IF the word is a verb is used reflexively, 
-            please treat the base form as its reflexive form and make the translation for the reflexive verb. 
-            Please seperate your responses per word by a single line. Please only provide one response per word/sentence pair below. 
-            If the word is the base form, please rewrite the word as the base form. Do NOT write the base form as none. 
-            If the word is the reflexive form, please rewrite the word as the reflexive form.
-            Please make sure you include the words before the : symbol in your response. I am using these to parse the data.
-            Word: 
-            Base form: 
-            Translation:
-            Example sentence:
-            Example translation:        
-        """
-        added_text = ""
-        response_text = ""
-        for i in range(len(jsondata)):
-            added_text += "Word: "+jsondata[i]["word"]+"\n"
-            added_text += "Sentence: "+jsondata[i]["sentence"]+"\n"
-            model = "gpt-3.5-turbo"
-            #Check if user is in the "pro" group
-            if request.user.groups.filter(name="pro").exists():
-                #Then they can use the gpt-4o model
-                print("User is in the pro group")
-                model = "gpt-4o"
-            if len(base_text) + len(added_text) > 10000 or i == len(jsondata)-1:
-                # Use the new ChatCompletion.create method
-                client = OpenAI(
-                    # This is the default and can be omitted
-                    api_key=os.environ.get('CHATGPT_KEY'),
-                )
+        if len(jsondata) == 0:
+            return HttpResponse("Error: No data provided", content_type="text/plain")
+        else:
+            base_text = """
+                Please provide your responses in the 4 line format below. 
+                Please do not write anything else so that I can parse this. 
+                I am giving you Spanishs word and the sentences they were used in. 
+                Please rewrite the word, tell me its base form, its translation in English, 
+                and an example sentence which uses the same meaning of the word but in at least a slightly different context. 
+                If multiple translations of the word are relevant to the sentence, you can provide the multiple translations separated by a comma.
+                The translation must be of the base form of the verb.
+                Please do not put more than 3 translations per word. If AND ONLY IF the word is a verb is used reflexively, 
+                please treat the base form as its reflexive form and make the translation for the reflexive verb. 
+                Please seperate your responses per word by a single line. Please only provide one response per word/sentence pair below. 
+                If the word is the base form, please rewrite the word as the base form. Do NOT write the base form as none. 
+                If the word is the reflexive form, please rewrite the word as the reflexive form.
+                Please make sure you include the words before the : symbol in your response. I am using these to parse the data.
+                Word: 
+                Base form: 
+                Translation:
+                Example sentence:
+                Example translation:        
+            """
+            added_text = ""
+            response_text = ""
+            condition = True
+            attempt = 1
+            while condition:
+                for i in range(len(jsondata)):
+                    added_text += "Word: "+jsondata[i]["word"]+"\n"
+                    added_text += "Sentence: "+jsondata[i]["sentence"]+"\n"
+                    model = "gpt-3.5-turbo"
+                    #Check if user is in the "pro" group
+                    if request.user.groups.filter(name="pro").exists():
+                        #Then they can use the gpt-4o model
+                        print("User is in the pro group")
+                        model = "gpt-4o"
+                    if len(base_text) + len(added_text) > 10000 or i == len(jsondata)-1:
+                        # Use the new ChatCompletion.create method
+                        client = OpenAI(
+                            # This is the default and can be omitted
+                            api_key=os.environ.get('CHATGPT_KEY'),
+                        )
 
-                response = client.chat.completions.create(
-                    messages=[
-                        {
-                            "role": "user",
-                            "content": base_text+added_text,
-                        }
-                    ],
-                    model=model,
-                )
-                print(response)
-                #Parse the response
-                response_text += response.choices[0].message.content
-                #Reset the added text
-                added_text = ""
-
-        #Split the response by line
-        response_lines = response_text.split("\n")
-        #Create a dictionary to hold the words and their data
-        words = []
-        for i in range(len(response_lines)):
-            if response_lines[i][0:6] == "Word: ":
-                word_dict = {"word": response_lines[i][6:].strip()}
-            elif response_lines[i][0:11] == "Base form: ":
-                word_dict["base"] = response_lines[i][11:].strip()
-            elif response_lines[i][0:13] == "Translation: ":
-                word_dict["translation"] = response_lines[i][13:].strip()
-            elif response_lines[i][0:17] == "Example sentence:":
-                word_dict["example"] = response_lines[i][17:].strip()
-            elif response_lines[i][0:20] == "Example translation:":
-                word_dict["example_translation"] = response_lines[i][20:].strip()
-                words.append(word_dict)
-        #Add the words to the database
-        db_connection = vitalib.db.connection.open()
-        for word in words:
-            vitalib.db.vocabulary.add(conn=db_connection, username=request.user.username, word=word["base"], definition=word["translation"], example=word["example"])
-        vitalib.db.connection.close(db_connection)
-        return HttpResponse(json.dumps(words), content_type="application/json")
+                        response = client.chat.completions.create(
+                            messages=[
+                                {
+                                    "role": "user",
+                                    "content": base_text+added_text,
+                                }
+                            ],
+                            model=model,
+                        )
+                        print(response)
+                        #Parse the response
+                        response_text += response.choices[0].message.content
+                        #Reset the added text
+                        added_text = ""
+                #Split the response by line
+                response_lines = response_text.split("\n")
+                #Create a dictionary to hold the words and their data
+                words = []
+                for i in range(len(response_lines)):
+                    if response_lines[i][0:6] == "Word: ":
+                        word_dict = {"word": response_lines[i][6:].strip()}
+                    elif response_lines[i][0:11] == "Base form: ":
+                        word_dict["base"] = response_lines[i][11:].strip()
+                    elif response_lines[i][0:13] == "Translation: ":
+                        word_dict["translation"] = response_lines[i][13:].strip()
+                    elif response_lines[i][0:17] == "Example sentence:":
+                        word_dict["example"] = response_lines[i][17:].strip()
+                    elif response_lines[i][0:20] == "Example translation:":
+                        word_dict["example_translation"] = response_lines[i][20:].strip()
+                        words.append(word_dict)
+                #If the words are not empty, break the loop
+                if len(words) > 0:
+                    condition = False
+                elif attempt > 3:
+                    #If the attempt is greater than 3, return an error
+                    return HttpResponse("Error: Failed to parse the data", content_type="text/plain")
+                else:
+                    #Add to the base text asking to please use the 4 line format properly
+                    base_text += """
+                    Please use the 4 line format properly. Please do not forget to include the words before the : symbol in your response. 
+                    I am using these to parse the data. This is attempt number """+str(attempt)+"."
+                    attempt += 1
+            #Add the words to the database
+            db_connection = vitalib.db.connection.open()
+            for word in words:
+                vitalib.db.vocabulary.add(conn=db_connection, username=request.user.username, word=word["base"], definition=word["translation"], example=word["example"])
+            vitalib.db.connection.close(db_connection)
+            return HttpResponse(json.dumps(words), content_type="application/json")
     else:
         return HttpResponseRedirect("/login/")
     

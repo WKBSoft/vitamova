@@ -138,6 +138,24 @@
     </div>
   </div>
 
+  <!-- No Vocab Modal -->
+  <div class="modal fade" id="noVocabModal" tabindex="-1" aria-labelledby="noVocabModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="noVocabModalLabel">Are you sure?</h1>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <p>You have not selected any vocabulary words. Are you sure you want to continue?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Stay Here</button>
+            <button type="button" class="btn btn-primary" onclick="no_vocab_continue()">Continue</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 <style>
     #vocabulary.fixed {
         position: fixed;
@@ -189,37 +207,69 @@
         window.scrollTo(0, 0);
     }
 
+    function no_vocab_continue() {
+        //Hide the modal
+        document.getElementById("noVocabModal").hidden = true;
+        //Proceed to the next step
+        reread();
+    }
+
 
     //Create the submit_vocabulary function
     function submit_vocabulary() {
-        //First make the button load
-        document.getElementById("submit_button").innerHTML = "<span class=\"spinner-border spinner-border-sm\" role=\"status\" aria-hidden=\"true\"></span>Loading...";
+        //If the vocabulary list is empty run the reread function
+        if (vocabulary.length == 0) {
+            //Show the modal
+            document.getElementById("noVocabModal").hidden = false;
+        } else {
+            //First make the button load
+            document.getElementById("submit_button").innerHTML = "<span class=\"spinner-border spinner-border-sm\" role=\"status\" aria-hidden=\"true\"></span>Loading...";
 
-        //Send the vocabulary list to the server with an AJAX request
-        //The url is /submit_vocabulary
-        //The data is the vocabulary list
-        //The method is POST
-        //The success function is the function below
-        $.ajax({
-            url: "/submit_vocabulary/",
-            data: JSON.stringify(vocabulary),
-            type: "POST",
-            contentType: "application/json",
-            //Set a header
-            headers: {
-                "X-Requested-With": "XMLHttpRequest",
-                "X-CSRFToken": "{{ csrf_token }}"
-            },
-            success: function(response) {
-                //Log the response to the console
-                console.log(response);
-                translated_vocabulary = response;
-                vocabulary_list();
-            }
-            //If there is an error, print the error to the console
-        }).fail(function() {
-            console.log("Error submitting vocabulary");
-        });
+            //Send the vocabulary list to the server with an AJAX request
+            //The url is /submit_vocabulary
+            //The data is the vocabulary list
+            //The method is POST
+            //The success function is the function below
+            $.ajax({
+                url: "/submit_vocabulary/",
+                data: JSON.stringify(vocabulary),
+                type: "POST",
+                contentType: "application/json",
+                //Set a header
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                success: function(response) {
+                    //Log the response to the console
+                    console.log(response);
+                    //If the response is a string
+                    if (typeof response === 'string' || response instanceof String) {
+                        //If the string is Error: Failed to parse the data
+                        if (response == "Error: Failed to parse the data") {
+                            //Alert the user that the AI is not responding correctly
+                            alert("The AI is not responding correctly. Please try again later.");
+                            //Refresh the page
+                            location.reload();
+                        } else {
+                            //Alert that there is an unknown error
+                            alert("An unknown error has occurred. Please try again later.");
+                            //Refresh the page
+                            location.reload();
+                        }
+                    }
+                    translated_vocabulary = response;
+                    vocabulary_list();
+                }
+                //If there is an error, print the error to the console
+            }).fail(function() {
+                console.log("Error submitting vocabulary");
+                //Alert that there is an unknown error
+                alert("An unknown error has occurred. Please try again later.");
+                //Refresh the page
+                location.reload();
+            });
+        }
     }
 
     //See if the user correctly translated the word
