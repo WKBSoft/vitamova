@@ -50,7 +50,7 @@
     </div>
     <div id="test_vocab" class="row justify-content-center" hidden>
         <div class="col-3"></div>
-        <div class="col-6" style="background-color: #f8f9fa;" id="test_list">
+        <div class="col-6" id="test_list">
             <div class="card">
                 <div class="card-body text-center">
                     <h5 id="card_title" class="card-title">Saying hello</h5>
@@ -286,11 +286,7 @@
             //While the test list is not empty
             while (test_vocabulary.length > 0) {
                 //show the div
-                var test_vocab = document.getElementById("test_vocab")
-                test_vocab.hidden = false;
-                console.log(test_vocab);
-                var card_title = document.getElementById("card_title");
-                console.log(card_title);
+                document.getElementById("test_vocab").hidden = false;
                 //Iterate through all the words
                 var words_to_remove = [];
                 for (var i=0; i < test_vocabulary.length; i++) {
