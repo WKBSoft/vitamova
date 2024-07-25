@@ -164,7 +164,6 @@
         document.getElementById("page_title").innerHTML = "Step 2: Review Vocabulary";
         //Update button
         document.getElementById("submit_button").innerHTML = "Complete Review!";
-        document.getElementById("submit_button").onclick = async() => { await test_vocabulary() };
 
 
         //Clear the vocabulary_list div
@@ -214,6 +213,7 @@
                 //Log the response to the console
                 console.log(response);
                 translated_vocabulary = response;
+                document.getElementById("submit_button").onclick = async() => { await test_vocabulary() };
                 vocabulary_list();
             }
             //If there is an error, print the error to the console
