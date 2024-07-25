@@ -305,6 +305,8 @@
                     if (promise_result == "Correct") {
                         //If the promise is correct, add the word to the words_to_remove list
                         words_to_remove.push(i);
+                        //Clear the text box
+                        document.getElementById("answer").value = "";
                     } else {
                         //Hide the dont remember button and the text box and show the next card button
                         document.getElementById("next_card").hidden = false;
