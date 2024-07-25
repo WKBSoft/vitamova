@@ -164,9 +164,8 @@
         document.getElementById("page_title").innerHTML = "Step 2: Review Vocabulary";
         //Update button
         document.getElementById("submit_button").innerHTML = "Complete Review!";
-        document.addEventListener("DOMContentLoaded", function() {
-            //Create an onclick event for the submit button
-            document.getElementById("submit_button").setAttribute("onclick", "test_vocabulary()");
+        document.getElementById("submit_button").addEventListener("click", async function() {
+            await test_vocabulary();
         });
 
 
