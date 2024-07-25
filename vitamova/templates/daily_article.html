@@ -164,7 +164,10 @@
         document.getElementById("page_title").innerHTML = "Step 2: Review Vocabulary";
         //Update button
         document.getElementById("submit_button").innerHTML = "Complete Review!";
-        document.getElementById("submit_button").addEventListener("click", test_vocabulary);
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("submit_button").addEventListener("click", test_vocabulary);
+        });
+
 
         //Clear the vocabulary_list div
         document.getElementById("vocabulary_list").innerHTML = "";
