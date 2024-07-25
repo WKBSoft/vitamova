@@ -283,6 +283,10 @@
             document.getElementById("answer").addEventListener("input", function() {
                 // Split the provided answer by commas
                 var correctAnswers = answer.split(",");
+                //Get rid of any leading or trailing whitespace
+                correctAnswers = correctAnswers.map(function(x) {
+                    return x.trim();
+                });
                 // Check if the current input value is in the list of correct answers
                 if (correctAnswers.includes(this.value)) {
                     // If the answer is correct, resolve the promise
