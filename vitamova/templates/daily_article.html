@@ -138,6 +138,11 @@
     </div>
   </div>
 
+<!-- Button trigger modal -->
+<button id="noVocabModalButton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#noVocabModal" hidden>
+    Launch demo modal
+  </button>
+
   <!-- No Vocab Modal -->
   <div class="modal fade" id="noVocabModal" tabindex="-1" aria-labelledby="noVocabModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -220,7 +225,7 @@
         //If the vocabulary list is empty run the reread function
         if (vocabulary.length == 0) {
             //Show the modal
-            document.getElementById("noVocabModal").hidden = false;
+            document.getElementById("noVocabModalButton").click();
         } else {
             //First make the button load
             document.getElementById("submit_button").innerHTML = "<span class=\"spinner-border spinner-border-sm\" role=\"status\" aria-hidden=\"true\"></span>Loading...";
