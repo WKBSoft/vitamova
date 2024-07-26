@@ -36,6 +36,7 @@ title_start = main_page.find("<span>",link_end) + 6
 title_end = main_page.find("</span>",title_start)
 title = main_page[title_start:title_end]
 
+print(full_link)
 #Get the article page
 article_page = requests.get(full_link).text
 
