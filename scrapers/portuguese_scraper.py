@@ -29,7 +29,11 @@ start = main_page.find("<h3")
 #The link follows the first href after the <h3 tag
 link_start = main_page.find("href",start) + 6
 link_end = main_page.find("\"",link_start)
-full_link = "https://www.sapo.pt" + main_page[link_start:link_end]
+new_link = main_page[link_start:link_end]
+if new_link.startswith("http"):
+    full_link = new_link
+else:
+    full_link = "https://www.sapo.pt" + main_page[link_start:link_end]
 
 #The article title is in <span> tags after the link
 title_start = main_page.find("<span>",link_end) + 6
