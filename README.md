@@ -2,7 +2,7 @@
 
 ### About
 
-This is a (Django)[https://github.com/django/django] Web Application for intermediate to advanced language learners.
+This is a [Django](https://github.com/django/django) Web Application for intermediate to advanced language learners.
 
 ## Compatability
 
